@@ -228,18 +228,28 @@
                     <div class="item-img-sm" style="background:#f5ece3;"></div>
                     {% endif %}
                 </td>
-                <td><a href="{{ url_for('product.product_detail', product_id=item['p_id']) }}"
-                        style="color:var(--text-dark);font-weight:500;">{{ item['product_name'] }}</a></td>
+                <td>
+                    {% if item['p_id'] %}
+                        <a href="{{ url_for('product.product_detail', product_id=item['p_id']) }}"
+                            style="color:var(--text-dark);font-weight:500;">{{ item['product_name'] }}</a>
+                    {% else %}
+                        <span style="color:var(--text-dark);font-weight:500;">{{ item['product_name'] }}</span>
+                    {% endif %}
+                </td>
                 <td>{{ item['quantity'] }}</td>
                 <td>₹{{ "%.2f"|format(item['price']|float) }}</td>
                 <td>₹{{ "%.2f"|format((item['price']|float * item['quantity']|int)) }}</td>
                 <td>
+                    {% if item['p_id'] %}
                     <a href="{{ url_for('product.product_detail', product_id=item['p_id']) }}#reviewsArea" 
                        style="font-size: 0.8rem; color: var(--primary); font-weight: 600; text-decoration: none; border: 1px solid var(--primary); padding: 5px 10px; border-radius: 6px; transition: 0.3s;"
                        onmouseover="this.style.background='var(--primary)'; this.style.color='white';" 
                        onmouseout="this.style.background='transparent'; this.style.color='var(--primary)';">
                         Review
                     </a>
+                    {% else %}
+                        <span style="font-size: 0.8rem; color: #999; font-style: italic;">Custom Order</span>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
