@@ -1,0 +1,1 @@
+import sqlite3; db = sqlite3.connect('plattera.db'); db.execute('CREATE TABLE IF NOT EXISTS wishlist (w_id INTEGER PRIMARY KEY AUTOINCREMENT, u_id INTEGER, p_id INTEGER, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (u_id) REFERENCES users(u_id), FOREIGN KEY (p_id) REFERENCES products(p_id))'); db.commit(); print('Wishlist table checked/created')
