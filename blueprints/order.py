@@ -12,15 +12,16 @@ def order_history():
         SELECT o.order_id, o.total_amount, o.order_status,
                o.created_at,
                oi.quantity, oi.price,
-               p.p_name as product_name,
-               pi.image_url,
+               COALESCE(p.p_name, oi.product_name) as product_name,
+               COALESCE((SELECT image_url FROM product_images WHERE p_id = p.p_id LIMIT 1), cr.reference_image) as image_url,
                sp.shop_name
         FROM orders o
         JOIN order_items oi ON o.order_id = oi.order_id
-        JOIN products p ON oi.p_id = p.p_id
-        LEFT JOIN product_images pi ON p.p_id = pi.p_id
-        LEFT JOIN seller_profiles sp ON p.seller_id = sp.u_id
+        LEFT JOIN products p ON oi.p_id = p.p_id
+        LEFT JOIN custom_requests cr ON oi.custom_request_id = cr.cr_id
+        LEFT JOIN seller_profiles sp ON COALESCE(p.seller_id, cr.seller_id) = sp.u_id
         WHERE o.u_id = ?
+        GROUP BY oi.oi_id
         ORDER BY o.created_at DESC
     ''', [current_user.u_id])
 
@@ -43,11 +44,11 @@ def order_detail(order_id):
 
     items = query_db('''
         SELECT oi.quantity, oi.price,
-               p.p_name as product_name, p.p_id,
-               pi.image_url
+               COALESCE(p.p_name, oi.product_name) as product_name, p.p_id,
+               COALESCE((SELECT image_url FROM product_images WHERE p_id = p.p_id LIMIT 1), cr.reference_image) as image_url
         FROM order_items oi
-        JOIN products p ON oi.p_id = p.p_id
-        LEFT JOIN product_images pi ON p.p_id = pi.p_id
+        LEFT JOIN products p ON oi.p_id = p.p_id
+        LEFT JOIN custom_requests cr ON oi.custom_request_id = cr.cr_id
         WHERE oi.order_id = ?
     ''', [order_id])
 

@@ -146,7 +146,13 @@
                     <td style="padding: 1rem; text-align: center;">
                         {% if req.status == 'pending' %}
                         <button
-                            onclick="openProcessModal('{{ req.cr_id }}', '{{ req.product_type }}', '{{ req.estimated_price }}')"
+                            data-crid="{{ req.cr_id }}"
+                            data-prodtype="{{ req.product_type }}"
+                            data-estimate="{{ req.estimated_price }}"
+                            data-quantity="{{ req.quantity }}"
+                            data-message="{{ req.custom_message }}"
+                            data-personalization="{{ req.personalization_details }}"
+                            onclick="openProcessModal(this)"
                             style="background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">
                             Review & Quote
                         </button>
@@ -171,8 +177,13 @@
 <div id="processModal"
     style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
     <div
-        style="background: white; width: 90%; max-width: 500px; padding: 1.8rem; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.2);">
+        style="background: white; width: 90%; max-width: 500px; padding: 1.8rem; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;">
         <h2 style="margin-bottom: 1.5rem; color: var(--primary);" id="modalTitle">Process Custom Request</h2>
+        <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+            <p><strong>Quantity:</strong> <span id="modalQuantity"></span></p>
+            <p><strong>Personalization:</strong> <span id="modalPersonalization"></span></p>
+            <p><strong>Message:</strong> <span id="modalMessage"></span></p>
+        </div>
         <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">Please review the details and
             provide your final quote and delivery timeline if you wish to accept this request.</p>
         <form id="processForm" method="POST" action="">
@@ -208,7 +219,14 @@
 </div>
 
 <script>
-    function openProcessModal(crId, prodType, estimate) {
+    function openProcessModal(btn) {
+        const crId = btn.getAttribute('data-crid');
+        const prodType = btn.getAttribute('data-prodtype');
+        const estimate = btn.getAttribute('data-estimate');
+        const quantity = btn.getAttribute('data-quantity');
+        const message = btn.getAttribute('data-message');
+        const personalization = btn.getAttribute('data-personalization');
+
         const modal = document.getElementById('processModal');
         const form = document.getElementById('processForm');
         const title = document.getElementById('modalTitle');

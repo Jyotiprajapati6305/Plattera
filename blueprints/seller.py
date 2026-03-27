@@ -194,17 +194,17 @@ def orders():
                COALESCE(p.p_name, oi.product_name) as p_name, 
                oi.quantity, (oi.price * oi.quantity) as amount, 
                o.order_status, o.created_at, sp.shop_name as seller_name,
-               (SELECT image_url FROM product_images WHERE p_id = p.p_id LIMIT 1) as p_image,
-               oi.is_custom
+               COALESCE((SELECT image_url FROM product_images WHERE p_id = p.p_id LIMIT 1), cr.reference_image) as p_image,
+               oi.is_custom, o.payment_method, o.razorpay_order_id, o.razorpay_payment_id
         FROM order_items oi
         JOIN orders o ON oi.order_id = o.order_id
         JOIN users u ON o.u_id = u.u_id
         LEFT JOIN products p ON oi.p_id = p.p_id
         LEFT JOIN custom_requests cr ON oi.custom_request_id = cr.cr_id
-        LEFT JOIN seller_profiles sp ON o.seller_id = sp.u_id
-        WHERE p.seller_id = ? OR cr.seller_id = ?
+        LEFT JOIN seller_profiles sp ON COALESCE(p.seller_id, cr.seller_id) = sp.u_id
+        WHERE COALESCE(p.seller_id, cr.seller_id) = ?
         ORDER BY o.created_at DESC
-    ''', [sid, sid])
+    ''', [sid])
     return render_template('seller/orders.html', orders=all_orders)
 
 @seller_bp.route('/earnings')
