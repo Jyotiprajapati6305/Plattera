@@ -1,0 +1,527 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed | Plattera{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    :root {
+        --primary: #D4A373;
+        --primary-light: #e6c5a5;
+        --secondary: #f0ebe1;
+        --accent: #e5e5e5;
+        --text-dark: #2d2a26;
+        --text-light: #6c757d;
+        --bg-light: #fafafa;
+        --white: #ffffff;
+        --success: #2e7d32;
+        --success-light: #e8f5e9;
+        --danger: #d97757;
+        --warning: #f5b041;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        --shadow-hover: 0 15px 40px rgba(212, 163, 115, 0.12);
+        --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    body {
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+    }
+
+    .container-success {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    /* Hero Success Section */
+    .success-hero {
+        text-align: center;
+        padding: 2rem 1rem 3rem;
+        animation: fadeDown 0.8s ease;
+    }
+
+    @keyframes fadeDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .success-icon-wrap {
+        width: 100px;
+        height: 100px;
+        background: var(--success-light);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 0 0 15px rgba(46, 125, 50, 0.1);
+        position: relative;
+    }
+
+    .success-icon-wrap i {
+        font-size: 3rem;
+        color: var(--success);
+    }
+
+    .success-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.8rem;
+        color: var(--text-dark);
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    .success-hero p {
+        font-size: 1.1rem;
+        color: var(--text-light);
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .email-notice {
+        display: inline-block;
+        background: white;
+        padding: 10px 24px;
+        border-radius: 30px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--text-dark);
+        margin-top: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--accent);
+    }
+
+    .email-notice i {
+        color: var(--primary);
+        margin-right: 8px;
+    }
+
+    /* Grid Layout */
+    .main-grid {
+        display: grid;
+        grid-template-columns: 1.8fr 1.2fr;
+        gap: 2.5rem;
+        margin-bottom: 5rem;
+    }
+
+    /* Cards Generic */
+    .card-s {
+        background: white;
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        margin-bottom: 2rem;
+    }
+
+    .card-header-s {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--accent);
+        padding-bottom: 1rem;
+    }
+
+    .card-header-s h2 {
+        font-size: 1.3rem;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: 'Outfit';
+    }
+
+    .card-header-s h2 i {
+        color: var(--primary);
+    }
+
+    /* Order Details */
+    .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .detail-label {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    .detail-val {
+        font-size: 1.05rem;
+        color: var(--text-dark);
+        font-weight: 500;
+    }
+
+    .detail-val.highlight {
+        color: var(--primary);
+        font-weight: 600;
+    }
+
+    /* Timeline */
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 11px;
+        top: 10px;
+        bottom: 10px;
+        width: 2px;
+        background: var(--accent);
+        z-index: 1;
+    }
+
+    .tl-step {
+        position: relative;
+        z-index: 2;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .tl-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        color: var(--text-light);
+        margin-top: 2px;
+    }
+
+    .tl-step.completed .tl-icon {
+        background: var(--success);
+        border-color: var(--success);
+        color: white;
+    }
+
+    .tl-step.active .tl-icon {
+        background: white;
+        border-color: var(--primary);
+        color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.2);
+    }
+
+    .tl-step.active .tl-icon::after {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: var(--primary);
+        border-radius: 50%;
+    }
+
+    .tl-content h4 {
+        font-size: 1rem;
+        margin-bottom: 2px;
+    }
+
+    .tl-content p {
+        font-size: 0.85rem;
+        color: var(--text-light);
+    }
+
+    /* Item List */
+    .item-row {
+        display: flex;
+        gap: 15px;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px dashed var(--accent);
+        margin-top: 1.5rem;
+    }
+
+    .item-row:last-child {
+        border-bottom: none;
+    }
+
+    .item-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 12px;
+        object-fit: cover;
+    }
+
+    .item-info {
+        flex: 1;
+    }
+
+    .item-name {
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .item-seller {
+        font-size: 0.85rem;
+        color: var(--text-light);
+    }
+
+    .item-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        font-weight: 500;
+    }
+
+    /* Summary */
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        color: var(--text-light);
+    }
+
+    .summary-total {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 2px solid var(--bg-light);
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .btn-action {
+        width: 100%;
+        padding: 16px;
+        border-radius: 12px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        font-family: 'Outfit';
+    }
+
+    .btn-track {
+        background: var(--text-dark);
+        color: white;
+    }
+
+    .btn-track:hover {
+        background: var(--primary);
+        transform: translateY(-2px);
+    }
+
+    .btn-shop {
+        background: white;
+        color: var(--text-dark);
+        border: 2px solid var(--accent);
+    }
+
+    .btn-shop:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    @media (max-width: 992px) {
+        .main-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .right-col .card-s {
+            position: relative;
+            top: 0;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .container-success {
+            padding: 20px 15px;
+        }
+
+        .success-hero h1 {
+            font-size: 2rem;
+        }
+
+        .success-hero p {
+            font-size: 1rem;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .success-icon-wrap {
+            width: 80px;
+            height: 80px;
+        }
+
+        .success-icon-wrap i {
+            font-size: 2.2rem;
+        }
+
+        .card-s {
+            padding: 1.5rem;
+        }
+
+        .btn-action {
+            padding: 14px;
+        }
+    }
+</style>
+
+<div class="container-success">
+    <div class="success-hero">
+        <div class="success-icon-wrap"><i class="fas fa-check"></i></div>
+        <h1>Order Confirmed!</h1>
+        <p>Your handcrafted crochet treasures are being prepared. Thank you for supporting artisan craft!</p>
+        <div class="email-notice">
+            <i class="fas fa-envelope-open-text"></i> Confirmation sent to {{ current_user.u_email }}
+        </div>
+    </div>
+
+    <div class="main-grid">
+        <div class="left-col">
+            <!-- Details -->
+            <div class="card-s">
+                <div class="card-header-s">
+                    <h2><i class="fas fa-receipt"></i> Order Overview</h2>
+                </div>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Order ID</span>
+                        <span class="detail-val highlight">#PLT-{{ order.order_id }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Date</span>
+                        <span class="detail-val">{{ order.created_at }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Payment</span>
+                        <span class="detail-val" style="color:var(--success)">
+                            <i class="fas fa-check-circle"></i> Paid via {{ order.payment_method|upper }}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Shipping to</span>
+                        <span class="detail-val" style="font-size: 0.9rem;">{{ order.shipping_address }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journey -->
+            <div class="card-s">
+                <div class="card-header-s">
+                    <h2><i class="fas fa-route"></i> Order Journey</h2>
+                </div>
+                <div class="timeline">
+                    <div class="tl-step completed">
+                        <div class="tl-icon"><i class="fas fa-check"></i></div>
+                        <div class="tl-content">
+                            <h4>Payment Received</h4>
+                            <p>Secure payment was successful.</p>
+                        </div>
+                    </div>
+                    <div class="tl-step active">
+                        <div class="tl-icon"></div>
+                        <div class="tl-content">
+                            <h4>Preparing for Crafting</h4>
+                            <p>Artisans are getting ready to start your pieces.</p>
+                        </div>
+                    </div>
+                    <div class="tl-step">
+                        <div class="tl-icon"></div>
+                        <div class="tl-content">
+                            <h4>Crafting in Progress</h4>
+                            <p>Handmade magic is happening.</p>
+                        </div>
+                    </div>
+                    <div class="tl-step">
+                        <div class="tl-icon"></div>
+                        <div class="tl-content">
+                            <h4>Shipped</h4>
+                            <p>Your order will be on its way soon.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items -->
+            <div class="card-s">
+                <div class="card-header-s">
+                    <h2><i class="fas fa-box-open"></i> Items in this Order</h2>
+                </div>
+                {% for item in items %}
+                <div class="item-row">
+                    {% if item.image_url %}
+                    <img src="{{ url_for('static', filename='uploads/products/' + item.image_url.split('/')[-1]) if not item.image_url.startswith('http') else item.image_url }}"
+                        class="item-img">
+                    {% else %}
+                    <div class="item-img"
+                        style="background:var(--secondary); display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-yarn" style="color:#aaa;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="item-info">
+                        <div class="item-name">{{ item.product_name }}</div>
+                        <div class="item-seller">Artisan Piece</div>
+                        <div class="item-meta">
+                            <span>Qty: {{ item.quantity }}</span>
+                            <span>₹{{ "%.0f"|format(item.price) }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="right-col">
+            <div class="card-s" style="position: sticky; top: 120px;">
+                <button class="btn-action btn-track"
+                    onclick="window.location.href='{{ url_for('order.order_history') }}'">
+                    <i class="fas fa-map-marker-alt"></i> Track Order Live
+                </button>
+                <button class="btn-action btn-shop" onclick="window.location.href='{{ url_for('product.gallery') }}'">
+                    Continue Shopping
+                </button>
+
+                <div style="margin-top: 30px;">
+                    <div class="card-header-s">
+                        <h2><i class="fas fa-file-invoice-dollar"></i> Summary</h2>
+                    </div>
+                    <div class="summary-row"><span>Subtotal</span><span>₹{{ "%.0f"|format(order.total_amount) }}</span>
+                    </div>
+                    <div class="summary-row"><span>Shipping</span><span>Free</span></div>
+                    <div class="summary-total">
+                        <span>Total Paid</span>
+                        <span>₹{{ "%.0f"|format(order.total_amount) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

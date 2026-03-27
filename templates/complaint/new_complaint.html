@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}New Complaint | Plattera{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #d4a373;
+        --primary-dark: #bc8249;
+        --font-headings: 'Crimson Pro', serif;
+        --font-body: 'Montserrat', sans-serif;
+        --text-dark: #333;
+        --text-light: #777;
+    }
+
+    .complaint-page {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 160px 2rem 6rem;
+    }
+
+    .complaint-page h1 {
+        font-family: var(--font-headings);
+        font-size: 3rem;
+        font-style: italic;
+        margin-bottom: 0.5rem;
+    }
+
+    .complaint-page .subtitle {
+        color: var(--text-light);
+        margin-bottom: 2.5rem;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-group {
+        margin-bottom: 1.8rem;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 0.78rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #aaa;
+        margin-bottom: 0.6rem;
+    }
+
+    .form-select-elem,
+    .form-textarea {
+        width: 100%;
+        padding: 0.9rem 1.1rem;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--text-dark);
+        transition: 0.3s;
+        background: #fdfdfd;
+    }
+
+    .form-select-elem:focus,
+    .form-textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.12);
+    }
+
+    .form-textarea {
+        height: 150px;
+        resize: vertical;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 1rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-family: var(--font-body);
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-submit:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(212, 163, 115, 0.4);
+    }
+
+    .back-link {
+        color: var(--primary);
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .back-link:hover {
+        gap: 0.8rem;
+    }
+</style>
+
+<div class="complaint-page">
+    <a href="{{ url_for('complaint.my_complaints') }}" class="back-link"><i class="fas fa-arrow-left"></i> Back</a>
+    <h1>Raise a Complaint</h1>
+    <p class="subtitle">We take every concern seriously. Please describe the issue clearly.</p>
+
+    <div class="form-card">
+        <form method="POST" action="{{ url_for('complaint.new_complaint') }}">
+            <div class="form-group">
+                <label class="form-label">Related Order (Optional)</label>
+                <select name="order_id" class="form-select-elem">
+                    <option value="">— Select an Order —</option>
+                    {% for order in user_orders %}
+                    <option value="{{ order['o_id'] }}">Order #{{ order['order_number'] }} ({{ order['created_at'][:10]
+                        }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Describe Your Issue</label>
+                <textarea name="complaint_text" class="form-textarea"
+                    placeholder="Clearly describe your problem so we can help..." required></textarea>
+            </div>
+            <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Submit Complaint</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

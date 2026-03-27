@@ -1,0 +1,773 @@
+<!-- Header specific styles -->
+<style>
+    /* --- ANNOUNCEMENT TOP BAR --- */
+    .top-bar {
+        background-color: #2e2a28;
+        /* Deep brown/black as requested */
+        color: rgba(255, 255, 255, 0.9);
+        padding: 8px 0;
+        text-align: center;
+        font-size: 13px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        font-family: var(--font-body);
+        font-weight: 500;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    /* --- GLOBAL & RESET --- */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    :root {
+        --bg-color: #fbf9f7;
+        /* Light Pastel Color */
+        --text-dark: #2e2a28;
+        --text-light: #5d5d5d;
+        --accent-brown: #b58b7a;
+        --glass-bg: rgba(255, 255, 255, 0.25);
+        --glass-border: rgba(255, 255, 255, 0.5);
+        --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+
+        --font-heading: var(--font-heading, 'Crimson Pro', serif);
+        --font-body: var(--font-body, 'Tenor Sans', sans-serif);
+
+        --container-width: 1400px;
+        /* Matched to base.html */
+        --transition: all 0.4s ease;
+    }
+
+
+    body {
+        /* Applied to ensure fonts load if this is the only CSS */
+        font-family: var(--font-body);
+        color: var(--text-dark);
+        background-color: var(--bg-color);
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+        transition: var(--transition);
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    /* --- Floating Blobs Animation --- */
+    @keyframes floatBlob {
+        0% {
+            transform: translate(0, 0) scale(1);
+        }
+
+        33% {
+            transform: translate(30px, -20px) scale(1.1);
+        }
+
+        66% {
+            transform: translate(-20px, 20px) scale(0.9);
+        }
+
+        100% {
+            transform: translate(0, 0) scale(1);
+        }
+    }
+
+    .navbar-blobs {
+        display: none;
+    }
+
+    .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(20px);
+        opacity: 0.6;
+        animation: floatBlob 10s infinite ease-in-out;
+    }
+
+    .blob-1 {
+        top: -10%;
+        left: 10%;
+        width: 160px;
+        height: 160px;
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        /* Pink to Soft Pink */
+        opacity: 0.7;
+        animation-duration: 3s;
+        /* Much faster */
+    }
+
+    .blob-2 {
+        bottom: -20%;
+        right: 20%;
+        width: 140px;
+        height: 140px;
+        background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+        /* Purple to Pink */
+        opacity: 0.6;
+        animation-duration: 4s;
+        /* Much faster */
+        animation-delay: 0.5s;
+    }
+
+    .blob-3 {
+        top: 20%;
+        right: -5%;
+        width: 110px;
+        height: 110px;
+        background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        /* Mint to Blue (Contrast) */
+        opacity: 0.5;
+        animation-duration: 3.5s;
+        /* Much faster */
+        animation-delay: 1s;
+    }
+
+    .blob-4 {
+        bottom: 10%;
+        left: -5%;
+        width: 130px;
+        height: 130px;
+        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        /* Peach to Orange */
+        opacity: 0.6;
+        animation-duration: 5s;
+        /* Much faster */
+        animation-delay: 0.2s;
+    }
+
+    /* --- HEADER & GLASS NAVBAR --- */
+    .header {
+        position: fixed;
+        top: 31px;
+        /* Sits flush under top-bar */
+        left: 0;
+        transform: none;
+        width: 100%;
+        z-index: 1000;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 0;
+
+        /* Enhanced Glass Effect */
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(25px) saturate(180%);
+        -webkit-backdrop-filter: blur(25px) saturate(180%);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* Scrolled State Removed */
+
+    .navbar-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 30px;
+        /* Reduced from 35px */
+        height: 72px;
+        /* Reduced from 85px */
+        transition: height 0.4s ease;
+    }
+
+    /* Logo */
+    .logo {
+        font-family: var(--font-heading, 'Crimson Pro', serif);
+        font-size: 32px;
+        /* Reduced from 38px */
+        font-weight: 700;
+        font-style: italic;
+        color: var(--text-dark);
+        /* Changed from white to dark for legibility */
+        text-decoration: none;
+        letter-spacing: -1.2px;
+        transition: all 0.4s ease;
+    }
+
+    /* Navigation Menu */
+    .nav-menu {
+        display: flex;
+        gap: 25px;
+        /* Reduced from 35px for better fit */
+        background: rgba(255, 255, 255, 0.45);
+        /* Clearer capsule background */
+        padding: 8px 30px;
+        /* Slightly reduced padding */
+        border-radius: 50px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    }
+
+    .nav-link {
+        color: var(--text-dark);
+        /* Changed from white to dark */
+        text-decoration: none;
+        font-size: 14px;
+        /* Slightly smaller for better fit */
+        font-weight: 600;
+        /* Slightly bolder */
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        /* Slightly reduced */
+        transition: all 0.3s ease;
+        opacity: 0.8;
+        /* Subtle transparency */
+        position: relative;
+        padding: 5px 0;
+        white-space: nowrap;
+        /* Added to prevent wrapping */
+    }
+
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 3px;
+        background: var(--accent-brown);
+        transition: width 0.3s ease;
+        border-radius: 2px;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+        width: 100%;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        opacity: 1;
+        color: var(--accent-brown);
+        font-weight: 700;
+    }
+
+    /* Right Side: Search & Cart */
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    /* Search Bar */
+    .search-box {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: #fff;
+        /* Solid white capsule as in screenshot */
+        border-radius: 30px;
+        padding: 8px 20px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: var(--transition);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .search-box:focus-within {
+        background: #fff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        border-color: var(--accent-brown);
+    }
+
+    .search-input {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-family: var(--font-body);
+        font-size: 14px;
+        /* Increased from 13px */
+        color: var(--text-dark);
+        width: 220px;
+        /* Increased from 150px */
+        margin-left: 10px;
+    }
+
+    .search-icon {
+        color: var(--text-light);
+        font-size: 14px;
+    }
+
+    /* Action Buttons (Wishlist, Cart, Profile) */
+    .wishlist-btn,
+    .cart-btn,
+    .profile-btn {
+        width: 42px;
+        /* Increased from 38px */
+        height: 42px;
+        /* Increased from 38px */
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-dark);
+        font-size: 18px;
+        /* Increased from 17px */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        position: relative;
+    }
+
+    .wishlist-btn {
+        color: #ff4d4d;
+        /* Soft red for wishlist */
+        background: #fffafa;
+    }
+
+    .wishlist-btn:hover,
+    .cart-btn:hover,
+    .profile-btn:hover {
+        transform: scale(1.1);
+        color: var(--accent-brown);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        opacity: 1;
+    }
+
+    .profile-btn {
+        opacity: 0.9;
+    }
+
+    .cart-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: var(--accent-brown);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+    }
+
+    /* Responsive */
+    .menu-toggle {
+        display: none;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    @media (max-width: 1024px) {
+        .search-input {
+            width: 100px;
+        }
+
+        .nav-menu {
+            gap: 20px;
+            padding: 8px 15px;
+            /* adjust padding for smaller width */
+        }
+    }
+
+    @media (max-width: 900px) {
+        .header {
+            width: 95%;
+            /* Slightly wider on mobile */
+            top: 15px;
+            padding: 0;
+        }
+
+        .header.scrolled {
+            top: 0;
+            width: 100%;
+            border-radius: 0;
+        }
+
+        .navbar-container {
+            padding: 10px 20px;
+            height: 70px;
+            /* Compact height */
+        }
+
+        .logo {
+            width: 110px;
+            /* Smaller logo */
+        }
+
+        .menu-toggle {
+            display: block;
+            color: var(--text-dark);
+            font-size: 22px;
+        }
+
+        /* Mobile Menu - Premium Dropdown */
+        .nav-menu {
+            position: absolute;
+            top: 100%;
+            /* Below header */
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 0;
+            gap: 25px;
+
+            /* Animation */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-20px);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+            border-radius: 0 0 24px 24px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+
+
+        .nav-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .nav-link {
+            font-size: 14px;
+            /* Larger touch targets */
+            letter-spacing: 3px;
+            width: 100%;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .search-box {
+            /* Make visible on mobile */
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 5px 15px;
+            border-radius: 20px;
+            width: auto;
+        }
+
+        .search-input {
+            display: block;
+            /* Show input on mobile */
+            width: 80px;
+            /* Smaller width for mobile */
+            font-size: 12px;
+        }
+
+        .search-icon {
+            font-size: 14px;
+            color: var(--text-light);
+            cursor: default;
+        }
+    }
+
+    /* Auth Buttons (Desktop) */
+    .auth-buttons {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .btn-glass {
+        font-family: var(--font-body);
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 600;
+        padding: 10px 22px;
+        border-radius: 30px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+
+        /* Better contrast for buttons */
+        background: var(--text-dark);
+        border: 1px solid var(--text-dark);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-glass:hover {
+        background: var(--accent-brown);
+        border-color: var(--accent-brown);
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(181, 139, 122, 0.3);
+    }
+
+    .mobile-only-link {
+        display: none;
+    }
+
+    @media (max-width: 900px) {
+        .mobile-only-link {
+            display: block;
+        }
+
+        .auth-buttons {
+            display: none;
+            /* Hide desktop buttons on mobile */
+        }
+    }
+
+    /* Extra Small Devices (Phones) */
+    @media (max-width: 480px) {
+        .navbar-container {
+            padding: 8px 15px;
+            height: 65px;
+        }
+
+        .logo {
+            font-size: 24px;
+        }
+
+        .nav-actions {
+            gap: 10px;
+        }
+
+        .search-box {
+            padding: 5px 10px;
+            width: auto;
+        }
+
+        .search-input {
+            width: 50px;
+            /* Compact width to fit everything */
+            font-size: 11px;
+        }
+
+        /* Ensure wishlist, cart and profile icons stay visible or adjust as needed */
+        .wishlist-btn,
+        .profile-btn {
+            display: flex;
+        }
+
+        .cart-btn {
+            font-size: 18px;
+        }
+
+        .menu-toggle {
+            font-size: 20px;
+        }
+    }
+</style>
+
+<div class="top-bar">
+    Free Shipping on orders above ₹999 | Use code: HANDMADE10
+</div>
+
+<header class="header" id="navbar">
+    <!-- Floating Pastel Blobs -->
+    <div class="navbar-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div class="blob blob-4"></div>
+    </div>
+
+    <div class="navbar-container">
+        <!-- Logo -->
+        <a href="{{ url_for('auth.dashboard') if current_user.is_authenticated else url_for('product.home') }}"
+            class="logo">Plattera</a>
+
+        <!-- Navigation Menu -->
+        <nav class="nav-menu" id="navMenu">
+            <a href="{{ url_for('auth.dashboard') if current_user.is_authenticated else url_for('product.home') }}"
+                class="nav-link {% if request.endpoint in ['product.home', 'auth.dashboard', 'seller.dashboard', 'admin.dashboard'] %}active{% endif %}">Home</a>
+            <a href="{{ url_for('product.gallery') }}"
+                class="nav-link {% if request.endpoint == 'product.gallery' %}active{% endif %}">Gallery</a>
+
+            <a href="{{ url_for('product.about') }}"
+                class="nav-link {% if request.endpoint == 'product.about' %}active{% endif %}">About Us</a>
+
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('custom_order.new_request') }}"
+                class="nav-link {% if request.endpoint == 'custom_order.new_request' %}active{% endif %}">Custom
+                Order</a>
+            {% else %}
+            <a href="{{ url_for('product.home') }}#custom-cta" class="nav-link">Custom Order</a>
+            {% endif %}
+
+
+            {#
+            {% if current_user.is_authenticated and current_user.role == 'seller' %}
+            <a href="{{ url_for('seller.dashboard') }}" class="nav-link">Seller Dashboard</a>
+            {% elif current_user.is_authenticated and current_user.role == 'admin' %}
+            <a href="{{ url_for('admin.dashboard') }}" class="nav-link">Admin Dashboard</a>
+            {% endif %}
+            #}
+
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('auth.logout') }}" class="nav-link mobile-only-link">Logout</a>
+            {% else %}
+            {% if request.endpoint != 'auth.login' and request.endpoint != 'auth.register' %}
+            <a href="{{ url_for('auth.login') }}" class="nav-link mobile-only-link">Login / Register</a>
+            {% elif request.endpoint == 'auth.login' %}
+            <a href="{{ url_for('auth.register') }}" class="nav-link mobile-only-link">Register</a>
+            {% elif request.endpoint == 'auth.register' %}
+            <a href="{{ url_for('auth.login') }}" class="nav-link mobile-only-link">Login</a>
+            {% endif %}
+            {% endif %}
+        </nav>
+
+        <!-- Right Actions -->
+        <div class="nav-actions">
+            <!-- Search Bar -->
+            <form action="{{ url_for('product.gallery') }}" method="get" class="search-box">
+                <button type="submit" style="border:none; background:transparent; padding:0; cursor: pointer;">
+                    <i class="fas fa-search search-icon"></i>
+                </button>
+                <input type="text" name="q" placeholder="Search..." class="search-input">
+            </form>
+
+
+
+            <!-- Action Icons (Cart, Wishlist, Profile) -->
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <!-- Cart Icon -->
+                <a href="{{ url_for('cart.view_cart') if current_user.is_authenticated else url_for('auth.login') }}"
+                    class="cart-btn" title="Shopping Bag">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-count">
+                        {{ cart_count }}
+                    </span>
+                </a>
+
+                {% if current_user.is_authenticated %}
+                <!-- Wishlist Icon -->
+                <a href="{{ url_for('auth.profile') }}#wishlist" class="wishlist-btn" title="My Wishlist">
+                    <i class="fas fa-heart"></i>
+                </a>
+
+                <!-- Profile Link Icon -->
+                <a href="{{ url_for('auth.profile') }}" class="profile-btn" title="My Profile">
+                    <i class="far fa-user-circle"></i>
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Auth Buttons -->
+            <div class="auth-buttons">
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('auth.logout') }}" class="btn-glass">Logout</a>
+                {% else %}
+                {% if request.endpoint != 'auth.login' %}
+                <a href="{{ url_for('auth.login') }}" class="btn-glass">Login</a>
+                {% endif %}
+                {% if request.endpoint != 'auth.register' %}
+                <a href="{{ url_for('auth.register') }}" class="btn-glass">Register</a>
+                {% endif %}
+                {% endif %}
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <div class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Spacer for scrolling -->
+<div class="header-spacer" style="height: 105px;"></div>
+
+<script>
+
+
+    // Mobile Menu Toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const navMenu = document.getElementById('navMenu');
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+    }
+
+    // AJAX Add to Cart
+    document.addEventListener('submit', function (e) {
+        if (e.target.closest('form') && (e.target.action.includes('/cart/add/') || e.target.querySelector('.btn-add-cart') || e.target.querySelector('.prod-action-btn.cart'))) {
+            e.preventDefault();
+            const form = e.target;
+            const url = form.action;
+            const formData = new FormData(form);
+
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => {
+                    if (response.status === 401) {
+                        return response.json().then(data => {
+                            showNotification(data.message || 'Please login to continue.', 'info');
+                            setTimeout(() => {
+                                window.location.href = data.redirect || '/auth/login';
+                            }, 1000);
+                            throw new Error('Unauthorized');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Update Cart Count
+                        const cartCountElement = document.querySelector('.cart-count');
+                        if (cartCountElement) {
+                            cartCountElement.textContent = data.cart_count;
+                        }
+
+                        // Show Popup (using a simple toast/notification logic)
+                        showNotification(data.message, 'success');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Do NOT manually submit the form here as it can cause double adds
+                    // if the error was just a timeout or minor issue.
+                });
+        }
+    });
+
+    function showNotification(message, type) {
+        const container = document.getElementById('flashContainer') || createFlashContainer();
+        const notification = document.createElement('div');
+        notification.className = `flash-msg flash-${type}`;
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            ${message}
+        `;
+        notification.onclick = function () { this.remove(); };
+        container.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.transition = 'opacity 0.5s';
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 500);
+        }, 4000);
+    }
+
+    function createFlashContainer() {
+        const fc = document.createElement('div');
+        fc.id = 'flashContainer';
+        fc.className = 'flash-container';
+        fc.style.cssText = 'position:fixed;top:120px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;max-width:360px;';
+        document.body.appendChild(fc);
+        return fc;
+    }
+</script>

@@ -1,0 +1,472 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<style>
+    /* Hide generic header spacer */
+    .header-spacer {
+        display: none !important;
+    }
+
+    /* VISIBILITY FIX: Force body to not scroll */
+    body {
+        overflow: hidden !important;
+    }
+
+    /* Auth Wrapper - full screen, image goes behind navbar */
+    .auth-wrapper {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        background: #fff;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        /* navbar sits above at higher z-index */
+    }
+
+    /* Panels */
+    .auth-panel {
+        width: 50%;
+        height: 100%;
+        position: relative;
+    }
+
+    /* Image Panel (Left for Register) */
+    .image-panel {
+        background: url("{{ url_for('static', filename='uploads/products/img3.jpeg') }}") center center/cover no-repeat;
+        color: white;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-image 0.5s ease;
+    }
+
+    /* Overlay - Darker for better text visibility */
+    .image-panel::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        /* Increased darkness */
+        z-index: 1;
+    }
+
+    /* Content over image */
+    .image-content {
+        position: relative;
+        z-index: 2;
+        max-width: 400px;
+        padding: 40px;
+    }
+
+    .image-content h2 {
+        font-family: var(--font-heading) !important;
+        font-size: 3.5rem;
+        font-weight: 300;
+        font-style: italic;
+        margin-bottom: 1.5rem;
+        color: #ffffff !important;
+        /* Force White */
+        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .image-content p {
+        font-family: var(--font-body, sans-serif);
+        font-size: 1.1rem;
+        color: #ffffff !important;
+        /* Force White */
+        opacity: 0.95;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* SVG Curve - Placed on the Right edge of the Image Panel */
+    .curve-divider {
+        position: absolute;
+        top: 0;
+        right: -1px;
+        /* Overlap slightly */
+        bottom: 0;
+        width: 120px;
+        height: 100%;
+        z-index: 3;
+        pointer-events: none;
+    }
+
+    /* Form Panel (Right for Register) */
+    .form-panel {
+        background: #ffffff;
+        z-index: 2;
+        padding: 20px 40px;
+        padding-top: 100px;
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    /* Form Container - Compact */
+    .auth-form-container {
+        width: 100%;
+        max-width: 600px;
+        margin: auto;
+        padding: 0 20px;
+    }
+
+
+
+    .form-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 500;
+        color: var(--text-dark, #333);
+        margin-bottom: 8px;
+        text-align: center;
+        letter-spacing: -1px;
+    }
+
+    .form-subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 0.95rem;
+    }
+
+    .form-control,
+    .form-select {
+        border: none;
+        border-bottom: 1px solid #ddd;
+        border-radius: 0;
+        padding: 10px 10px;
+        background: transparent;
+        transition: all 0.3s;
+        font-size: 1.05rem;
+        /* Increased from 0.95rem */
+    }
+
+    .form-select {
+        cursor: pointer;
+        /* Override underline-only style — make it look like a real dropdown */
+        border: 1.5px solid #ddd !important;
+        border-radius: 8px !important;
+        padding: 14px 16px !important;
+        background-color: #fafafa !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 14px center !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        margin-top: 8px;
+        font-size: 1rem !important;
+        color: #444;
+        transition: border-color 0.3s;
+    }
+
+    .form-select:focus {
+        border-color: var(--accent-brown, #b58b7a) !important;
+        box-shadow: 0 0 0 3px rgba(181, 139, 122, 0.15) !important;
+        background-color: #fff !important;
+        outline: none;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        box-shadow: none;
+        border-bottom-color: var(--accent-brown, #b58b7a);
+        background: transparent;
+    }
+
+    .form-label {
+        font-size: 0.95rem;
+        /* Increased from 0.82rem */
+        letter-spacing: 2px;
+        margin-top: 12px;
+        color: #555;
+    }
+
+    .btn-auth {
+        background: #fcf2ed;
+        color: var(--text-dark, #333);
+        border: 2px dashed var(--text-dark, #333);
+        border-radius: 50px;
+        padding: 12px 40px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: all 0.3s;
+        width: 100%;
+        margin-top: 24px;
+        font-size: 1.05rem;
+        /* Increased from 0.95rem */
+    }
+
+    .btn-auth:hover {
+        background: #f5e6de;
+        /* Slightly darker pastel on hover */
+        border-color: var(--text-dark, #333);
+        color: var(--text-dark, #333);
+        transform: translateY(-1px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .auth-links {
+        margin-top: 25px;
+        text-align: center;
+        font-size: 1rem;
+        /* Increased from 0.9rem */
+        color: #666;
+    }
+
+    .auth-links a {
+        color: var(--text-dark, #333);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s;
+    }
+
+    .auth-links a:hover {
+        color: var(--accent-brown, #b58b7a);
+    }
+
+    /* Seller Highlight Card - Enhanced */
+    .register-seller-box {
+        background: #fff9f5;
+        border: 1px solid #f5e6de;
+        border-left: 4px solid var(--accent-brown, #b58b7a);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-top: 25px;
+        text-align: center;
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .register-seller-box:hover {
+        background: #fdf2eb;
+        transform: translateX(5px);
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.02);
+    }
+
+    .register-seller-box i {
+        color: var(--accent-brown, #b58b7a);
+        font-size: 1.2rem;
+    }
+
+    .register-seller-box p {
+        margin-bottom: 0;
+        font-size: 1.05rem;
+        /* Increased from 0.95rem */
+        color: #444;
+        font-weight: 500;
+    }
+
+    .register-seller-box a {
+        color: var(--accent-brown, #b58b7a) !important;
+        font-weight: 800 !important;
+        text-decoration: none;
+        position: relative;
+        padding-bottom: 2px;
+    }
+
+    .register-seller-box a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--accent-brown, #b58b7a);
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.3s ease;
+    }
+
+    .register-seller-box a:hover::after {
+        transform: scaleX(1);
+        transform-origin: left;
+    }
+
+    @media (max-width: 900px) {
+        .auth-wrapper {
+            flex-direction: column;
+            overflow-y: auto;
+            height: 100vh;
+            min-height: 100vh;
+        }
+
+        .auth-panel {
+            width: 100%;
+        }
+
+        .image-panel {
+            height: 30vh;
+            flex: none;
+        }
+
+        .form-panel {
+            height: auto;
+            flex: 1;
+            padding: 40px 20px;
+        }
+
+        .curve-divider {
+            display: none;
+        }
+    }
+</style>
+
+<div class="auth-wrapper">
+    <!-- Image Side (Left) -->
+    <div class="auth-panel image-panel">
+        <!-- Curve Divider -->
+        <div class="curve-divider">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="height: 100%; width: 100%; fill: #ffffff;">
+                <path d="M100 0 v100 C 0 80 0 20 100 0 Z" />
+            </svg>
+        </div>
+
+        <div class="image-content">
+            <h2 id="imageHeading">Join Our Family</h2>
+            <p id="imageParagraph">Become a part of our crafting community. Buy unique handmade items or sell your own
+                creations.</p>
+            <div id="perksDiv" class="d-none">
+                <ul style="list-style: none; padding: 0; margin-top: 20px; text-align: left; opacity: 0.9;">
+                    <li style="margin-bottom: 10px;"><i class="fas fa-check-circle"
+                            style="color: #97A69A; margin-right: 10px;"></i> 0% Listing Commission</li>
+                    <li style="margin-bottom: 10px;"><i class="fas fa-check-circle"
+                            style="color: #97A69A; margin-right: 10px;"></i> Direct-to-Customer Sales</li>
+                    <li style="margin-bottom: 10px;"><i class="fas fa-check-circle"
+                            style="color: #97A69A; margin-right: 10px;"></i> Advanced Shop Analytics</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Side (Right) -->
+    <div class="auth-panel form-panel">
+        <div class="auth-form-container">
+            <h1 class="form-title" id="formTitle">Create Account</h1>
+            <!-- <p class="form-subtitle">Fill in your details to get started.</p> -->
+
+            <form method="POST" action="{{ url_for('auth.register') }}">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">First Name</label>
+                        <input type="text" name="first_name" class="form-control" placeholder="Jane" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" name="last_name" class="form-control" placeholder="Doe" required>
+                    </div>
+                </div>
+
+                <label class="form-label">Email Address</label>
+                <input type="email" name="email" class="form-control" placeholder="jane@example.com" required>
+
+                <label class="form-label">Phone Number (WhatsApp)</label>
+                <input type="tel" name="phone_number" class="form-control" placeholder="+91 9876543210" required>
+
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Create a strong password"
+                    required>
+
+                <input type="hidden" name="role" value="buyer" id="roleInput">
+
+                <!-- Seller specific fields -->
+                <div class="d-none" id="sellerFields">
+                    <label class="form-label">Shop Name (Optional)</label>
+                    <input type="text" name="shop_name" class="form-control" placeholder="My Crochet Corner">
+                    <div class="form-text small text-muted mt-1">Choose a catchy name for your shop!</div>
+
+                    <label class="form-label">Shop Address / Location</label>
+                    <input type="text" name="address" class="form-control" placeholder="123, Creative Street, City"
+                        id="addressInput">
+                    <div class="form-text small text-muted mt-1">Provide your location for delivery and logistics.</div>
+                </div>
+
+                <button type="submit" class="btn-auth" id="submitBtn">Sign Up</button>
+
+                <div class="register-seller-box" id="sellerPrompt">
+                    <i class="fas fa-store"></i>
+                    <p>Want to sell your own creations? <a href="javascript:void(0)" id="toggleSellerBtn">Register as
+                            Seller</a></p>
+                </div>
+
+                <div class="auth-links">
+                    <p id="roleReturnText" class="d-none mb-2">Joining for home decor? <a href="javascript:void(0)"
+                            id="toggleBuyerBtn">Back to Buyer</a></p>
+                    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log In</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const roleInput = document.getElementById('roleInput');
+    const sellerFields = document.getElementById('sellerFields');
+    const sellerPrompt = document.getElementById('sellerPrompt');
+    const toggleSellerBtn = document.getElementById('toggleSellerBtn');
+    const toggleBuyerBtn = document.getElementById('toggleBuyerBtn');
+    const roleReturnText = document.getElementById('roleReturnText');
+    const formTitle = document.getElementById('formTitle');
+    const imagePanel = document.querySelector('.image-panel');
+    const imageHeading = document.getElementById('imageHeading');
+    const imageParagraph = document.getElementById('imageParagraph');
+    const perksDiv = document.getElementById('perksDiv');
+    const submitBtn = document.getElementById('submitBtn');
+    const addressInput = document.getElementById('addressInput'); // For requirement toggling
+    const shopNameInput = document.querySelector('input[name="shop_name"]');
+
+    toggleSellerBtn.addEventListener('click', function () {
+        roleInput.value = 'seller';
+        sellerFields.classList.remove('d-none');
+        sellerPrompt.classList.add('d-none');
+        roleReturnText.classList.remove('d-none');
+        formTitle.textContent = "Artisan Registration";
+
+        if (addressInput) addressInput.setAttribute('required', 'required'); // Address required for sellers
+
+        // VISUALS
+        imagePanel.style.backgroundImage = "url(\"{{ url_for('static', filename='uploads/products/wall-hangging.png') }}\")";
+        imageHeading.textContent = "Your Shop Starts Here";
+        imageParagraph.textContent = "Join Plattera as an artisan. Showcase your talent to thousands of crochet lovers.";
+        perksDiv.classList.remove('d-none');
+        submitBtn.textContent = "Create Artisan Shop";
+
+        // Animating field entrance
+        sellerFields.style.opacity = 0;
+        setTimeout(() => {
+            sellerFields.style.transition = "opacity 0.5s";
+            sellerFields.style.opacity = 1;
+        }, 10);
+    });
+
+    toggleBuyerBtn.addEventListener('click', function () {
+        roleInput.value = 'buyer';
+        sellerFields.classList.add('d-none');
+        sellerPrompt.classList.remove('d-none');
+        roleReturnText.classList.add('d-none');
+        formTitle.textContent = "Create Account";
+
+        if (addressInput) addressInput.removeAttribute('required'); // Remove required if switching back to buyer
+
+        // REVERT VISUALS
+        imagePanel.style.backgroundImage = "url(\"{{ url_for('static', filename='uploads/products/img3.jpeg') }}\")";
+        imageHeading.textContent = "Join Our Family";
+        imageParagraph.textContent = "Become a part of our crafting community. Buy unique handmade items or sell your own creations.";
+        perksDiv.classList.add('d-none');
+        submitBtn.textContent = "Sign Up";
+    });
+</script>
+
+{% block footer %}{% endblock %}
+{% endblock %}

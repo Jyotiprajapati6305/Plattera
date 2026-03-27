@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders & Dispute Management | Plattera Admin</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Tenor+Sans&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Admin Pure Black Theme */
+            --primary: #ffffff;
+            --primary-light: rgba(255, 255, 255, 0.1);
+            --primary-dark: #e0e0e0;
+            --secondary: #111111;
+
+            --bg-body: #000000;
+            --bg-card: #0a0a0a;
+            --bg-hover: #151515;
+
+            --text-dark: #ffffff;
+            --text-muted: #888888;
+
+            --border-color: rgba(255, 255, 255, 0.1);
+
+            /* Status Colors */
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.15);
+            --danger: #fb4848;
+            --danger-light: rgba(251, 72, 72, 0.15);
+            --info: #3ba2b8;
+            --info-light: rgba(59, 162, 184, 0.15);
+
+            --font-head: 'Crimson Pro', serif;
+            --font-body: 'Tenor Sans', sans-serif;
+
+            --shadow-sm: none;
+            --shadow-hover: 0 4px 15px rgba(255, 255, 255, 0.05);
+
+            --radius-md: 12px;
+            --radius-sm: 6px;
+            --transition: all 0.3s ease;
+
+            --sidebar-width: 300px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-dark);
+            background-color: var(--bg-body);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-head);
+            font-weight: 600;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem 3rem;
+            width: calc(100% - var(--sidebar-width));
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title h1 {
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            max-width: 600px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-bar input {
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            font-family: inherit;
+            width: 250px;
+            font-size: 0.9rem;
+            background: var(--bg-hover);
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .btn {
+            padding: 0.7rem 1.2rem;
+            border-radius: 50px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid transparent;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-color);
+            color: var(--text-dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-hover);
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--bg-hover);
+        }
+
+        .btn-danger {
+            background: rgba(251, 72, 72, 0.1);
+            border-color: var(--danger);
+            color: var(--danger);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* --- TABS SYSTEM --- */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- CARDS & GRIDS --- */
+        .grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--primary);
+            background: var(--primary-light);
+            flex-shrink: 0;
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-family: var(--font-head);
+            font-weight: bold;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        /* --- TABLES --- */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            background: #fafafa;
+            white-space: nowrap;
+        }
+
+        tr.hoverable:hover {
+            background: var(--bg-hover);
+        }
+
+        .p-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .flex-cell {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .badge-confirmed {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .badge-inprod {
+            background: #fff0e6;
+            color: #fd7e14;
+        }
+
+        .badge-ready {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        .badge-shipped {
+            background: var(--purple-light);
+            color: var(--purple-status);
+        }
+
+        .badge-delivered {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge-cancelled {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        /* Expanded Row Detail Panel */
+        .detail-row {
+            display: none;
+            background: #fafafa;
+        }
+
+        .detail-row.open {
+            display: table-row;
+        }
+
+        .detail-content {
+            padding: 2rem !important;
+            border-bottom: 2px solid var(--primary) !important;
+        }
+
+        .detail-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            height: 100%;
+        }
+
+        /* Alerts and notices */
+        .alert {
+            padding: 0.8rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .alert-danger {
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 1px solid rgba(217, 76, 76, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include 'admin/sidebar.html' %}
+
+    <!-- RIGHT MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- PAGE HEADER -->
+        <header class="top-header">
+            <div class="page-title">
+                <h1>Orders & Dispute Management</h1>
+                <p>Monitor all marketplace transactions, resolve conflicts, and ensure smooth buyer–seller operations.
+                </p>
+            </div>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Order ID / Buyer / Seller">
+                </div>
+                <select
+                    style="padding: 0.7rem 1rem; border: 1px solid var(--border-color); border-radius: 50px; font-family: inherit; font-size: 0.9rem; background: white; cursor: pointer;">
+                    <option>Today</option>
+                    <option>7 Days</option>
+                    <option>30 Days</option>
+                    <option>Custom Date</option>
+                </select>
+                <button class="btn btn-outline"><i class="fa-solid fa-download"></i> Export Orders</button>
+            </div>
+        </header>
+
+        <!-- ==============================================
+             1. ALL ORDERS
+        =============================================== -->
+        <div id="tab-all" class="tab-content active">
+            <div class="grid-5">
+                <div class="card stat-card" style="margin-bottom:0;">
+                    <div class="stat-icon" style="background:var(--primary-light); color:var(--primary);"><i
+                            class="fa-solid fa-boxes-stacked"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-title">Total Orders</span>
+                        <span class="stat-value">{{ stats.total }}</span>
+                    </div>
+                </div>
+                <div class="card stat-card" style="margin-bottom:0;">
+                    <div class="stat-icon" style="background:var(--warning-light); color:var(--warning);"><i
+                            class="fa-solid fa-spinner"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-title">Active</span>
+                        <span class="stat-value">{{ stats.active }}</span>
+                    </div>
+                </div>
+                <div class="card stat-card" style="margin-bottom:0;">
+                    <div class="stat-icon" style="background:var(--success-light); color:var(--success);"><i
+                            class="fa-solid fa-check-double"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-title">Completed</span>
+                        <span class="stat-value">{{ stats.completed }}</span>
+                    </div>
+                </div>
+                <div class="card stat-card" style="margin-bottom:0;">
+                    <div class="stat-icon" style="background:var(--danger-light); color:var(--danger);"><i
+                            class="fa-solid fa-ban"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-title">Cancelled</span>
+                        <span class="stat-value">{{ stats.cancelled }}</span>
+                    </div>
+                </div>
+                <div class="card stat-card" style="margin-bottom:0; grid-column: auto;">
+                    <div class="stat-icon" style="background:#e8f4fa; color:#0c7fa8;"><i class="fa-solid fa-coins"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-title">Marketplace Revenue</span>
+                        <span class="stat-value">₹{{ stats.revenue }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Product</th>
+                                <th>Buyer</th>
+                                <th>Seller</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for o in orders %}
+                            <tr class="hoverable">
+                                <td><strong>#{{ o.order_id }}</strong></td>
+                                <td>
+                                    <div class="flex-cell">
+                                        <img src="{{ url_for('static', filename='uploads/' + o.p_image) if o.p_image else 'https://via.placeholder.com/100' }}"
+                                            class="p-image">
+                                        <span>{{ o.p_name or 'Multiple Items (' + (o.item_count|string) + ')' if
+                                            o.item_count > 0 else 'No Items' }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ o.buyer_name }}</td>
+                                <td><a href="#" style="color:var(--primary); font-weight:bold;">{{ o.shop_name or
+                                        'Admin' }}</a></td>
+                                <td>₹{{ o.total_amount }}</td>
+                                <td>
+                                    {% if o.order_status == 'Delivered' %}
+                                    <span class="badge badge-delivered">Delivered</span>
+                                    {% elif o.order_status == 'Cancelled' %}
+                                    <span class="badge badge-cancelled">Cancelled</span>
+                                    {% elif o.order_status == 'Shipped' %}
+                                    <span class="badge badge-shipped">Shipped</span>
+                                    {% else %}
+                                    <span class="badge badge-inprod">{{ o.order_status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ o.created_at }}</td>
+                                <td>
+                                    <button class="btn-outline"
+                                        style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:4px;"
+                                        onclick="toggleDetail('order-{{ o.order_id }}')">Manage <i
+                                            class="fa-solid fa-chevron-down"></i></button>
+                                </td>
+                            </tr>
+                            <tr id="order-{{ o.order_id }}" class="detail-row">
+                                <td colspan="8" class="detail-content">
+                                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1.5rem;">
+                                        <div class="detail-card">
+                                            <h4 style="color:var(--text-dark); margin-bottom:1rem;"><i
+                                                    class="fa-solid fa-circle-info"></i> Order Details</h4>
+                                            <ul style="font-size:0.9rem; margin-bottom:1.5rem; line-height: 1.8;">
+                                                <li><strong>Buyer:</strong> {{ o.buyer_name }}</li>
+                                                <li><strong>Seller:</strong> {{ o.shop_name or 'Admin' }}</li>
+                                                <li><strong>Order Placed:</strong> {{ o.created_at }}</li>
+                                                <li><strong>Total Paid:</strong> ₹{{ o.total_amount }}</li>
+                                            </ul>
+                                        </div>
+                                        <div class="detail-card">
+                                            <h4 style="color:var(--text-dark); margin-bottom:1rem;"><i
+                                                    class="fa-solid fa-credit-card"></i> Payment & Timeline</h4>
+                                            <ul style="font-size:0.9rem; margin-bottom:1rem; line-height: 1.8;">
+                                                <li><strong>Method:</strong> {{ o.payment_method or 'Manual/COD' }}</li>
+                                                <li><strong>Status:</strong> <span style="color:var(--success);">{{
+                                                        'Paid' if o.razorpay_payment_id else 'Pending/Manual' }}</span>
+                                                </li>
+                                                <li><strong>Transaction ID:</strong> <code
+                                                        style="background:var(--bg-hover); padding:2px 4px; border-radius:4px;">{{ o.razorpay_payment_id or 'N/A' }}</code>
+                                                </li>
+                                                <li><strong>Processed At:</strong> {{ o.created_at }}</li>
+                                            </ul>
+                                            <div
+                                                style="border-top:1px solid var(--border-color); padding-top:1rem; margin-top:1rem;">
+                                                <p
+                                                    style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:bold; margin-bottom:0.8rem;">
+                                                    Processing Step</p>
+                                                <div style="display:flex; gap:10px; align-items:center;">
+                                                    <div
+                                                        style="width:10px; height:10px; border-radius:50%; background:var(--success);">
+                                                    </div>
+                                                    <span style="font-size:0.85rem;">Payment Verified</span>
+                                                </div>
+                                                <div
+                                                    style="height:15px; width:2px; background:var(--border-color); margin-left:4px;">
+                                                </div>
+                                                <div style="display:flex; gap:10px; align-items:center;">
+                                                    <div
+                                                        style="width:10px; height:10px; border-radius:50%; background:{{ 'var(--warning)' if o.order_status == 'pending' else 'var(--success)' }};">
+                                                    </div>
+                                                    <span style="font-size:0.85rem;">{{ 'Awaiting Production' if
+                                                        o.order_status == 'pending' else 'Production Started' }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="detail-card"
+                                            style="background:rgba(251, 72, 72, 0.05); border-color:var(--danger);">
+                                            <h4 style="color:var(--danger); margin-bottom:1rem;"><i
+                                                    class="fa-solid fa-shield-halved"></i> Admin Enforcement</h4>
+                                            <p style="font-size:0.85rem; margin-bottom:1rem; color:var(--text-muted);">
+                                                Intervene directly if
+                                                needed.</p>
+                                            {% if o.order_status not in ['Delivered', 'Cancelled'] %}
+                                            <form action="{{ url_for('admin.cancel_order', order_id=o.order_id) }}"
+                                                method="POST" style="margin: 0;"
+                                                onsubmit="return confirm('Are you sure you want to FORCE CANCEL this order completely?');">
+                                                <button type="submit" class="btn btn-primary"
+                                                    style="background:var(--danger); color:white; width:100%; justify-content:center; border:none; cursor: pointer;"><i
+                                                        class="fa-solid fa-ban"></i> Force Cancel Order</button>
+                                            </form>
+                                            {% else %}
+                                            <button class="btn btn-primary" disabled
+                                                style="background:var(--bg-hover); color:var(--text-muted); width:100%; justify-content:center; border:none; cursor:not-allowed;"><i
+                                                    class="fa-solid fa-ban"></i> Cannot Cancel ({{ o.order_status
+                                                }})</button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             2. ACTIVE ORDERS
+        =============================================== -->
+        <div id="tab-active" class="tab-content">
+            <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i class="fa-solid fa-spinner"
+                    style="color:var(--warning);"></i> Active Orders & Production Timeline</h2>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Buyer</th>
+                                <th>Seller</th>
+                                <th>Product</th>
+                                <th>Status</th>
+                                <th>Dispatch Deadline</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hoverable">
+                                <td><strong>PLT-10580</strong></td>
+                                <td>Neha Verma</td>
+                                <td>CrochetHub</td>
+                                <td>Boho Bag</td>
+                                <td><span class="badge badge-inprod">In Production</span></td>
+                                <td><strong style="color:var(--text-dark);">2 Days</strong></td>
+                                <td><button class="btn-outline"
+                                        style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:4px;"><i
+                                            class="fa-solid fa-eye"></i> View</button></td>
+                            </tr>
+                            <tr class="hoverable" style="background:var(--danger-light);">
+                                <td><strong>PLT-10578</strong></td>
+                                <td>Amit Patel</td>
+                                <td>WoolyWonders</td>
+                                <td>Amigurumi Bear</td>
+                                <td><span class="badge badge-cancelled">Delayed Dispatch</span></td>
+                                <td><strong style="color:var(--danger);">Overdue by 1 Day</strong></td>
+                                <td><button class="btn-primary"
+                                        style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:4px; background:var(--danger);"><i
+                                            class="fa-solid fa-triangle-exclamation"></i> Action Required</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             3. COMPLETED ORDERS
+        =============================================== -->
+        <div id="tab-completed" class="tab-content">
+            <div class="grid-2">
+                <div>
+                    <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i class="fa-solid fa-check-double"
+                            style="color:var(--success);"></i> Successfully Delivered</h2>
+                    <div class="card">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Product</th>
+                                        <th>Seller</th>
+                                        <th>Delivered Date</th>
+                                        <th>Rating</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hoverable">
+                                        <td><strong>PLT-10201</strong></td>
+                                        <td>Amigurumi Bunny</td>
+                                        <td>HandmadeByRiya</td>
+                                        <td>12 Oct 2025</td>
+                                        <td style="color:var(--warning);">⭐⭐⭐⭐⭐</td>
+                                    </tr>
+                                    <tr class="hoverable">
+                                        <td><strong>PLT-10198</strong></td>
+                                        <td>Winter Headband</td>
+                                        <td>Knit Nest</td>
+                                        <td>10 Oct 2025</td>
+                                        <td style="color:var(--warning);">⭐⭐⭐⭐</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card" style="background:var(--primary-light); border-color:var(--primary);">
+                        <h3 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i
+                                class="fa-solid fa-chart-bar"></i> Insights</h3>
+                        <div
+                            style="margin-bottom:1rem; padding:1rem; background:white; border-radius:8px; border:1px solid var(--border-color);">
+                            <span style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase;">Avg
+                                Delivery Time</span>
+                            <div style="font-size:1.5rem; font-weight:bold;">4.2 Days</div>
+                        </div>
+                        <div
+                            style="margin-bottom:1rem; padding:1rem; background:white; border-radius:8px; border:1px solid var(--border-color);">
+                            <span style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase;">Avg
+                                Buyer Rating</span>
+                            <div style="font-size:1.5rem; font-weight:bold;">4.8 / 5.0</div>
+                        </div>
+                        <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:1rem;"><i
+                                class="fa-solid fa-download"></i> Download Transaction Record</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             4. CANCELLED ORDERS
+        =============================================== -->
+        <div id="tab-cancelled" class="tab-content">
+            <h2 style="color:var(--danger); margin-bottom:1.5rem;"><i class="fa-solid fa-ban"></i> Cancelled Logs</h2>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Product</th>
+                                <th>Cancelled By</th>
+                                <th>Reason</th>
+                                <th>Refund Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hoverable">
+                                <td><strong>PLT-10450</strong></td>
+                                <td>Crochet Cushion Cover</td>
+                                <td><span class="badge" style="background:#e0e0e0; color:#444;">Buyer</span></td>
+                                <td>Changed Mind</td>
+                                <td><span class="badge badge-delivered">Refunded</span></td>
+                            </tr>
+                            <tr class="hoverable">
+                                <td><strong>PLT-10390</strong></td>
+                                <td>Custom Keychain</td>
+                                <td><span class="badge badge-inprod">Seller</span></td>
+                                <td>Unable to Fulfill Request</td>
+                                <td><span class="badge badge-delivered">Refunded</span></td>
+                            </tr>
+                            <tr class="hoverable">
+                                <td><strong>PLT-10385</strong></td>
+                                <td>Bulk Yarn Order</td>
+                                <td><span class="badge badge-cancelled">Admin Intervention</span></td>
+                                <td>Suspicious transaction flag</td>
+                                <td><span class="badge badge-ready">Processing</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             5. REFUND REQUESTS
+        =============================================== -->
+        <div id="tab-refund" class="tab-content">
+            <h2 style="color:var(--warning); margin-bottom:1.5rem;"><i class="fa-solid fa-hand-holding-dollar"></i>
+                Buyer Refund Requests</h2>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Buyer</th>
+                                <th>Seller</th>
+                                <th>Issue Reported</th>
+                                <th>Requested Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hoverable">
+                                <td><strong>PLT-10300</strong></td>
+                                <td>Priya S.</td>
+                                <td>TheYarnFairy</td>
+                                <td>Damaged Product</td>
+                                <td>₹600 (Full)</td>
+                                <td><span class="badge badge-pending">Review Pending</span></td>
+                                <td><button class="btn-outline"
+                                        style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:4px;"
+                                        onclick="toggleDetail('refund-row-1')">Evaluate <i
+                                            class="fa-solid fa-chevron-down"></i></button></td>
+                            </tr>
+                            <tr id="refund-row-1" class="detail-row">
+                                <td colspan="7" class="detail-content">
+                                    <div
+                                        style="background:var(--warning-light); padding:1.5rem; border:1px solid rgba(217, 154, 44, 0.3); border-radius:8px;">
+                                        <h4 style="color:var(--text-dark); margin-bottom:1rem;">Refund Review Ticket
+                                            #R-994</h4>
+                                        <div
+                                            style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem; margin-bottom:1.5rem;">
+                                            <div style="background:white; padding:1rem; border-radius:4px;">
+                                                <h5 style="margin-bottom:0.5rem; color:var(--primary);">Buyer Complaint
+                                                </h5>
+                                                <p style="font-size:0.9rem;">"The crochet basket arrived squished and
+                                                    the handle is unraveling. I cannot use this to store heavy items as
+                                                    requested."</p>
+                                                <div style="margin-top:0.5rem; display:flex; gap:0.5rem;">
+                                                    <span
+                                                        style="font-size:0.8rem; background:#f0f0f0; padding:0.2rem 0.5rem; border-radius:4px;"><i
+                                                            class="fa-solid fa-image"></i> image1.jpg</span>
+                                                </div>
+                                            </div>
+                                            <div style="background:white; padding:1rem; border-radius:4px;">
+                                                <h5 style="margin-bottom:0.5rem; color:var(--primary);">Seller Response
+                                                </h5>
+                                                <p style="font-size:0.9rem;">"It might have been damaged in transit. I
+                                                    pack them well. I am willing to offer a replacement rather than a
+                                                    full refund."</p>
+                                            </div>
+                                        </div>
+                                        <div style="display:flex; gap:1rem;">
+                                            <button class="btn btn-primary" style="background:var(--success);"><i
+                                                    class="fa-solid fa-check"></i> Approve Full Refund</button>
+                                            <button class="btn btn-outline" style="background:white;">Offer Partial
+                                                Refund</button>
+                                            <button class="btn btn-outline" style="background:white;">Request
+                                                Replacement</button>
+                                            <button class="btn btn-danger"><i class="fa-solid fa-xmark"></i> Reject
+                                                Refund</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             6. DISPUTE RESOLUTION
+        =============================================== -->
+        <div id="tab-dispute" class="tab-content">
+            <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i class="fa-solid fa-scale-balanced"
+                    style="color:var(--primary);"></i> Dispute Cases</h2>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Case ID</th>
+                                <th>Order ID</th>
+                                <th>Buyer</th>
+                                <th>Seller</th>
+                                <th>Core Issue</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hoverable">
+                                <td><strong>#D-045</strong></td>
+                                <td>PLT-10255</td>
+                                <td>Suresh M.</td>
+                                <td>CreativeKnots</td>
+                                <td>Not matching description (Size issue)</td>
+                                <td><span class="badge badge-cancelled">Admin Mediation needed</span></td>
+                                <td><button class="btn-outline"
+                                        style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:4px;"
+                                        onclick="toggleDetail('dispute-row-1')">Mediate <i
+                                            class="fa-solid fa-chevron-down"></i></button></td>
+                            </tr>
+                            <tr id="dispute-row-1" class="detail-row">
+                                <td colspan="7" class="detail-content">
+                                    <div
+                                        style="background:var(--primary-light); padding:1.5rem; border:1px solid var(--primary); border-radius:8px;">
+                                        <h4 style="color:var(--primary-dark); margin-bottom:1rem;">Dispute Log &
+                                            Mediation</h4>
+                                        <p
+                                            style="font-size:0.9rem; margin-bottom:1rem; background:white; padding:1rem; border-radius:4px;">
+                                            <strong>Buyer says:</strong> Blanket is stated as 6ft by 4ft, but it
+                                            measures 5ft by 3.5ft. <br><br> <strong>Seller Says:</strong> Crochet items
+                                            stretch over time. The dimensions listed are approximate pre-wash
+                                            measurements.
+                                        </p>
+                                        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                                            <button class="btn btn-outline" style="background:white;">Request Additional
+                                                Evidence</button>
+                                            <button class="btn btn-outline" style="background:white;">Offer Partial
+                                                Refund Form</button>
+                                            <button class="btn btn-primary"
+                                                style="background:var(--danger); border-color:var(--danger);">Force
+                                                Refund & Close</button>
+                                            <button class="btn btn-primary">Close Case (Seller Favor)</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             7. SHIPPING DELAY MONITOR
+        =============================================== -->
+        <div id="tab-delay" class="tab-content">
+            <div class="grid-2">
+                <div>
+                    <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i class="fa-solid fa-truck-clock"
+                            style="color:var(--warning);"></i> Late Shipments Watchlist</h2>
+                    <div class="card">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Seller</th>
+                                        <th>Product</th>
+                                        <th>Delay Days</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hoverable">
+                                        <td><strong>PLT-10845</strong></td>
+                                        <td>YarnArtStudio</td>
+                                        <td>Crochet Blanket</td>
+                                        <td><strong style="color:var(--danger);">3 Days</strong></td>
+                                        <td><button class="btn-outline"
+                                                style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:4px;">Nudge</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <h3 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i
+                                class="fa-solid fa-chart-column"></i> Delay Statistics</h3>
+                        <div
+                            style="margin-bottom:1rem; padding:1rem; background:#fff5f5; border-radius:8px; border:1px solid rgba(217, 76, 76, 0.2);">
+                            <span style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase;">Delayed
+                                Orders Active</span>
+                            <div style="font-size:1.5rem; font-weight:bold; color:var(--danger);">42</div>
+                        </div>
+                        <div
+                            style="margin-bottom:1rem; padding:1rem; background:var(--success-light); border-radius:8px; border:1px solid rgba(82, 155, 104, 0.2);">
+                            <span style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase;">On-Time
+                                Delivery Rate</span>
+                            <div style="font-size:1.5rem; font-weight:bold; color:var(--success);">94.3%</div>
+                        </div>
+                        <p style="font-size:0.8rem; color:var(--text-muted);">Platform SLA requires > 95% on-time
+                            delivery. Warning thresholds are active.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript for Sidebar Navigation & Expandable Rows -->
+    <script>
+        // Sidebar active tab switching logic
+        function switchTab(tabId, btnElement) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Remove active style from buttons
+            document.querySelectorAll('.sidebar-link').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab and highlight button
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Expandable Detail Row Logic
+        function toggleDetail(rowId) {
+            const row = document.getElementById(rowId);
+            if (row.classList.contains('open')) {
+                row.classList.remove('open');
+            } else {
+                row.classList.add('open');
+            }
+        }
+    </script>
+</body>
+
+</html>

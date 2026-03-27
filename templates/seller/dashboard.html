@@ -1,0 +1,354 @@
+{% extends "seller/layout.html" %}
+
+{% block title %}Dashboard | Plattera Seller{% endblock %}
+
+{% block header_content %}
+<h1>Welcome back, {{ current_user.first_name or current_user.u_name }}! 👋</h1>
+<p>Track your sales, manage orders, and grow your {{ profile.shop_name or 'artisan business' }}.</p>
+{% endblock %}
+
+{% block content %}
+<!-- STATS OVERVIEW -->
+<div class="grid-4"
+    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+    <div class="card stat-card"
+        style="background: white; border-radius: 16px; padding: 1.8rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); position: relative; overflow: hidden;">
+        <div class="stat-icon"
+            style="position: absolute; top: 15px; right: 15px; color: var(--primary); font-size: 1.5rem;"><i
+                class="fa-solid fa-indian-rupee-sign"></i></div>
+        <div class="stat-title"
+            style="font-size: 0.9rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Total
+            Revenue</div>
+        <div class="stat-value"
+            style="font-size: 1.6rem; font-family: var(--font-head); font-weight: bold; margin-top: 0.5rem;">₹ {{
+            "{:,.2f}".format(total_revenue) }}</div>
+        <div class="stat-trend trend-up"
+            style="font-size: 0.85rem; color: var(--success); font-weight: bold; margin-top: 0.5rem;"><i
+                class="fa-solid fa-arrow-trend-up"></i> Net Earnings</div>
+    </div>
+
+    <div class="card stat-card"
+        style="background: white; border-radius: 16px; padding: 1.8rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); position: relative; overflow: hidden;">
+        <div class="stat-icon"
+            style="position: absolute; top: 15px; right: 15px; color: var(--primary); font-size: 1.5rem;"><i
+                class="fa-solid fa-box-open"></i></div>
+        <div class="stat-title"
+            style="font-size: 0.9rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Total
+            Orders</div>
+        <div class="stat-value"
+            style="font-size: 1.6rem; font-family: var(--font-head); font-weight: bold; margin-top: 0.5rem;">{{
+            total_orders }}</div>
+        <div class="stat-trend"
+            style="font-size: 0.85rem; color: var(--warning); font-weight: bold; margin-top: 0.5rem;"><a
+                href="{{ url_for('seller.orders') }}" style="color: inherit;">View active orders</a></div>
+    </div>
+
+    <div class="card stat-card"
+        style="background: white; border-radius: 16px; padding: 1.8rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); position: relative; overflow: hidden;">
+        <div class="stat-icon"
+            style="position: absolute; top: 15px; right: 15px; color: var(--primary); font-size: 1.5rem;"><i
+                class="fa-solid fa-magic"></i></div>
+        <div class="stat-title"
+            style="font-size: 0.9rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Custom
+            Requests</div>
+        <div class="stat-value"
+            style="font-size: 1.6rem; font-family: var(--font-head); font-weight: bold; margin-top: 0.5rem;">{{
+            pending_custom }}</div>
+        <div class="stat-trend" style="font-size: 0.85rem; color: var(--info); font-weight: bold; margin-top: 0.5rem;">
+            Awaiting Quote</div>
+    </div>
+
+    <div class="card stat-card"
+        style="background: white; border-radius: 16px; padding: 1.8rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); position: relative; overflow: hidden;">
+        <div class="stat-icon"
+            style="position: absolute; top: 15px; right: 15px; color: var(--primary); font-size: 1.5rem;"><i
+                class="fa-solid fa-star"></i></div>
+        <div class="stat-title"
+            style="font-size: 0.9rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Reviews
+        </div>
+        <div class="stat-value"
+            style="font-size: 1.6rem; font-family: var(--font-head); font-weight: bold; margin-top: 0.5rem;">{{
+            recent_reviews|length }}</div>
+        <div class="stat-trend"
+            style="font-size: 0.85rem; color: var(--primary); font-weight: bold; margin-top: 0.5rem;">Recent Feedback
+        </div>
+    </div>
+</div>
+
+<!-- QUICK ACTIONS -->
+<div class="action-panel" style="display: flex; gap: 1rem; margin-bottom: 2.5rem; flex-wrap: wrap;">
+    <a href="{{ url_for('seller.add_product') }}" class="action-btn"
+        style="background: white; border: 1px solid var(--border-color); padding: 1rem 1.5rem; border-radius: 50px; display: flex; align-items: center; gap: 0.8rem; font-weight: bold; flex: 1; justify-content: center; min-width: 160px;">
+        <i class="fa-solid fa-plus-circle" style="color: var(--primary);"></i> Add New Product
+    </a>
+    <a href="{{ url_for('seller.orders') }}" class="action-btn"
+        style="background: white; border: 1px solid var(--border-color); padding: 1rem 1.5rem; border-radius: 50px; display: flex; align-items: center; gap: 0.8rem; font-weight: bold; flex: 1; justify-content: center; min-width: 160px;">
+        <i class="fa-solid fa-box" style="color: var(--primary);"></i> View Orders
+    </a>
+    <a href="{{ url_for('seller.learning') }}" class="action-btn"
+        style="background: white; border: 1px solid var(--border-color); padding: 1rem 1.5rem; border-radius: 50px; display: flex; align-items: center; gap: 0.8rem; font-weight: bold; flex: 1; justify-content: center; min-width: 160px;">
+        <i class="fa-solid fa-graduation-cap" style="color: var(--primary);"></i> Seller Academy
+    </a>
+    <a href="{{ url_for('seller.earnings') }}" class="action-btn"
+        style="background: white; border: 1px solid var(--border-color); padding: 1rem 1.5rem; border-radius: 50px; display: flex; align-items: center; gap: 0.8rem; font-weight: bold; flex: 1; justify-content: center; min-width: 160px;">
+        <i class="fa-solid fa-wallet" style="color: var(--primary);"></i> View Earnings
+    </a>
+</div>
+
+<!-- CUSTOM REQUESTS SECTION -->
+<div class="card"
+    style="background: white; border-radius: 16px; padding: 1.8rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 2.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.3rem; color: var(--primary);"><i class="fa-solid fa-magic"></i> New Custom Requests</h3>
+        <span
+            style="background: var(--primary); color: white; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">{{
+            custom_requests|selectattr('status', 'equalto', 'pending')|list|length }} Pending</span>
+    </div>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <th style="padding: 1rem; text-align: left; color: var(--text-muted); font-size: 0.85rem;">Date</th>
+                    <th style="padding: 1rem; text-align: left; color: var(--text-muted); font-size: 0.85rem;">Buyer
+                    </th>
+                    <th style="padding: 1rem; text-align: left; color: var(--text-muted); font-size: 0.85rem;">Product
+                        Type</th>
+                    <th style="padding: 1rem; text-align: left; color: var(--text-muted); font-size: 0.85rem;">Est.
+                        Price</th>
+                    <th style="padding: 1rem; text-align: left; color: var(--text-muted); font-size: 0.85rem;">Status
+                    </th>
+                    <th style="padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in custom_requests %}
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 1rem; font-size: 0.9rem;">{{ req.created_at[:10] }}</td>
+                    <td style="padding: 1rem; font-weight: 600;">{{ req.buyer_name }}</td>
+                    <td style="padding: 1rem;">
+                        <div style="font-weight: bold;">{{ req.product_type }} (x{{ req.quantity }})</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">{{ req.custom_message[:50] }}...</div>
+                    </td>
+                    <td style="padding: 1rem; font-weight: bold;">₹ {{ "{:,.0f}".format(req.estimated_price) }}</td>
+                    <td style="padding: 1rem;">
+                        <span
+                            style="background: {% if req.status == 'pending' %}#fdf2e9{% elif req.status == 'accepted' %}#e8f5e9{% elif req.status == 'ordered' %}#e3f2fd{% else %}#fbe9e7{% endif %}; 
+                                     color: {% if req.status == 'pending' %}#d35400{% elif req.status == 'accepted' %}#2e7d32{% elif req.status == 'ordered' %}#1565c0{% else %}#c0392b{% endif %}; 
+                                     padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">
+                            {{ req.status|title }}
+                        </span>
+                        {% if req.status == 'ordered' %}
+                        <div style="font-size: 0.7rem; margin-top: 4px; color: var(--primary); font-weight: bold;">PAID
+                            & ORDERED</div>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem; text-align: center;">
+                        {% if req.status == 'pending' %}
+                        <button
+                            onclick="openProcessModal('{{ req.cr_id }}', '{{ req.product_type }}', '{{ req.estimated_price }}')"
+                            style="background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">
+                            Review & Quote
+                        </button>
+                        {% else %}
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">Completed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not custom_requests %}
+                <tr>
+                    <td colspan="6" style="padding: 3rem; text-align: center; color: var(--text-muted);">No custom
+                        requests yet.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- PROCESS MODAL -->
+<div id="processModal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div
+        style="background: white; width: 90%; max-width: 500px; padding: 1.8rem; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.2);">
+        <h2 style="margin-bottom: 1.5rem; color: var(--primary);" id="modalTitle">Process Custom Request</h2>
+        <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">Please review the details and
+            provide your final quote and delivery timeline if you wish to accept this request.</p>
+        <form id="processForm" method="POST" action="">
+            <input type="hidden" name="action" id="formAction" value="accept">
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-weight: bold; margin-bottom: 0.5rem;">Final Quote (₹)</label>
+                <input type="number" name="final_price" id="finalPrice" required step="1"
+                    style="width: 100%; padding: 12px; border: 1.5px solid var(--border-color); border-radius: 10px; font-size: 0.95rem;">
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">User estimated: <span
+                        id="userEstimate"></span></p>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <label style="display: block; font-weight: bold; margin-bottom: 0.5rem;">Delivery Time (e.g., 10-12
+                    Days)</label>
+                <input type="text" name="delivery_time" id="deliveryTime" required placeholder="e.g. 10-14 Days"
+                    style="width: 100%; padding: 12px; border: 1.5px solid var(--border-color); border-radius: 10px; font-size: 0.95rem;">
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" onclick="return setAction('reject')"
+                    style="flex: 1; background: #fdf2f2; color: #e02424; border: 1px solid #fecaca; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold;">Deny
+                    Request</button>
+                <button type="submit" onclick="return setAction('accept')"
+                    style="flex: 2; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold;">Approve
+                    & Send Quote</button>
+            </div>
+            <button type="button" onclick="closeModal()"
+                style="display: block; width: 100%; margin-top: 1rem; background: transparent; border: none; color: var(--text-muted); cursor: pointer;">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openProcessModal(crId, prodType, estimate) {
+        const modal = document.getElementById('processModal');
+        const form = document.getElementById('processForm');
+        const title = document.getElementById('modalTitle');
+        const estimateSpan = document.getElementById('userEstimate');
+        const priceInput = document.getElementById('finalPrice');
+
+        form.action = "{{ url_for('custom_order.process_request', cr_id=0) }}".replace('0', crId);
+        title.innerText = "Review Request: " + prodType;
+        estimateSpan.innerText = "₹" + estimate;
+        priceInput.value = estimate;
+
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('processModal').style.display = 'none';
+    }
+
+    function setAction(action) {
+        document.getElementById('formAction').value = action;
+        if (action === 'reject') {
+            if (!confirm('Are you sure you want to deny this request? An email will be sent to the user notifying them of your decision.')) return false;
+
+            // Remove required fields for rejection
+            document.getElementById('finalPrice').removeAttribute('required');
+            document.getElementById('finalPrice').value = '0';
+
+            document.getElementById('deliveryTime').removeAttribute('required');
+            document.getElementById('deliveryTime').value = 'Rejected';
+
+            return true;
+        }
+        return true;
+    }
+
+    // Close modal on outside click
+    window.onclick = function (event) {
+        const modal = document.getElementById('processModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+</script>
+
+<!-- PERFORMANCE & RECENT ORDERS -->
+<div class="grid-2" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+    <div class="card"
+        style="background: white; border-radius: 16px; padding: 1.8rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.3rem; color: var(--primary);"><i class="fa-solid fa-receipt"></i> Recent Orders</h3>
+            <a href="{{ url_for('seller.orders') }}"
+                style="font-weight: bold; font-size: 0.9rem; color: var(--primary);">View All</a>
+        </div>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <th style="padding: 1rem; text-align: left; color: var(--text-muted); font-size: 0.85rem;">Order
+                            ID</th>
+                        <th style="padding: 1rem; text-align: left; color: var(--text-muted); font-size: 0.85rem;">
+                            Seller</th>
+                        <th style="padding: 1rem; text-align: left; color: var(--text-muted); font-size: 0.85rem;">
+                            Product</th>
+                        <th style="padding: 1rem; text-align: left; color: var(--text-muted); font-size: 0.85rem;">
+                            Qty</th>
+                        <th style="padding: 1rem; text-align: left; color: var(--text-muted); font-size: 0.85rem;">
+                            Amount</th>
+                        <th style="padding: 1rem; text-align: left; color: var(--text-muted); font-size: 0.85rem;">
+                            Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in recent_orders %}
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 1rem; font-weight: 700;">#{{ order.order_id }}</td>
+                        <td style="padding: 1rem; color: var(--text-muted); font-weight: 600;">{{ order.seller_name if
+                            order.seller_name else 'Unknown' }}</td>
+                        <td style="padding: 1rem;">
+                            {{ order.display_name }}
+                            {% if order.is_custom %}
+                            <span
+                                style="font-size: 0.7rem; background: #fff3e0; color: #e65100; padding: 2px 6px; border-radius: 4px; margin-left: 5px;">CUSTOM</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 1rem; font-weight: bold;">x{{ order.quantity }}</td>
+                        <td style="padding: 1rem;">₹ {{ "{:,.2f}".format(order.amount) }}</td>
+                        <td style="padding: 1rem;">
+                            <span
+                                style="background: var(--primary-light); color: var(--primary); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">
+                                {{ order.order_status|title }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not recent_orders %}
+                    <tr>
+                        <td colspan="4" style="padding: 2rem; text-align: center; color: var(--text-muted);">No orders
+                            found.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div class="card"
+            style="background: white; border-radius: 16px; padding: 1.8rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);">
+            <h3 style="font-size: 1.3rem; color: var(--primary); margin-bottom: 1rem;"><i
+                    class="fa-solid fa-lightbulb"></i> Store Insight</h3>
+            <div
+                style="background: var(--primary-light); padding: 1.2rem; border-radius: 12px; border-left: 4px solid var(--primary);">
+                <p style="font-weight: 600; font-size: 0.95rem;">You have {{ low_stock|length }} products with low
+                    stock!</p>
+                <p style="font-size: 0.85rem; margin-top: 5px; opacity: 0.8;">Restock soon to keep your sales momentum
+                    going.</p>
+            </div>
+            <div style="margin-top: 1.5rem;">
+                <p style="font-size: 0.9rem; color: var(--text-muted);">Average Review Rating</p>
+                <div style="font-size: 1.6rem; font-weight: bold; font-family: var(--font-head);">4.8 <i
+                        class="fa-solid fa-star" style="color: var(--warning); font-size: 1.3rem;"></i></div>
+            </div>
+        </div>
+
+        <div class="card"
+            style="background: white; border-radius: 16px; padding: 1.8rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);">
+            <h3 style="font-size: 1.3rem; color: var(--primary); margin-bottom: 1rem;"><i
+                    class="fa-solid fa-trophy"></i> Top Products</h3>
+            {% for prod in top_products %}
+            <div
+                style="display: flex; align-items: center; gap: 1rem; padding: 0.8rem 0; border-bottom: 1px solid var(--border-color);">
+                <img src="{{ url_for('static', filename='uploads/products/' + prod.image_url if prod.image_url else 'default.png') }}"
+                    style="width: 45px; height: 45px; border-radius: 8px; object-fit: cover;">
+                <div style="flex: 1;">
+                    <div style="font-weight: bold; font-size: 0.9rem;">{{ prod.p_name }}</div>
+                    <div style="font-size: 0.8rem; color: var(--primary);">{{ prod.sold_count }} sales</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

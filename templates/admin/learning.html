@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Academy Management | Plattera Admin</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Tenor+Sans&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Admin Pure Black Theme */
+            --primary: #ffffff;
+            --primary-light: rgba(255, 255, 255, 0.1);
+            --primary-dark: #e0e0e0;
+            --secondary: #111111;
+
+            --bg-body: #000000;
+            --bg-card: #0a0a0a;
+            --bg-hover: #151515;
+
+            --text-dark: #ffffff;
+            --text-muted: #888888;
+
+            --border-color: rgba(255, 255, 255, 0.1);
+
+            /* Status Colors */
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.15);
+            --danger: #fb4848;
+            --danger-light: rgba(251, 72, 72, 0.15);
+            --info: #3ba2b8;
+            --info-light: rgba(59, 162, 184, 0.15);
+
+            --font-head: 'Crimson Pro', serif;
+            --font-body: 'Tenor Sans', sans-serif;
+
+            --shadow-sm: none;
+            --shadow-hover: 0 4px 15px rgba(255, 255, 255, 0.05);
+
+            --radius-md: 12px;
+            --radius-sm: 6px;
+            --transition: all 0.3s ease;
+
+            --sidebar-width: 300px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-dark);
+            background-color: var(--bg-body);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-head);
+            font-weight: 600;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem 3rem;
+            width: calc(100% - var(--sidebar-width));
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title h1 {
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            max-width: 600px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-bar input {
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            font-family: inherit;
+            width: 250px;
+            font-size: 0.9rem;
+            background: var(--bg-hover);
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .btn {
+            padding: 0.7rem 1.2rem;
+            border-radius: 50px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid transparent;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-color);
+            color: var(--text-dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-hover);
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--bg-hover);
+        }
+
+        /* --- TABS SYSTEM --- */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- CARDS & GRIDS --- */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--primary);
+            background: var(--primary-light);
+            flex-shrink: 0;
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-family: var(--font-head);
+            font-weight: bold;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        /* --- TABLES --- */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            background: #fafafa;
+            white-space: nowrap;
+        }
+
+        tr.hoverable:hover {
+            background: var(--bg-hover);
+        }
+
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .badge-active {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge-pending {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        /* --- FORMS --- */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.95rem;
+            background: #fff;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: #fafafa;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: var(--border-color);
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--success);
+        }
+
+        /* Video thumbnail */
+        .vid-thumb {
+            width: 60px;
+            height: 40px;
+            border-radius: 4px;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .flex-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .section-title {
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .insight-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .insight-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include 'admin/sidebar.html' %}
+
+    <!-- RIGHT MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- PAGE HEADER -->
+        <header class="top-header">
+            <div class="page-title">
+                <h1>Learning Academy Management</h1>
+                <p>Manage crochet learning modules, upload tutorials, track seller progress, and control the Plattera
+                    education system.</p>
+            </div>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Lesson / Category">
+                </div>
+                <button class="btn btn-outline"
+                    onclick="switchTab('tab-progress', document.querySelector('.sidebar-link:nth-child(5)'))"><i
+                        class="fa-solid fa-chart-bar"></i> View Stats</button>
+                <button class="btn btn-primary"
+                    onclick="switchTab('tab-modules', document.querySelector('.sidebar-link:nth-child(4)'))"><i
+                        class="fa-solid fa-plus"></i> Add Module</button>
+            </div>
+        </header>
+
+        <!-- ==============================================
+             1. MANAGE CROCHET CATEGORIES
+        =============================================== -->
+        <div id="tab-categories" class="tab-content active">
+            <div class="grid-3">
+                <div class="card stat-card" style="margin-bottom:0;">
+                    <div class="stat-icon"><i class="fa-solid fa-folder"></i></div>
+                    <div class="stat-info"><span class="stat-title">Total Categories</span><span
+                            class="stat-value">12</span></div>
+                </div>
+                <div class="card stat-card"
+                    style="margin-bottom:0; background: linear-gradient(135deg, var(--primary-light), white);">
+                    <div class="stat-icon" style="background:white; color:var(--primary); box-shadow:var(--shadow-sm);">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div class="stat-info"><span class="stat-title">Active Modules</span><span
+                            class="stat-value">48</span></div>
+                </div>
+                <div class="card stat-card" style="margin-bottom:0;">
+                    <div class="stat-icon" style="background:var(--info-light); color:var(--info);"><i
+                            class="fa-solid fa-video"></i></div>
+                    <div class="stat-info"><span class="stat-title">Total Video Lessons</span><span
+                            class="stat-value">120</span></div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="section-title"><i class="fa-solid fa-list-ul"></i> Categories Overview</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Skill Level</th>
+                                    <th>Modules</th>
+                                    <th>Sellers Enrolled</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hoverable">
+                                    <td><strong>Crochet Bags</strong></td>
+                                    <td>Intermediate</td>
+                                    <td>8</td>
+                                    <td>320</td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-pen"></i></button>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px; color:var(--danger); border-color:rgba(217, 76, 76, 0.3);"><i
+                                                class="fa-solid fa-eye-slash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="hoverable">
+                                    <td><strong>Amigurumi Basics</strong></td>
+                                    <td>Beginner</td>
+                                    <td>5</td>
+                                    <td>450</td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-pen"></i></button>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px; color:var(--danger); border-color:rgba(217, 76, 76, 0.3);"><i
+                                                class="fa-solid fa-eye-slash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="section-title"><i class="fa-solid fa-folder-plus"></i> Add New Category</h3>
+                    <div class="form-group">
+                        <label class="form-label">Category Name</label>
+                        <input type="text" class="form-control" placeholder="e.g. Advanced Wearables">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Skill Level</label>
+                        <select class="form-control">
+                            <option>Beginner</option>
+                            <option>Intermediate</option>
+                            <option>Advanced</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category Description</label>
+                        <textarea class="form-control"
+                            placeholder="What will sellers learn in this category?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category Thumbnail</label>
+                        <div class="upload-area" style="padding: 1.5rem;">
+                            <i class="fa-solid fa-image upload-icon" style="font-size:1.5rem;"></i>
+                            <p style="font-size:0.85rem; color:var(--text-muted);">Upload Image</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%; justify-content:center;">Create Category</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             2. UPLOAD VIDEO LESSONS
+        =============================================== -->
+        <div id="tab-videos" class="tab-content">
+            <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i class="fa-solid fa-video"></i> Video Lessons
+                Dashboard</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="section-title"><i class="fa-solid fa-list-ol"></i> Lesson Library</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Lesson Title</th>
+                                    <th>Category</th>
+                                    <th>Module</th>
+                                    <th>Duration</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hoverable">
+                                    <td>
+                                        <div class="flex-cell">
+                                            <img src="https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=100"
+                                                class="vid-thumb">
+                                            <span>Basic Bag Structure</span>
+                                        </div>
+                                    </td>
+                                    <td>Crochet Bags</td>
+                                    <td>Bag Foundations</td>
+                                    <td>15 mins</td>
+                                    <td>12 Oct</td>
+                                    <td><button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-pen"></i></button></td>
+                                </tr>
+                                <tr class="hoverable">
+                                    <td>
+                                        <div class="flex-cell">
+                                            <img src="https://images.unsplash.com/photo-1629858535805-d14283eb97c1?w=100"
+                                                class="vid-thumb">
+                                            <span>Magic Ring Technique</span>
+                                        </div>
+                                    </td>
+                                    <td>Amigurumi</td>
+                                    <td>Getting Started</td>
+                                    <td>8 mins</td>
+                                    <td>10 Oct</td>
+                                    <td><button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-pen"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="section-title"><i class="fa-solid fa-cloud-arrow-up"></i> Upload New Lesson</h3>
+                    <div class="form-group">
+                        <label class="form-label">Lesson Title</label>
+                        <input type="text" class="form-control" placeholder="Lesson Name">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select class="form-control">
+                                <option>Crochet Bags</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Module</label>
+                            <select class="form-control">
+                                <option>Bag Foundations</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Video Source</label>
+                        <input type="text" class="form-control" style="margin-bottom:0.5rem;"
+                            placeholder="YouTube / Vimeo Link">
+                        <div class="upload-area" style="padding: 1rem;">
+                            <p style="font-size:0.85rem; color:var(--text-muted);">Or Upload File (MP4)</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Duration (mins)</label>
+                        <input type="number" class="form-control" placeholder="15">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Additional Materials</label>
+                        <div
+                            style="border:1px solid var(--border-color); padding:0.5rem; border-radius:4px; display:inline-block; font-size:0.85rem; cursor:pointer; background:#fafafa;">
+                            <i class="fa-solid fa-paperclip"></i> Attach Pattern / Task
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%; justify-content:center;">Publish Lesson</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             3. UPLOAD PDF RESOURCES
+        =============================================== -->
+        <div id="tab-pdfs" class="tab-content">
+            <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i class="fa-solid fa-file-pdf"></i>
+                Downloadable Resources</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="section-title"><i class="fa-solid fa-folder-open"></i> Resource Library</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Resource Name</th>
+                                    <th>Category</th>
+                                    <th>Type</th>
+                                    <th>Downloads</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hoverable">
+                                    <td><strong>Crochet Pricing Guide</strong></td>
+                                    <td>Business Basics</td>
+                                    <td><span class="badge" style="background:#fdeaea; color:#d94c4c;"><i
+                                                class="fa-solid fa-file-pdf"></i> PDF</span></td>
+                                    <td>1,240</td>
+                                    <td><button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-trash" style="color:var(--danger);"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="hoverable">
+                                    <td><strong>Profit Calculation Sheet</strong></td>
+                                    <td>Business Basics</td>
+                                    <td><span class="badge" style="background:#e6f4ea; color:#529b68;"><i
+                                                class="fa-solid fa-file-excel"></i> Excel</span></td>
+                                    <td>890</td>
+                                    <td><button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-trash" style="color:var(--danger);"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="section-title"><i class="fa-solid fa-upload"></i> Add Resource</h3>
+                    <div class="form-group">
+                        <label class="form-label">Resource Title</label>
+                        <input type="text" class="form-control" placeholder="e.g. Photography Checklist">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-control">
+                            <option>Marketing & Photography</option>
+                            <option>Business Basics</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Resource Type</label>
+                        <select class="form-control">
+                            <option>PDF Document</option>
+                            <option>Excel / Spreadsheet</option>
+                            <option>Checklist Template</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">File Upload</label>
+                        <div class="upload-area">
+                            <i class="fa-solid fa-file-arrow-up upload-icon"></i>
+                            <p style="font-size:0.85rem; color:var(--text-muted);">Drop file here</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%; justify-content:center;">Upload Resource</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             4. EDIT MODULES
+        =============================================== -->
+        <div id="tab-modules" class="tab-content">
+            <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i class="fa-solid fa-book-open"></i> Learning
+                Modules</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="section-title"><i class="fa-solid fa-layer-group"></i> Existing Modules</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Module Name</th>
+                                    <th>Category</th>
+                                    <th>Lessons</th>
+                                    <th>Duration</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hoverable">
+                                    <td><strong>Bag Making Fundamentals</strong></td>
+                                    <td>Crochet Bags</td>
+                                    <td>6</td>
+                                    <td>1.5 Hours</td>
+                                    <td>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-pen"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="hoverable">
+                                    <td><strong>Advanced Stitching</strong></td>
+                                    <td>Techniques</td>
+                                    <td>4</td>
+                                    <td>45 mins</td>
+                                    <td>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-pen"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="section-title"><i class="fa-solid fa-square-plus"></i> Create New Module</h3>
+                    <div class="form-group">
+                        <label class="form-label">Module Title</label>
+                        <input type="text" class="form-control" placeholder="Module Name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Select Category</label>
+                        <select class="form-control">
+                            <option>Crochet Bags</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Module Description</label>
+                        <textarea class="form-control" placeholder="Overview of the module..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estimated Time</label>
+                        <input type="text" class="form-control" placeholder="e.g. 2 Hours">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Lessons <span
+                                style="font-weight:normal; font-size:0.8rem; color:var(--text-muted);">(Select
+                                multiple)</span></label>
+                        <select class="form-control" multiple style="height:80px;">
+                            <option>Basic Bag Structure (15m)</option>
+                            <option>Magic Ring Technique (8m)</option>
+                            <option>Handle Attachment (12m)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%; justify-content:center;">Publish Module</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             5. TRACK SELLER PROGRESS
+        =============================================== -->
+        <div id="tab-progress" class="tab-content">
+            <div class="grid-2">
+                <div>
+                    <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i class="fa-solid fa-chart-line"></i>
+                        Seller Progress Tracking</h2>
+                    <div class="card">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Seller</th>
+                                        <th>Modules Completed</th>
+                                        <th>Certificates</th>
+                                        <th>Learning Hours</th>
+                                        <th>Progress</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hoverable">
+                                        <td><strong><a href="#" style="color:var(--primary);">Riya Crochet</a></strong>
+                                        </td>
+                                        <td>5 / 8</td>
+                                        <td>2</td>
+                                        <td>14.5 Hrs</td>
+                                        <td>
+                                            <div style="font-size:0.85rem; font-weight:bold; margin-bottom:0.2rem;">65%
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width:65%;"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="hoverable">
+                                        <td><strong><a href="#" style="color:var(--primary);">Yarn Magic</a></strong>
+                                        </td>
+                                        <td>8 / 8</td>
+                                        <td>4</td>
+                                        <td>28 Hrs</td>
+                                        <td>
+                                            <div
+                                                style="font-size:0.85rem; font-weight:bold; margin-bottom:0.2rem; color:var(--success);">
+                                                100%</div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width:100%;"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="hoverable">
+                                        <td><strong><a href="#" style="color:var(--primary);">Crafty Hands</a></strong>
+                                        </td>
+                                        <td>1 / 8</td>
+                                        <td>0</td>
+                                        <td>1.2 Hrs</td>
+                                        <td>
+                                            <div style="font-size:0.85rem; font-weight:bold; margin-bottom:0.2rem;">12%
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill"
+                                                    style="width:12%; background-color:var(--warning);"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card" style="background:var(--primary-light); border-color:var(--primary);">
+                        <h3 class="section-title"><i class="fa-solid fa-lightbulb"></i> Learning Insights</h3>
+                        <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+                            <div style="flex:1; background:white; padding:1rem; border-radius:8px; text-align:center;">
+                                <div
+                                    style="font-size:1.8rem; font-family:var(--font-head); font-weight:bold; color:var(--primary);">
+                                    420</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Active
+                                    Learners</div>
+                            </div>
+                            <div style="flex:1; background:white; padding:1rem; border-radius:8px; text-align:center;">
+                                <div
+                                    style="font-size:1.8rem; font-family:var(--font-head); font-weight:bold; color:var(--success);">
+                                    310</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Certs
+                                    Issued</div>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size:0.95rem; margin-bottom:0.8rem;">Top Learning Categories</h4>
+                        <div class="insight-list" style="margin-bottom:1.5rem;">
+                            <div class="insight-item">
+                                <span><i class="fa-solid fa-bag-shopping" style="color:var(--primary);"></i> Crochet
+                                    Bags</span>
+                                <strong>35%</strong>
+                            </div>
+                            <div class="insight-item">
+                                <span><i class="fa-solid fa-teddy-bear" style="color:var(--info);"></i> Amigurumi</span>
+                                <strong>25%</strong>
+                            </div>
+                            <div class="insight-item">
+                                <span><i class="fa-solid fa-shirt" style="color:var(--warning);"></i> Wearables</span>
+                                <strong>20%</strong>
+                            </div>
+                        </div>
+
+                        <div
+                            style="background:white; padding:1.2rem; border-radius:8px; border:1px solid var(--border-color);">
+                            <h4
+                                style="font-size:0.9rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.5rem;">
+                                Most Active Learner</h4>
+                            <div style="display:flex; align-items:center; gap:1rem;">
+                                <div
+                                    style="width:40px; height:40px; border-radius:50%; background:var(--secondary); color:white; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+                                    R</div>
+                                <div>
+                                    <div style="font-weight:bold;">Riya Crochet</div>
+                                    <div style="font-size:0.85rem; color:var(--primary);">Completed 9 Modules</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             6. MANAGE CERTIFICATIONS
+        =============================================== -->
+        <div id="tab-certifications" class="tab-content">
+            <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i class="fa-solid fa-certificate"></i>
+                Certification Management</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="section-title"><i class="fa-solid fa-medal"></i> Active Certificates</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Certificate</th>
+                                    <th>Requirements</th>
+                                    <th>Sellers Earned</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hoverable">
+                                    <td>
+                                        <div class="flex-cell">
+                                            <i class="fa-solid fa-certificate"
+                                                style="font-size:1.5rem; color:var(--warning);"></i>
+                                            <strong>Certified Seller</strong>
+                                        </div>
+                                    </td>
+                                    <td>Complete 5 Modules</td>
+                                    <td>210</td>
+                                    <td><button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-pen"></i></button></td>
+                                </tr>
+                                <tr class="hoverable">
+                                    <td>
+                                        <div class="flex-cell">
+                                            <i class="fa-solid fa-camera"
+                                                style="font-size:1.5rem; color:var(--info);"></i>
+                                            <strong>Photography Pro</strong>
+                                        </div>
+                                    </td>
+                                    <td>Complete Photo Course</td>
+                                    <td>85</td>
+                                    <td><button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-pen"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="section-title"><i class="fa-solid fa-plus-circle"></i> Create Certificate</h3>
+                    <div class="form-group">
+                        <label class="form-label">Certificate Name</label>
+                        <input type="text" class="form-control" placeholder="e.g. Master Amigurumi Maker">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" placeholder="What does this badge signify?"
+                            style="min-height:70px;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Requirements</label>
+                        <select class="form-control">
+                            <option>Complete specific module</option>
+                            <option>Complete full category</option>
+                            <option>Achieve 5-star seller rating</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Badge Icon / Image</label>
+                        <div class="upload-area" style="padding: 1rem;">
+                            <i class="fa-solid fa-shield upload-icon" style="font-size:1.2rem; margin-bottom:0;"></i>
+                            Upload Vector Preview
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%; justify-content:center;">Publish
+                        Certificate</button>
+
+                    <div style="margin-top:1.5rem; text-align:center;">
+                        <span
+                            style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">Badge
+                            Preview (Seller Profile)</span>
+                        <div
+                            style="display:inline-block; padding:0.5rem 1rem; border:1px solid var(--warning); border-radius:50px; background:var(--warning-light); color:var(--warning); font-weight:bold; font-size:0.85rem;">
+                            <i class="fa-solid fa-medal"></i> Admin Preview Badge
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             7. SCHEDULE LIVE WORKSHOPS
+        =============================================== -->
+        <div id="tab-workshops" class="tab-content">
+            <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i class="fa-solid fa-calendar-day"></i> Live
+                Workkshops & Events</h2>
+            <div class="grid-2" style="grid-template-columns: 1.5fr 1fr;">
+                <div class="card">
+                    <h3 class="section-title"><i class="fa-solid fa-calendar-check"></i> Upcoming Workshops</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Workshop Title</th>
+                                    <th>Instructor</th>
+                                    <th>Date & Time</th>
+                                    <th>Registered</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hoverable">
+                                    <td><strong>Festival Sales Strategy</strong></td>
+                                    <td>Plattera Growth Team</td>
+                                    <td>12 Oct, 4:00 PM</td>
+                                    <td>145 Sellers</td>
+                                    <td>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-link"></i> Link</button>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px; color:var(--primary);"><i
+                                                class="fa-solid fa-pen"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="hoverable">
+                                    <td><strong>Pricing Your Handmade Items</strong></td>
+                                    <td>Sarah (Expert Seller)</td>
+                                    <td>20 Oct, 5:30 PM</td>
+                                    <td>82 Sellers</td>
+                                    <td>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-link"></i> Link</button>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px; color:var(--primary);"><i
+                                                class="fa-solid fa-pen"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--border-color);">
+                        <h4 style="color:var(--text-dark); margin-bottom:1rem;"><i class="fa-solid fa-video-slash"></i>
+                            Workshop Recording Archive</h4>
+                        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;">Upload recorded
+                            sessions for sellers who missed the live event.</p>
+                        <button class="btn btn-outline"><i class="fa-solid fa-upload"></i> Upload Recording</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="section-title"><i class="fa-solid fa-calendar-plus"></i> Create Workshop</h3>
+                    <div class="form-group">
+                        <label class="form-label">Workshop Title</label>
+                        <input type="text" class="form-control" placeholder="Event Name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Instructor Name</label>
+                        <input type="text" class="form-control" placeholder="Who is teaching?">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Time</label>
+                            <input type="time" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Duration</label>
+                        <input type="text" class="form-control" placeholder="e.g. 1 Hour">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Meeting Link</label>
+                        <input type="url" class="form-control" placeholder="Zoom / Google Meet URL">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Max Participants</label>
+                        <input type="number" class="form-control" placeholder="Leave empty for unlimited">
+                    </div>
+                    <button class="btn btn-primary" style="width:100%; justify-content:center;">Schedule
+                        Workshop</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript for Sidebar Navigation -->
+    <script>
+        // Sidebar active tab switching logic
+        function switchTab(tabId, btnElement) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Remove active style from buttons
+            document.querySelectorAll('.sidebar-link').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab and highlight button
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+
+</html>

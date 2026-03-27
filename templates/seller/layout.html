@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Seller Dashboard | Plattera{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Tenor+Sans&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary: #bf4646;
+            --primary-light: #fbecec;
+            --primary-dark: #9e3737;
+            --secondary: #d4b8e6;
+            --bg-body: #fff4ea;
+            --bg-card: #ffffff;
+            --text-dark: #2d2d2d;
+            --text-muted: #666666;
+            --border-color: #f0e4df;
+            --success: #4a8c5b;
+            --success-light: #e6f4ea;
+            --warning: #d99a2c;
+            --warning-light: #fef5e6;
+            --danger: #d94c4c;
+            --info: #4aa3a3;
+            --info-light: #e6f7f7;
+            --font-head: 'Crimson Pro', serif;
+            --font-body: 'Tenor Sans', sans-serif;
+            --shadow-sm: 0 4px 10px rgba(191, 70, 70, 0.05);
+            --shadow-md: 0 10px 25px rgba(191, 70, 70, 0.08);
+            --shadow-hover: 0 15px 35px rgba(191, 70, 70, 0.12);
+            --radius-md: 16px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --sidebar-width: 250px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body) !important;
+            color: var(--text-dark);
+            background-color: var(--bg-body);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-head) !important;
+            font-weight: 600;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            font-size: 1.6rem;
+            font-family: var(--font-head);
+            color: var(--primary);
+            margin-bottom: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 700;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            list-style: none;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 1rem;
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            transition: var(--transition);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        .page-header {
+            position: relative;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.2)), url('https://images.unsplash.com/photo-1610427773289-5347209930f7?auto=format&fit=crop&q=80&w=2000');
+            padding: 3rem 4rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-text h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .container {
+            padding: 2rem 3rem 4rem;
+            margin-top: -40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: var(--transition);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .page-header {
+                padding: 2rem 1.5rem;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+        }
+
+            {
+            % block extra_css %
+        }
+
+            {
+            % endblock %
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-shop"></i>
+            <span>Plattera Seller</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('seller.dashboard') }}"
+                    class="sidebar-link {% if request.endpoint == 'seller.dashboard' %}active{% endif %}">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
+            <li><a href="{{ url_for('seller.inventory') }}"
+                    class="sidebar-link {% if request.endpoint == 'seller.inventory' %}active{% endif %}">
+                    <i class="fa-solid fa-boxes-stacked"></i> Inventory</a></li>
+            <li><a href="{{ url_for('seller.orders') }}"
+                    class="sidebar-link {% if request.endpoint == 'seller.orders' %}active{% endif %}">
+                    <i class="fa-solid fa-box"></i> Orders</a></li>
+            <li><a href="{{ url_for('seller.earnings') }}"
+                    class="sidebar-link {% if request.endpoint == 'seller.earnings' %}active{% endif %}">
+                    <i class="fa-solid fa-indian-rupee-sign"></i> Earnings</a></li>
+            <li><a href="{{ url_for('seller.learning') }}"
+                    class="sidebar-link {% if request.endpoint == 'seller.learning' %}active{% endif %}">
+                    <i class="fa-solid fa-graduation-cap"></i> Learning</a></li>
+            <li><a href="{{ url_for('seller.settings') }}"
+                    class="sidebar-link {% if request.endpoint == 'seller.settings' %}active{% endif %}">
+                    <i class="fa-solid fa-gear"></i> Settings</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="sidebar-link"
+                    style="margin-top: 2rem; color: var(--danger);">
+                    <i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="page-header parallax">
+            <div class="header-text">
+                {% block header_content %}{% endblock %}
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn"><i class="fa-solid fa-bell"></i></button>
+                <button class="icon-btn"><i class="fa-solid fa-envelope"></i></button>
+                <a href="{{ url_for('seller.settings') }}" class="icon-btn"><i class="fa-solid fa-gear"></i></a>
+            </div>
+        </header>
+
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

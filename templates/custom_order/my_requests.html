@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block title %}My Custom Requests | Plattera{% endblock %}
+
+{% block content %}
+<style>
+    .requests-container {
+        max-width: 1000px;
+        margin: 4rem auto;
+        padding: 0 2rem;
+    }
+
+    .request-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-pending {
+        background: #fff3e0;
+        color: #ef6c00;
+    }
+
+    .status-confirmed {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .status-rejected {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .status-accepted {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .status-ordered {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .seller-info-box {
+        margin-top: 15px;
+        padding: 15px;
+        background: #fdf9f4;
+        border-radius: 12px;
+        border-left: 3px solid var(--primary);
+    }
+
+    .seller-info-box p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--text-dark);
+    }
+
+    .seller-info-box i {
+        width: 20px;
+        color: var(--primary);
+    }
+
+    .order-details-mini {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+        font-size: 0.85rem;
+        color: var(--text-light);
+    }
+
+    .status-msg {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        background: #fdf9f4;
+        border-right: 3px solid transparent;
+    }
+
+    .status-msg.accepted {
+        border-right-color: var(--success);
+        color: #155724;
+        background: #e8f5e9;
+    }
+
+    .status-msg.rejected {
+        border-right-color: var(--danger);
+        color: #721c24;
+        background: #fdf2f2;
+    }
+
+    .status-msg.ordered {
+        border-right-color: var(--primary);
+        color: #5d4037;
+        background: #fafafa;
+    }
+</style>
+
+<div class="requests-container">
+    <h1 style="margin-bottom: 2rem;">My Custom Order Requests</h1>
+
+    {% for req in requests %}
+    <div class="request-card">
+        <div style="flex: 1;">
+            <h3 style="margin-bottom: 5px; color: var(--text-dark);">{{ req.product_type }}</h3>
+            <p style="color: #666; font-size: 0.85rem;">Requested on {{ req.created_at[:10] }}</p>
+
+            <div class="order-details-mini">
+                <span><strong>Size:</strong> {{ req.product_size or 'Small' }}</span>
+                <span><strong>Pattern:</strong> ₹{{ req.color_complexity or '0' }} Complexity</span>
+                <span><strong>Quantity:</strong> {{ req.quantity or 1 }}</span>
+                <span><strong>Urgency:</strong> {{ 'Rush' if req.urgency|int > 0 else 'Standard' }}</span>
+            </div>
+
+            <p style="margin-top: 15px;"><strong>Personalization:</strong> {{ req.personalization_details or 'None' }}
+            </p>
+            {% if req.custom_message %}
+            <p
+                style="margin-top: 5px; font-style: italic; color: var(--text-light); background: #fafafa; padding: 10px; border-radius: 8px;">
+                "{{ req.custom_message }}"
+            </p>
+            {% endif %}
+
+            <div class="seller-info-box">
+                <p style="font-weight: 600; margin-bottom: 5px; color: var(--primary);">Artisan Information</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                    <p><i class="fas fa-store"></i> <strong>Shop:</strong> {{ req.shop_name }}</p>
+                    <p><i class="fas fa-user"></i> <strong>Artisan:</strong> {{ req.seller_name }}</p>
+                    <p><i class="fas fa-phone"></i> <strong>Phone:</strong> {{ req.seller_phone }}</p>
+                </div>
+            </div>
+
+            {% if req.request_status == 'accepted' %}
+            <div class="status-msg accepted">
+                <strong>Great news!</strong> Your artisan has accepted this request.
+                <br>Final Quote: <strong>₹{{ req.final_price or req.estimated_price }}</strong>
+                | Delivery: <strong>{{ req.delivery_time or 'Standard' }}</strong>
+                <div style="margin-top: 10px;">
+                    <a href="{{ url_for('cart.view_cart') }}" class="btn-custom"
+                        style="padding: 8px 15px; font-size: 0.9rem;">View in Cart & Pay</a>
+                </div>
+            </div>
+            {% elif req.request_status == 'rejected' %}
+            <div class="status-msg rejected">
+                <strong>Update:</strong> This request was not accepted by the artisan.
+            </div>
+            {% elif req.request_status == 'ordered' %}
+            <div class="status-msg ordered">
+                <strong>Status:</strong> Order Placed! The artisan is now working on your custom piece.
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="text-align: right; margin-left: 2rem;">
+            <div style="font-weight: 700; color: var(--primary); font-size: 1.4rem; margin-bottom: 15px;">₹{{
+                req.final_price or req.estimated_price }}</div>
+            <span class="status-badge status-{{ req.request_status }}">
+                {% if req.request_status == 'accepted' %}
+                Approved
+                {% elif req.request_status == 'ordered' %}
+                Paid & Confirmed
+                {% else %}
+                {{ req.request_status }}
+                {% endif %}
+            </span>
+            {% if req.request_status == 'accepted' %}
+            <div style="margin-top: 10px;">
+                <a href="{{ url_for('cart.view_cart') }}"
+                    style="color: var(--primary); font-size: 0.8rem; font-weight: 600; text-decoration: underline;">Pay
+                    Now</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 4rem;">
+        <i class="fas fa-box-open" style="font-size: 4rem; color: #ddd; margin-bottom: 1rem;"></i>
+        <p style="color: #666;">No custom requests found.</p>
+        <a href="{{ url_for('custom_order.new_request') }}" class="btn-custom"
+            style="display: inline-block; margin-top: 1rem;">Start Your First Request</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

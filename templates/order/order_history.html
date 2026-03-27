@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% block title %}My Orders | Plattera{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #d4a373;
+        --primary-dark: #bc8249;
+        --text-dark: #2e2a28;
+        --text-light: #777;
+        --bg: #fffefc;
+        --font-headings: var(--font-heading, 'Crimson Pro', serif);
+        --font-body: var(--font-body, 'Tenor Sans', sans-serif);
+    }
+
+    .page-hero {
+        padding: 160px 2rem 50px;
+        text-align: center;
+        background: linear-gradient(135deg, #fdfbfb, #f0e6df);
+    }
+
+    .page-hero h1 {
+        font-family: var(--font-headings);
+        font-size: 3.5rem;
+        font-style: italic;
+    }
+
+    .page-hero p {
+        color: var(--text-light);
+    }
+
+    .plattera-container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 3rem 2rem 6rem;
+    }
+
+    .status-tabs {
+        display: flex;
+        gap: 0;
+        margin-bottom: 2.5rem;
+        background: white;
+        border-radius: 50px;
+        padding: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    }
+
+    .status-tab {
+        flex: 1;
+        padding: 10px;
+        text-align: center;
+        border-radius: 50px;
+        font-size: 0.82rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        cursor: pointer;
+        font-family: 'Tenor Sans', sans-serif;
+        color: var(--text-light);
+        border: none;
+        background: transparent;
+        transition: 0.3s;
+    }
+
+    .status-tab.active {
+        background: var(--primary);
+        color: white;
+    }
+
+    .order-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.8rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        display: grid;
+        grid-template-columns: 90px 1fr auto;
+        gap: 1.5rem;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        border-left: 4px solid #eee;
+        transition: 0.3s;
+    }
+
+    .order-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-card[data-status="delivered"] {
+        border-left-color: #66bb6a;
+    }
+
+    .order-card[data-status="shipped"] {
+        border-left-color: #26a69a;
+    }
+
+    .order-card[data-status="pending"] {
+        border-left-color: #ffc107;
+    }
+
+    .order-card[data-status="processing"] {
+        border-left-color: #ff9a9e;
+    }
+
+    .order-card[data-status="cancelled"] {
+        border-left-color: #ef5350;
+    }
+
+    .order-thumb {
+        width: 90px;
+        height: 90px;
+        border-radius: 10px;
+        object-fit: cover;
+        background: #f5f0ec;
+    }
+
+    .order-id {
+        font-family: 'Tenor Sans', sans-serif;
+        font-size: 0.8rem;
+        color: #aaa;
+        letter-spacing: 1px;
+    }
+
+    .order-name {
+        font-family: var(--font-headings);
+        font-size: 1.3rem;
+        margin: 0.3rem 0;
+    }
+
+    .order-meta {
+        font-size: 0.82rem;
+        color: var(--text-light);
+    }
+
+    .price-col {
+        text-align: right;
+    }
+
+    .order-price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 14px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 0.5rem;
+    }
+
+    .st-delivered {
+        background: #e8f5e9;
+        color: #388e3c;
+    }
+
+    .st-shipped {
+        background: #e0f7fa;
+        color: #00796b;
+    }
+
+    .st-pending {
+        background: #fff8e1;
+        color: #f57c00;
+    }
+
+    .st-processing {
+        background: #fce4ec;
+        color: #c2185b;
+    }
+
+    .st-cancelled {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .btn-view-order {
+        margin-top: 0.8rem;
+        display: inline-block;
+        font-size: 0.8rem;
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        padding: 5px 14px;
+        border-radius: 50px;
+        transition: 0.3s;
+    }
+
+    .btn-view-order:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .empty-orders {
+        text-align: center;
+        padding: 5rem 2rem;
+        color: var(--text-light);
+    }
+
+    .empty-orders i {
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+        display: block;
+        color: #ddd;
+    }
+</style>
+
+<div class="page-hero">
+    <h1>My Orders</h1>
+    <p>Track all your purchases in one place</p>
+</div>
+
+<div class="plattera-container">
+    {% if orders %}
+    {% for order in orders %}
+    <div class="order-card" data-status="{{ order['order_status'] }}">
+        {% if order['image_url'] %}
+        <img class="order-thumb"
+            src="{{ url_for('static', filename='uploads/products/' + order['image_url'].split('/')[-1]) if not order['image_url'].startswith('http') else order['image_url'] }}"
+            alt="{{ order['product_name'] }}" onerror="this.style.background='#f5ece3'">
+        {% else %}
+        <div class="order-thumb"
+            style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffecd2,#fcb69f);">
+            <i class="fas fa-shopping-bag" style="color:rgba(255,255,255,0.6);font-size:1.5rem;"></i>
+        </div>
+        {% endif %}
+
+        <div>
+            <p class="order-id">#{{ order['order_id'] }}</p>
+            <p class="order-name">{{ order['product_name'] }}</p>
+            <p class="order-meta">
+                {% if order['shop_name'] %}<i class="fas fa-store"></i> {{ order['shop_name'] }} &bull; {% endif %}
+                Qty: {{ order['quantity'] }} &bull; {{ order['created_at'][:10] }}
+            </p>
+            <a href="{{ url_for('order.order_detail', order_id=order['order_id']) }}" class="btn-view-order">View
+                Details</a>
+        </div>
+
+        <div class="price-col">
+            <div class="order-price">₹{{ "%.2f"|format(order['total_amount']|float) }}</div>
+            <div class="status-badge st-{{ order['order_status'] }}">
+                {% if order['order_status'] == 'delivered' %}<i class="fas fa-check-circle"></i>
+                {% elif order['order_status'] == 'shipped' %}<i class="fas fa-truck"></i>
+                {% elif order['order_status'] == 'pending' %}<i class="fas fa-clock"></i>
+                {% elif order['order_status'] == 'cancelled' %}<i class="fas fa-times-circle"></i>
+                {% else %}<i class="fas fa-spinner"></i>{% endif %}
+                {{ order['order_status']|capitalize }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="empty-orders">
+        <i class="fas fa-shopping-bag"></i>
+        <p>You haven't placed any orders yet.</p>
+        <a href="{{ url_for('product.gallery') }}"
+            style="margin-top:1.5rem;display:inline-block;padding:0.8rem 2rem;background:var(--primary);color:white;border-radius:50px;font-weight:600;">Start
+            Shopping</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

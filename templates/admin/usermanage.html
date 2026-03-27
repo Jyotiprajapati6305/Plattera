@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management | Plattera Admin</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Tenor+Sans&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for graphs inside Modals -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            /* Admin Pure Black Theme */
+            --primary: #ffffff;
+            --primary-light: rgba(255, 255, 255, 0.1);
+            --primary-dark: #e0e0e0;
+            --secondary: #111111;
+
+            --bg-body: #000000;
+            --bg-card: #0a0a0a;
+            --bg-hover: #151515;
+
+            --text-dark: #ffffff;
+            --text-muted: #888888;
+
+            --border-color: rgba(255, 255, 255, 0.1);
+
+            /* Status Colors */
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.15);
+            --danger: #fb4848;
+            --danger-light: rgba(251, 72, 72, 0.15);
+            --info: #3ba2b8;
+            --info-light: rgba(59, 162, 184, 0.15);
+
+            --font-head: 'Crimson Pro', serif;
+            --font-body: 'Tenor Sans', sans-serif;
+
+            --shadow-sm: none;
+            --shadow-hover: 0 4px 15px rgba(255, 255, 255, 0.05);
+
+            --radius-md: 12px;
+            --radius-sm: 6px;
+            --transition: all 0.3s ease;
+
+            --sidebar-width: 300px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-dark);
+            background-color: var(--bg-body);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-head);
+            font-weight: 600;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --- MAIN CONTENT & HEADER --- */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem 3rem;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .page-title h1 {
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .header-tools {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            font-family: inherit;
+            width: 250px;
+            background: var(--bg-hover);
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: bold;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-color);
+            color: var(--text-dark);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(122, 92, 140, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--bg-hover);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        /* --- SUMMARY PANEL --- */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .summary-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sum-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .sum-info h4 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+            font-family: var(--font-body);
+        }
+
+        .sum-info .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-dark);
+            line-height: 1;
+            font-family: var(--font-head);
+        }
+
+        /* --- TAB NAVIGATION --- */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+            gap: 2rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 0;
+            font-size: 1.1rem;
+            font-family: var(--font-head);
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- FILTERS --- */
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 0.4rem 1rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-chip:hover,
+        .filter-chip.active {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* --- TABLES --- */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: #fafafa;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .badge.active {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge.suspended {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .badge.blocked {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .badge.pending {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .badge.verified {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        /* Action Dropdown */
+        .action-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .action-drop-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        .action-drop-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: var(--bg-card);
+            min-width: 160px;
+            box-shadow: var(--shadow-md);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .action-dropdown:hover .action-drop-content {
+            display: block;
+        }
+
+        .action-drop-content a {
+            color: var(--text-dark);
+            padding: 0.8rem 1rem;
+            text-decoration: none;
+            display: block;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .action-drop-content a:last-child {
+            border-bottom: none;
+        }
+
+        .action-drop-content a:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .action-drop-content a.danger-act {
+            color: var(--danger);
+        }
+
+        .action-drop-content a.danger-act:hover {
+            background: var(--danger-light);
+        }
+
+        /* --- MODAL / SIDE PANEL --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: flex-end;
+            /* Slide from right */
+            z-index: 1000;
+        }
+
+        .modal-panel {
+            background: var(--bg-card);
+            width: 100%;
+            max-width: 600px;
+            height: 100vh;
+            overflow-y: auto;
+            animation: slideInRight 0.3s ease;
+            box-shadow: -10px 0 25px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-body);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        /* Modal Sections */
+        .profile-card {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 0.2rem;
+        }
+
+        .section-header {
+            font-family: var(--font-head);
+            font-size: 1.3rem;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .perf-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .perf-box {
+            background: var(--bg-body);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .perf-box .val {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary);
+            font-family: var(--font-head);
+        }
+
+        .perf-box .lbl {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+        }
+
+        /* Document grid (Pending Apps) */
+        .doc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .doc-item {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .doc-item i {
+            font-size: 2rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        @media screen and (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: var(--transition);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include 'admin/sidebar.html' %}
+
+    <!-- MAIN DASHBOARD -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <header class="top-header">
+            <div class="page-title">
+                <h1>User Management</h1>
+                <p>Manage sellers, buyers, approvals, and account control from one place.</p>
+            </div>
+
+            <div class="header-tools">
+                <div class="search-box">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Search Name, Email, ID...">
+                </div>
+                <button class="btn btn-outline"><i class="fa-solid fa-filter"></i> Filters</button>
+                <button class="btn btn-primary"><i class="fa-solid fa-download"></i> Export Data</button>
+            </div>
+        </header>
+
+        <!-- SUMMARY PANEL -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="sum-icon" style="background: var(--primary-light); color: var(--primary);"><i
+                        class="fa-solid fa-store"></i></div>
+                <div class="sum-info">
+                    <h4>Total Sellers</h4>
+                    <div class="value">{{ stats.total_sellers }}</div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="sum-icon" style="background: var(--success-light); color: var(--success);"><i
+                        class="fa-solid fa-check-circle"></i></div>
+                <div class="sum-info">
+                    <h4>Active Sellers</h4>
+                    <div class="value">{{ stats.active_sellers }}</div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="sum-icon" style="background: var(--danger-light); color: var(--danger);"><i
+                        class="fa-solid fa-ban"></i></div>
+                <div class="sum-info">
+                    <h4>Suspended Sellers</h4>
+                    <div class="value">{{ stats.suspended_sellers }}</div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="sum-icon" style="background: var(--info-light); color: var(--info);"><i
+                        class="fa-solid fa-users"></i></div>
+                <div class="sum-info">
+                    <h4>Total Buyers</h4>
+                    <div class="value">{{ stats.total_buyers }}</div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="sum-icon" style="background: var(--warning-light); color: var(--warning);"><i
+                        class="fa-solid fa-clock-rotate-left"></i></div>
+                <div class="sum-info">
+                    <h4>Pending Apps</h4>
+                    <div class="value">{{ stats.pending_apps }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('sellers')">1️⃣ Sellers</button>
+            <button class="tab-btn" onclick="switchTab('buyers')">2️⃣ Buyers</button>
+            <button class="tab-btn" onclick="switchTab('pending')">3️⃣ Pending Approvals <span class="badge pending">{{
+                    stats.pending_apps }}</span></button>
+        </div>
+
+        <!-- TAB 1: SELLERS -->
+        <div id="sellers" class="tab-content active">
+            <div class="filter-bar">
+                <div class="filter-chip active">All Sellers</div>
+                <div class="filter-chip">Active</div>
+                <div class="filter-chip">Suspended</div>
+                <div class="filter-chip">Low Rating (< 3)</div>
+                        <div class="filter-chip">High Revenue</div>
+                        <div class="filter-chip">New Sellers</div>
+                </div>
+
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Seller ID</th>
+                                <th>Store Name</th>
+                                <th>Owner Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Rating</th>
+                                <th>Revenue</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for seller in sellers %}
+                            <tr>
+                                <td>#{{ seller.u_id }}</td>
+                                <td>{{ seller.shop_name or 'Not Set' }}</td>
+                                <td>{{ seller.u_name }}</td>
+                                <td>{{ seller.u_email }}</td>
+                                <td>
+                                    {% if seller.approval_status == 'Approved' %}
+                                    <span class="badge active">Active</span>
+                                    {% elif seller.approval_status == 'Rejected' %}
+                                    <span class="badge suspended">Rejected</span>
+                                    {% else %}
+                                    <span class="badge pending">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>⭐ 4.5</td> <!-- Placeholder rating -->
+                                <td style="color:var(--success); font-weight:bold;">₹ 0</td>
+                                <!-- Placeholder revenue -->
+                                <td>
+                                    <div class="action-dropdown">
+                                        <button class="action-drop-btn"><i
+                                                class="fa-solid fa-ellipsis-vertical"></i></button>
+                                        <div class="action-drop-content">
+                                            <a href="#"><i class="fa-solid fa-user"></i> View Profile</a>
+                                            {% if seller.approval_status != 'Approved' %}
+                                            <form action="{{ url_for('admin.approve_seller', user_id=seller.u_id) }}"
+                                                method="POST" style="display:inline;">
+                                                <a href="javascript:void(0)" onclick="this.parentElement.submit();"
+                                                    style="color: var(--success);"><i class="fa-solid fa-check"></i>
+                                                    Approve</a>
+                                            </form>
+                                            {% endif %}
+                                            {% if seller.approval_status != 'Rejected' %}
+                                            <form action="{{ url_for('admin.reject_seller', user_id=seller.u_id) }}"
+                                                method="POST" style="display:inline;">
+                                                <a href="javascript:void(0)" onclick="this.parentElement.submit();"
+                                                    class="danger-act"><i class="fa-solid fa-ban"></i> Reject</a>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 2: BUYERS -->
+            <div id="buyers" class="tab-content">
+                <div class="filter-bar">
+                    <div class="filter-chip active">All Buyers</div>
+                    <div class="filter-chip">Active</div>
+                    <div class="filter-chip">Blocked</div>
+                    <div class="filter-chip">High Spending</div>
+                    <div class="filter-chip">Frequent Returns</div>
+                </div>
+
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Buyer ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Orders</th>
+                                <th>Total Spending</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for buyer in buyers %}
+                            <tr>
+                                <td>#{{ buyer.u_id }}</td>
+                                <td>{{ buyer.u_name }}</td>
+                                <td>{{ buyer.u_email }}</td>
+                                <td>0</td> <!-- Placeholder orders count -->
+                                <td style="font-weight:bold;">₹ 0</td> <!-- Placeholder spending -->
+                                <td><span class="badge active">Active</span></td>
+                                <td>
+                                    <div class="action-dropdown">
+                                        <button class="action-drop-btn"><i
+                                                class="fa-solid fa-ellipsis-vertical"></i></button>
+                                        <div class="action-drop-content">
+                                            <a href="#"><i class="fa-solid fa-user"></i> View Profile</a>
+                                            <a href="#" class="danger-act"><i class="fa-solid fa-ban"></i> Block</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 3: PENDING APPROVALS -->
+            <div id="pending" class="tab-content">
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Applicant ID</th>
+                                <th>Store Name</th>
+                                <th>Owner Name</th>
+                                <th>Email</th>
+                                <th>Applied Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in pending %}
+                            <tr>
+                                <td>#{{ p.u_id }}</td>
+                                <td>{{ p.shop_name or 'N/A' }}</td>
+                                <td>{{ p.u_name }}</td>
+                                <td>{{ p.u_email }}</td>
+                                <td>{{ p.created_at }}</td>
+                                <td><span class="badge pending">Awaiting Review</span></td>
+                                <td>
+                                    <div class="action-dropdown">
+                                        <button class="action-drop-btn"><i
+                                                class="fa-solid fa-ellipsis-vertical"></i></button>
+                                        <div class="action-drop-content">
+                                            <form action="{{ url_for('admin.approve_seller', user_id=p.u_id) }}"
+                                                method="POST" style="display:inline;">
+                                                <a href="javascript:void(0)" onclick="this.parentElement.submit();"
+                                                    style="color: var(--success);"><i
+                                                        class="fa-solid fa-check-circle"></i> Approve</a>
+                                            </form>
+                                            <form action="{{ url_for('admin.reject_seller', user_id=p.u_id) }}"
+                                                method="POST" style="display:inline;">
+                                                <a href="javascript:void(0)" onclick="this.parentElement.submit();"
+                                                    class="danger-act"><i class="fa-solid fa-times-circle"></i>
+                                                    Reject</a>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+    </main>
+
+    <!-- MODAL CONTAINERS -->
+
+    <!-- SELLER PROFILE MODAL -->
+    <div class="modal-overlay" id="sellerModal">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h2>Seller Profile</h2>
+                <button class="close-modal" onclick="closeModal('sellerModal')"><i
+                        class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <!-- Basic Info -->
+                <div class="profile-card">
+                    <div class="profile-avatar">YS</div>
+                    <div>
+                        <h3 style="font-size: 1.5rem; margin-bottom:0.2rem;">YarnCraft Studio <span
+                                class="badge verified" style="font-size: 0.7rem; vertical-align:middle;">Verified
+                                KYC</span></h3>
+                        <p style="color: var(--text-muted);">Owned by: Aditi Sharma</p>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item"><span class="info-label">Email</span><strong>aditi@yarncraft.com</strong>
+                    </div>
+                    <div class="info-item"><span class="info-label">Phone</span><strong>+91 9876543210</strong></div>
+                    <div class="info-item"><span class="info-label">Reg. Date</span><strong>12 Jan 2024</strong></div>
+                    <div class="info-item"><span class="info-label">Status</span><span
+                            style="color:var(--success); font-weight:bold;">Active</span></div>
+                </div>
+
+                <!-- Performance -->
+                <h4 class="section-header"><i class="fa-solid fa-chart-line"></i> Performance Analytics</h4>
+                <div class="perf-grid">
+                    <div class="perf-box">
+                        <div class="val">48</div>
+                        <div class="lbl">Products</div>
+                    </div>
+                    <div class="perf-box">
+                        <div class="val" style="color:var(--success);">122</div>
+                        <div class="lbl">Total Orders</div>
+                    </div>
+                    <div class="perf-box">
+                        <div class="val">₹45k</div>
+                        <div class="lbl">Revenue</div>
+                    </div>
+                    <div class="perf-box">
+                        <div class="val">2.8%</div>
+                        <div class="lbl">Conv. Rate</div>
+                    </div>
+                    <div class="perf-box">
+                        <div class="val">31%</div>
+                        <div class="lbl">Repeat Buy</div>
+                    </div>
+                    <div class="perf-box">
+                        <div class="val">4.9⭐</div>
+                        <div class="lbl">Rating (150 rev)</div>
+                    </div>
+                </div>
+
+                <div
+                    style="height: 150px; width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-sm); margin-bottom: 2rem; display:flex; align-items:center; justify-content:center; background:#fafafa; color:var(--text-muted);">
+                    <canvas id="sellerSalesChart"></canvas>
+                </div>
+
+                <!-- Learning & Badges -->
+                <h4 class="section-header"><i class="fa-solid fa-medal"></i> Learning & Badges</h4>
+                <div class="info-grid">
+                    <div class="info-item"><span class="info-label">Modules Done</span><strong>3 / 8</strong></div>
+                    <div class="info-item"><span class="info-label">Last Active</span><strong>Yesterday</strong></div>
+                </div>
+                <div style="margin-bottom: 2rem;">
+                    <span class="filter-chip active" style="margin-right: 0.5rem;"><i class="fa-solid fa-check"></i> Top
+                        Rated Seller</span>
+                    <span class="filter-chip" style="border-style:dashed; color:var(--primary);"><i
+                            class="fa-solid fa-plus"></i> Assign Badge</span>
+                </div>
+
+                <!-- Account Control -->
+                <h4 class="section-header" style="color: var(--danger); border-color: var(--danger-light);"><i
+                        class="fa-solid fa-shield-halved"></i> Account Control</h4>
+                <div class="form-group">
+                    <label class="form-label">Suspend Seller Reason</label>
+                    <select class="form-input">
+                        <option>Policy Violation</option>
+                        <option>Poor Ratings / Quality</option>
+                        <option>Suspicious Activity / Fraud</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-outline" style="flex:1;">Send Warning Email</button>
+                    <button class="btn btn-danger" style="flex:1;">Suspend Seller</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BUYER PROFILE MODAL -->
+    <div class="modal-overlay" id="buyerModal">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h2>Buyer Profile</h2>
+                <button class="close-modal" onclick="closeModal('buyerModal')"><i
+                        class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-card">
+                    <div class="profile-avatar" style="background:#e8f0fe; color:#477bd4;">KP</div>
+                    <div>
+                        <h3 style="font-size: 1.5rem; margin-bottom:0.2rem;">Karan Patel</h3>
+                        <p style="color: var(--success); font-weight:bold;">Active Buyer</p>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item"><span class="info-label">Email</span><strong>karan.p@mail.com</strong></div>
+                    <div class="info-item"><span class="info-label">Phone</span><strong>+91 9988776655</strong></div>
+                    <div class="info-item"><span class="info-label">Joined</span><strong>Feb 2025</strong></div>
+                    <div class="info-item"><span class="info-label">Top Category</span><strong>Baby Gifts</strong></div>
+                </div>
+
+                <h4 class="section-header"><i class="fa-solid fa-bag-shopping"></i> Order History</h4>
+                <div class="perf-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div class="perf-box">
+                        <div class="val">12</div>
+                        <div class="lbl">Total Orders</div>
+                    </div>
+                    <div class="perf-box">
+                        <div class="val" style="color:var(--success);">₹ 24,500</div>
+                        <div class="lbl">Total Spending</div>
+                    </div>
+                    <div class="perf-box">
+                        <div class="val" style="color:var(--danger);">1</div>
+                        <div class="lbl">Cancelled</div>
+                    </div>
+                    <div class="perf-box">
+                        <div class="val">₹ 2,041</div>
+                        <div class="lbl">Avg Order Value</div>
+                    </div>
+                </div>
+                <button class="btn btn-outline" style="width:100%; margin-bottom: 2rem;">View Detailed Orders</button>
+
+                <h4 class="section-header" style="color: var(--danger); border-color: var(--danger-light);"><i
+                        class="fa-solid fa-shield-halved"></i> Account Actions</h4>
+                <div class="form-group">
+                    <label class="form-label">Block Reason</label>
+                    <select class="form-input">
+                        <option>Fake Orders (RTO)</option>
+                        <option>Abusive Behavior</option>
+                        <option>Fraudulent Payment</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-outline" style="flex:1;">Flag Suspicious</button>
+                    <button class="btn btn-danger" style="flex:1;">Block Buyer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PENDING APPROVAL MODAL -->
+    <div class="modal-overlay" id="pendingModal">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h2>Review Application</h2>
+                <button class="close-modal" onclick="closeModal('pendingModal')"><i
+                        class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div
+                    style="background: var(--warning-light); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid rgba(217, 154, 44, 0.3); margin-bottom: 2rem;">
+                    <strong>Status:</strong> New Application received on 04 Mar 2026.
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item"><span class="info-label">Store Name</span><strong>Knots by Sneha</strong>
+                    </div>
+                    <div class="info-item"><span class="info-label">Owner</span><strong>Sneha Roy</strong></div>
+                    <div class="info-item"><span class="info-label">Category</span><strong>Crochet Home Decor</strong>
+                    </div>
+                    <div class="info-item"><span class="info-label">Phone</span><strong>+91 9123456780</strong></div>
+                </div>
+
+                <h4 class="section-header"><i class="fa-solid fa-file-contract"></i> Description & Samples</h4>
+                <p
+                    style="font-size: 0.95rem; color: var(--text-dark); margin-bottom: 1rem; background: #fafafa; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                    "I have been making amigurumi and boho wall hangings for 3 years. I source ethical yarn and am
+                    looking to scale through Plattera."
+                </p>
+
+                <h4 class="section-header"><i class="fa-solid fa-id-card"></i> KYC Documents</h4>
+                <div class="doc-grid">
+                    <div class="doc-item">
+                        <i class="fa-solid fa-address-card"></i>
+                        <div style="font-size: 0.85rem; font-weight:bold;">Govt. ID (Aadhaar)</div>
+                        <a href="#" style="font-size: 0.8rem; color: var(--info);">View Document</a>
+                    </div>
+                    <div class="doc-item">
+                        <i class="fa-solid fa-building-columns"></i>
+                        <div style="font-size: 0.85rem; font-weight:bold;">Bank Details</div>
+                        <a href="#" style="font-size: 0.8rem; color: var(--info);">View Document</a>
+                    </div>
+                </div>
+
+                <h4 class="section-header" style="margin-top:2.5rem;"><i class="fa-solid fa-gavel"></i> Approval
+                    Decision</h4>
+                <div class="form-group">
+                    <label class="form-label">Rejection Reason (if applicable)</label>
+                    <input type="text" class="form-input" placeholder="e.g. Blurry ID Document">
+                </div>
+
+                <div style="display: flex; gap: 1rem; flex-direction: column;">
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-outline" style="flex:1;">Request Re-upload</button>
+                        <button class="btn btn-danger" style="flex:1;">Reject</button>
+                    </div>
+                    <button class="btn btn-success" style="width: 100%; padding: 1rem;">Approve Seller & Grant
+                        Access</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Modal Logic
+        function openModal(type) {
+            document.getElementById(type + 'Modal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Small Chart for Seller Profile Modal
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById('sellerSalesChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar'],
+                        datasets: [{
+                            label: 'Sales',
+                            data: [12, 19, 15],
+                            borderColor: '#7a5c8c',
+                            tension: 0.4,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

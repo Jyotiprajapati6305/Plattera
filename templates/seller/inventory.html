@@ -1,0 +1,86 @@
+{% extends "seller/layout.html" %}
+
+{% block title %}Inventory | Plattera Seller{% endblock %}
+
+{% block header_content %}
+<h1>Product Inventory</h1>
+<p>Manage your listings, stock levels, and product details.</p>
+{% endblock %}
+
+{% block content %}
+<div class="card"
+    style="background: white; border-radius: 16px; padding: 1.8rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);">
+    <div
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <h3 style="font-size: 1.3rem; color: var(--primary);"><i class="fa-solid fa-boxes-stacked"></i> Your Products
+        </h3>
+        <div style="display: flex; gap: 1rem;">
+            <a href="{{ url_for('seller.add_product') }}" class="btn-sm fill"
+                style="background: var(--primary); color: white; padding: 0.6rem 1.2rem; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block;">
+                <i class="fa-solid fa-plus-circle"></i> Add New Product
+            </a>
+        </div>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Image</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Product Details</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Category</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Price</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Stock</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 1rem;">
+                        {% set img_url = product.main_image if product.main_image else
+                        'static/uploads/products/default.png' %}
+                        {% if not img_url.startswith('static/') and not img_url.startswith('http') %}
+                        {% set img_url = 'static/uploads/products/' + img_url %}
+                        {% endif %}
+                        <img src="/{{ img_url }}"
+                            style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-color);">
+                    </td>
+                    <td style="padding: 1rem;">
+                        <div style="font-weight: bold;">{{ product.p_name }}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">ID: #{{ product.p_id }}</div>
+                    </td>
+                    <td style="padding: 1rem; color: var(--text-muted);">{{ product.c_name }}</td>
+                    <td style="padding: 1rem; font-weight: bold;">₹ {{ "{:,.2f}".format(product.p_price) }}</td>
+                    <td style="padding: 1rem;">
+                        <span style="{% if product.p_stock <= 5 %}color: var(--danger); font-weight: bold;{% endif %}">
+                            {{ product.p_stock }} units
+                        </span>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="{{ url_for('seller.edit_product', pid=product.p_id) }}" class="btn-sm"
+                                style="padding: 0.4rem 0.8rem; border-radius: 5px; border: 1px solid var(--border-color); background: white; color: var(--text-dark); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;"><i
+                                    class="fa-solid fa-pen"></i></a>
+                            <a href="{{ url_for('seller.delete_product', pid=product.p_id) }}" class="btn-sm"
+                                onclick="return confirm('Are you sure you want to delete this product?');"
+                                style="padding: 0.4rem 0.8rem; border-radius: 5px; border: 1px solid var(--danger); background: white; color: var(--danger); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;"><i
+                                    class="fa-solid fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not products %}
+                <tr>
+                    <td colspan="6" style="padding: 3rem; text-align: center; color: var(--text-muted);">
+                        <i class="fa-solid fa-box-open"
+                            style="font-size: 3rem; opacity: 0.2; display: block; margin-bottom: 1rem;"></i>
+                        You haven't added any products yet.
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

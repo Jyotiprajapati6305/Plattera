@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+<style>
+    /* Hide generic header spacer */
+    .header-spacer {
+        display: none !important;
+    }
+
+    /* VISIBILITY FIX: Force body to not scroll */
+    body {
+        overflow: hidden !important;
+    }
+
+    /* Auth Wrapper - full screen, image goes behind navbar */
+    .auth-wrapper {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        background: #fff;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        /* navbar sits above at higher z-index */
+    }
+
+    /* Panels */
+    .auth-panel {
+        width: 50%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Form Panel (Left for Login) */
+    .form-panel {
+        background: #ffffff;
+        z-index: 2;
+        padding: 20px 40px;
+        padding-top: 100px;
+        overflow: hidden;
+    }
+
+    /* Image Panel (Right for Login) */
+    .image-panel {
+        background: url("{{ url_for('static', filename='uploads/products/img3.jpeg') }}") center center/cover no-repeat;
+        color: white;
+        text-align: center;
+        position: relative;
+    }
+
+    /* Overlay */
+    /* Overlay - Darker for better text visibility */
+    .image-panel::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        /* Increased darkness */
+        z-index: 1;
+    }
+
+    /* Content over image */
+    .image-content {
+        position: relative;
+        z-index: 2;
+        max-width: 400px;
+        padding: 40px;
+    }
+
+    .image-content h2 {
+        font-family: var(--font-heading) !important;
+        font-size: 3.5rem;
+        font-weight: 300;
+        font-style: italic;
+        margin-bottom: 1.5rem;
+        color: #ffffff !important;
+        /* Force White */
+        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .image-content p {
+        font-family: var(--font-body, sans-serif);
+        font-size: 1.1rem;
+        color: #ffffff !important;
+        /* Force White */
+        opacity: 0.95;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* SVG Curve - Placed on the Left edge of the Image Panel */
+    .curve-divider {
+        position: absolute;
+        top: 0;
+        left: -1px;
+        /* Overlap slightly */
+        bottom: 0;
+        width: 120px;
+        height: 100%;
+        z-index: 3;
+        pointer-events: none;
+        transform: scaleX(-1);
+        /* Flip horizontally to curve appropriately */
+    }
+
+    /* Form Container - Increased Size */
+    .auth-form-container {
+        width: 100%;
+        max-width: 600px;
+        /* Increased from 450px */
+        position: relative;
+        padding: 20px;
+    }
+
+    .form-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 500;
+        color: var(--text-dark, #333);
+        margin-bottom: 24px;
+        text-align: center;
+        letter-spacing: -1px;
+    }
+
+    .form-control {
+        border: none;
+        border-bottom: 1px solid #ddd;
+        border-radius: 0;
+        padding: 10px 10px;
+        background: transparent;
+        transition: all 0.3s;
+        font-size: 1.05rem;
+        /* Increased from 0.95rem */
+    }
+
+    .form-control:focus {
+        box-shadow: none;
+        border-bottom-color: var(--accent-brown, #b58b7a);
+        background: transparent;
+    }
+
+    .form-label {
+        font-size: 0.95rem;
+        /* Increased from 0.82rem */
+        letter-spacing: 2px;
+        color: #555;
+        /* Darker for better visibility */
+        margin-bottom: 2px;
+        text-transform: uppercase;
+    }
+
+    .btn-auth {
+        background: #fcf2ed;
+        color: var(--text-dark, #333);
+        border: 2px dashed var(--text-dark, #333);
+        border-radius: 50px;
+        padding: 12px 40px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: all 0.3s;
+        width: 100%;
+        margin-top: 24px;
+        font-size: 1.05rem;
+        /* Increased from 0.95rem */
+    }
+
+    .btn-auth:hover {
+        background: #f5e6de;
+        /* Slightly darker pastel on hover */
+        border-color: var(--text-dark, #333);
+        color: var(--text-dark, #333);
+        transform: translateY(-1px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .auth-links {
+        margin-top: 25px;
+        text-align: center;
+        font-size: 1rem;
+        /* Increased from 0.9rem */
+        color: #666;
+    }
+
+    .auth-links a {
+        color: var(--text-dark, #333);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s;
+    }
+
+    .auth-links a:hover {
+        color: var(--accent-brown, #b58b7a);
+    }
+
+    .form-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+        font-size: 0.95rem;
+        /* Increased from 0.85rem */
+        color: #666;
+    }
+
+    .form-options a {
+        color: #666;
+        text-decoration: none;
+    }
+
+    @media (max-width: 900px) {
+        .auth-wrapper {
+            flex-direction: column;
+            overflow-y: auto;
+            height: 100vh;
+            min-height: 100vh;
+        }
+
+        .auth-panel {
+            width: 100%;
+        }
+
+        .image-panel {
+            height: 30vh;
+            flex: none;
+        }
+
+        .form-panel {
+            height: auto;
+            flex: 1;
+            padding: 40px 20px;
+        }
+
+        .curve-divider {
+            display: none;
+        }
+    }
+</style>
+
+<div class="auth-wrapper">
+    <!-- Form Side (Left) -->
+    <div class="auth-panel form-panel">
+        <div class="auth-form-container">
+            <!-- Special Notifications for Sellers -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            {% if 'pending approval' in message or 'rejected' in message %}
+            <div class="seller-status-box mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="status-icon me-3">
+                        {% if 'pending' in message %}
+                        <i class="fas fa-hourglass-half text-info"></i>
+                        {% else %}
+                        <i class="fas fa-times-circle text-danger"></i>
+                        {% endif %}
+                    </div>
+                    <div class="status-content text-start">
+                        <h6 class="mb-1 fw-bold">{{ 'Application Pending' if 'pending' in message else 'Registration
+                            Update' }}</h6>
+                        <p class="mb-0 small text-muted">{{ message }}</p>
+                    </div>
+                </div>
+            </div>
+            <style>
+                .seller-status-box {
+                    background: #f8fbff;
+                    border: 1px solid #e1f0ff;
+                    border-radius: 12px;
+                    padding: 15px;
+                    animation: slideDown 0.4s ease;
+                }
+
+                .status-icon {
+                    width: 40px;
+                    height: 40px;
+                    background: #fff;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+                    font-size: 1.1rem;
+                }
+
+                @keyframes slideDown {
+                    from {
+                        transform: translateY(-10px);
+                        opacity: 0;
+                    }
+
+                    to {
+                        transform: translateY(0);
+                        opacity: 1;
+                    }
+                }
+            </style>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <h1 class="form-title">Log In</h1>
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <div class="mb-4">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Enter your password"
+                        required>
+                </div>
+
+                <div class="form-options">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe" style="border-radius: 2px;">
+                        <label class="form-check-label" for="rememberMe" style="font-size: 0.85rem;">Remember me</label>
+                    </div>
+                    <a href="{{ url_for('auth.forgot_password') }}">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-auth">Log In</button>
+
+                <div class="auth-links">
+                    <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Sign Up</a></p>
+                    <hr class="my-4 opacity-10">
+                    <p class="small text-muted mb-0">Staff Member? <a href="{{ url_for('admin.login') }}"
+                            class="text-decoration-underline fw-bold" target="_blank">Admin Portal</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Image Side (Right) -->
+    <div class="auth-panel image-panel">
+        <!-- Curve Divider -->
+        <div class="curve-divider">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="height: 100%; width: 100%; fill: #ffffff;">
+                <path d="M100 0 v100 C 0 80 0 20 100 0 Z" />
+            </svg>
+        </div>
+
+        <div class="image-content">
+            <h2>Welcome Back!</h2>
+            <p>We are glad to see you again. Get access to your orders, wishlist, and recommendations.</p>
+        </div>
+    </div>
+</div>
+
+{% block footer %}{% endblock %}
+{% endblock %}

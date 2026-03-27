@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance & Commission | Plattera Admin</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Tenor+Sans&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            /* Admin Pure Black Theme */
+            --primary: #ffffff;
+            --primary-light: rgba(255, 255, 255, 0.1);
+            --primary-dark: #e0e0e0;
+            --secondary: #111111;
+
+            --bg-body: #000000;
+            --bg-card: #0a0a0a;
+            --bg-hover: #151515;
+
+            --text-dark: #ffffff;
+            --text-muted: #888888;
+
+            --border-color: rgba(255, 255, 255, 0.1);
+
+            /* Status Colors */
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.15);
+            --danger: #fb4848;
+            --danger-light: rgba(251, 72, 72, 0.15);
+            --info: #3ba2b8;
+            --info-light: rgba(59, 162, 184, 0.15);
+
+            --font-head: 'Crimson Pro', serif;
+            --font-body: 'Tenor Sans', sans-serif;
+
+            --shadow-sm: none;
+            --shadow-hover: 0 4px 15px rgba(255, 255, 255, 0.05);
+
+            --radius-md: 12px;
+            --radius-sm: 6px;
+            --transition: all 0.3s ease;
+
+            --sidebar-width: 300px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-dark);
+            background-color: var(--bg-body);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-head);
+            font-weight: 600;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* --- MAIN CONTENT LAYOUT --- */
+        .main-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem 3rem;
+            width: calc(100% - var(--sidebar-width));
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title h1 {
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            max-width: 600px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.2rem;
+            border-radius: 50px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid transparent;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-color);
+            color: var(--text-dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-hover);
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--bg-hover);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #428256;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c34141;
+        }
+
+        .btn-info {
+            background: var(--blue);
+            color: white;
+        }
+
+        /* --- TABS SYSTEM --- */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- CARDS & GRIDS --- */
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 0;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .icon-primary {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .icon-success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .icon-warning {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .icon-danger {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .icon-blue {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-family: var(--font-head);
+            font-weight: bold;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        /* --- TABLES --- */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            background: #fafafa;
+            white-space: nowrap;
+        }
+
+        tr.hoverable:hover {
+            background: var(--bg-hover);
+        }
+
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .badge-pending {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .badge-approved {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge-rejected {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .badge-paid {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+
+        /* Expandable Row Detail Panel */
+        .detail-row {
+            display: none;
+            background: var(--bg-hover);
+        }
+
+        .detail-row.open {
+            display: table-row;
+        }
+
+        .detail-content {
+            padding: 2rem !important;
+            border-bottom: 2px solid var(--primary) !important;
+        }
+
+        .detail-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            height: 100%;
+        }
+
+        /* --- FORMS --- */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.95rem;
+            background: var(--bg-hover);
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group .form-control {
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+
+        .input-group-text {
+            background: var(--bg-hover);
+            border: 1px solid var(--border-color);
+            border-right: none;
+            padding: 0.8rem 1rem;
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+            color: var(--text-muted);
+            font-weight: bold;
+        }
+
+        .section-title {
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        /* Flex row config for filters */
+        .filter-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+            background: var(--bg-hover);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-row select,
+        .filter-row input {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.85rem;
+        }
+
+        .tax-box {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tax-box::after {
+            content: '\f53c';
+            font-family: 'FontAwesome';
+            position: absolute;
+            right: -20px;
+            bottom: -30px;
+            font-size: 10rem;
+            opacity: 0.05;
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include 'admin/sidebar.html' %}
+
+    <!-- RIGHT MAIN CONTENT -->
+    <div class="main-wrapper">
+
+        <!-- PAGE HEADER -->
+        <header class="top-header">
+            <div class="page-title">
+                <h1>Finance & Commission</h1>
+                <p>Manage platform revenue, seller payouts, commission rules, and financial reports.</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary"
+                    onclick="switchTab('tab-requests', document.querySelector('.sidebar-link:nth-child(2)'))"><i
+                        class="fa-solid fa-eye"></i> View New Payouts</button>
+            </div>
+        </header>
+
+        <!-- DYNAMIC TABS AREA -->
+        <main class="tabs-area">
+
+            <!-- ==============================================
+                 1. COMMISSION SETTINGS
+            =============================================== -->
+            <div id="tab-settings" class="tab-content active">
+                <div class="grid-2" style="grid-template-columns: 1fr 1fr;">
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-sliders"></i> Platform Commission Rules</h3>
+                        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.5rem;">Configure the global
+                            commission settings for sellers on Plattera.</p>
+
+                        <div class="form-group">
+                            <label class="form-label">Default Global Commission (%)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-percent"></i></span>
+                                <input type="number" class="form-control" value="10">
+                            </div>
+                            <span
+                                style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem; display:block;">Applied
+                                to all sellers unless overridden by category or specific rules.</span>
+                        </div>
+
+                        <div class="form-group" style="margin-top:2rem;">
+                            <label class="form-label">Minimum Payout Limit</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" class="form-control" value="1000">
+                            </div>
+                            <span
+                                style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem; display:block;">Minimum
+                                amount a seller must accumulate before requesting a payout.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Payment Processing Fee</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" class="form-control" value="25">
+                            </div>
+                            <span
+                                style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem; display:block;">Fixed
+                                fee deducted per payout processing.</span>
+                        </div>
+
+                        <div style="margin-top:2rem; display:flex; gap:1rem;">
+                            <button class="btn btn-success"><i class="fa-solid fa-check"></i> Save Changes</button>
+                            <button class="btn btn-outline"><i class="fa-solid fa-rotate-left"></i> Reset to
+                                Default</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-layer-group"></i> Category-wise Overrides</h3>
+                        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.5rem;">Set specific
+                            commission rates for different product categories.</p>
+
+                        <div
+                            style="background:var(--bg-hover); padding:1rem; border-radius:var(--radius-sm); border:1px solid var(--border-color); margin-bottom:1rem;">
+                            <div
+                                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                                <strong>Crochet Bags</strong>
+                                <span class="badge badge-paid">Active</span>
+                            </div>
+                            <div class="input-group">
+                                <input type="number" class="form-control" value="12">
+                                <span class="input-group-text"
+                                    style="border-radius:0 var(--radius-sm) var(--radius-sm) 0; border-left:none;">%</span>
+                            </div>
+                        </div>
+
+                        <div
+                            style="background:var(--bg-hover); padding:1rem; border-radius:var(--radius-sm); border:1px solid var(--border-color); margin-bottom:1rem;">
+                            <div
+                                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                                <strong>Amigurumi Toys</strong>
+                                <span class="badge badge-paid">Active</span>
+                            </div>
+                            <div class="input-group">
+                                <input type="number" class="form-control" value="8">
+                                <span class="input-group-text"
+                                    style="border-radius:0 var(--radius-sm) var(--radius-sm) 0; border-left:none;">%</span>
+                            </div>
+                        </div>
+
+                        <div
+                            style="background:var(--bg-hover); padding:1rem; border-radius:var(--radius-sm); border:1px solid var(--border-color); margin-bottom:1.5rem;">
+                            <div
+                                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                                <strong>Home Decor</strong>
+                                <span class="badge badge-paid">Active</span>
+                            </div>
+                            <div class="input-group">
+                                <input type="number" class="form-control" value="10">
+                                <span class="input-group-text"
+                                    style="border-radius:0 var(--radius-sm) var(--radius-sm) 0; border-left:none;">%</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-outline" style="width:100%; justify-content:center;"><i
+                                class="fa-solid fa-plus"></i> Add Category Rule</button>
+
+                        <h3 class="section-title" style="margin-top:2rem;"><i class="fa-solid fa-user-tag"></i> Seller
+                            Specific Commission</h3>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Override commissions
+                            for Top Sellers or promotional accounts.</p>
+                        <button class="btn btn-outline"
+                            style="width:100%; justify-content:center; color:var(--primary);"><i
+                                class="fa-solid fa-user-plus"></i> Manage Seller Overrides</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 2 & 3. PAYOUT REQUESTS & MANAGEMENT
+            =============================================== -->
+            <div id="tab-requests" class="tab-content">
+                <div class="card">
+                    <h2
+                        style="color:var(--primary-dark); margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+                        <span><i class="fa-solid fa-money-check-dollar" style="color:var(--primary);"></i> Seller Payout
+                            Requests</span>
+                        <div class="filter-row"
+                            style="margin-bottom:0; padding:0.5rem; background:transparent; border:none; gap:0.5rem;">
+                            <select>
+                                <option>Status: All</option>
+                                <option>Pending</option>
+                                <option>Approved</option>
+                                <option>Paid</option>
+                            </select>
+                            <input type="text" placeholder="Search Seller...">
+                            <input type="date">
+                        </div>
+                    </h2>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Request ID</th>
+                                    <th>Seller Name</th>
+                                    <th>Amount</th>
+                                    <th>Orders Included</th>
+                                    <th>Request Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Row 1 (Pending) -->
+                                <tr class="hoverable">
+                                    <td><strong>PR001</strong></td>
+                                    <td>Rahul Store</td>
+                                    <td><strong style="font-size:1.1rem;">₹8,500</strong></td>
+                                    <td>12 Orders</td>
+                                    <td>10 Mar 2026</td>
+                                    <td><span class="badge badge-pending">Pending</span></td>
+                                    <td><button class="btn-outline"
+                                            style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:4px;"
+                                            onclick="togglePayoutDetail('payout-row-1')"><i class="fa-solid fa-eye"></i>
+                                            View</button></td>
+                                </tr>
+                                <!-- Detailed Payout Management View -->
+                                <tr id="payout-row-1" class="detail-row">
+                                    <td colspan="7" class="detail-content">
+                                        <div
+                                            style="background:var(--primary-light); padding:1.5rem; border:1px solid var(--primary); border-radius:8px;">
+                                            <div
+                                                style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color); padding-bottom:1rem;">
+                                                <div>
+                                                    <h3 style="color:var(--primary-dark); margin-bottom:0.5rem;">Payout
+                                                        Management - PR001</h3>
+                                                    <div style="display:flex; gap:2rem; font-size:0.9rem;">
+                                                        <div><strong style="color:var(--text-muted);">Seller:</strong>
+                                                            Rahul Store (SLR1023)</div>
+                                                        <div><strong style="color:var(--text-muted);">Bank:</strong>
+                                                            HDFC Bank - **** 4598</div>
+                                                        <div><strong style="color:var(--text-muted);">UPI:</strong>
+                                                            rahulstore@upi</div>
+                                                    </div>
+                                                </div>
+                                                <div style="text-align:right;">
+                                                    <div
+                                                        style="font-size:0.8rem; text-transform:uppercase; color:var(--text-muted);">
+                                                        Net Payout Amount</div>
+                                                    <div
+                                                        style="font-size:2rem; font-family:var(--font-head); font-weight:bold; color:var(--success);">
+                                                        ₹8,480</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="grid-2">
+                                                <div
+                                                    style="background:white; padding:1.5rem; border-radius:8px; border:1px solid var(--border-color);">
+                                                    <h4
+                                                        style="margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
+                                                        <i class="fa-solid fa-calculator"></i> Calculation Summary
+                                                    </h4>
+                                                    <ul style="list-style:none; padding:0; font-size:0.95rem;">
+                                                        <li
+                                                            style="display:flex; justify-content:space-between; margin-bottom:0.8rem;">
+                                                            <span>Total Sales (12 Orders)</span> <strong>₹9,450</strong>
+                                                        </li>
+                                                        <li
+                                                            style="display:flex; justify-content:space-between; margin-bottom:0.8rem; color:var(--danger);">
+                                                            <span>Platform Commission (10%)</span> <strong>-
+                                                                ₹945</strong>
+                                                        </li>
+                                                        <li
+                                                            style="display:flex; justify-content:space-between; margin-bottom:1rem; border-bottom:1px dashed var(--border-color); padding-bottom:1rem; color:var(--danger);">
+                                                            <span>Processing Fee</span> <strong>- ₹25</strong>
+                                                        </li>
+                                                        <li
+                                                            style="display:flex; justify-content:space-between; font-size:1.1rem; color:var(--success);">
+                                                            <strong>Net Payout Approved</strong> <strong>₹8,480</strong>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                                <div
+                                                    style="background:white; padding:1.5rem; border-radius:8px; border:1px solid var(--border-color); display:flex; flex-direction:column; justify-content:center; gap:1rem;">
+                                                    <button class="btn btn-success"
+                                                        style="justify-content:center; padding:1rem; font-size:1rem;"><i
+                                                            class="fa-solid fa-check-double"></i> Approve & Process
+                                                        Payout</button>
+                                                    <div style="display:flex; gap:1rem;">
+                                                        <button class="btn btn-info"
+                                                            style="flex:1; justify-content:center;"><i
+                                                                class="fa-solid fa-money-bill-transfer"></i> Mark as
+                                                            Paid</button>
+                                                        <button class="btn btn-danger"
+                                                            style="flex:1; justify-content:center;"><i
+                                                                class="fa-solid fa-ban"></i> Reject Request</button>
+                                                    </div>
+                                                    <div style="text-align:center; margin-top:0.5rem;">
+                                                        <a href="#"
+                                                            style="color:var(--primary); font-size:0.85rem; margin-right:1rem;"><i
+                                                                class="fa-solid fa-file-invoice"></i> Download
+                                                            Invoice</a>
+                                                        <a href="#" style="color:var(--primary); font-size:0.85rem;"><i
+                                                                class="fa-solid fa-envelope"></i> Send Notification</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div
+                                                style="margin-top:1.5rem; background:white; padding:1rem; border-radius:8px; border:1px solid var(--border-color);">
+                                                <h4 style="margin-bottom:1rem; font-size:0.95rem;"><i
+                                                        class="fa-solid fa-box-open"></i> Orders Included in this Payout
+                                                </h4>
+                                                <table style="font-size:0.85rem;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Order ID</th>
+                                                            <th>Product</th>
+                                                            <th>Amount</th>
+                                                            <th>Commission</th>
+                                                            <th>Seller Earned</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>ORD101</td>
+                                                            <td>Phone Case (Crochet)</td>
+                                                            <td>₹500</td>
+                                                            <td style="color:var(--danger);">-₹50</td>
+                                                            <td style="color:var(--success);">₹450</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>ORD102</td>
+                                                            <td>USB Cable Cover</td>
+                                                            <td>₹300</td>
+                                                            <td style="color:var(--danger);">-₹30</td>
+                                                            <td style="color:var(--success);">₹270</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="5"
+                                                                style="text-align:center; color:var(--text-muted);">...
+                                                                + 10 more orders ...</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 2 (Approved) -->
+                                <tr class="hoverable">
+                                    <td><strong>PR002</strong></td>
+                                    <td>Fashion Hub</td>
+                                    <td><strong style="font-size:1.1rem;">₹4,200</strong></td>
+                                    <td>6 Orders</td>
+                                    <td>9 Mar 2026</td>
+                                    <td><span class="badge badge-approved">Approved</span></td>
+                                    <td><button class="btn-outline"
+                                            style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-eye"></i> View</button></td>
+                                </tr>
+
+                                <!-- Row 3 (Rejected) -->
+                                <tr class="hoverable">
+                                    <td><strong>PR003</strong></td>
+                                    <td>Gadget World</td>
+                                    <td><strong style="font-size:1.1rem;">₹11,000</strong></td>
+                                    <td>18 Orders</td>
+                                    <td>8 Mar 2026</td>
+                                    <td><span class="badge badge-rejected">Rejected</span></td>
+                                    <td><button class="btn-outline"
+                                            style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-eye"></i> View</button></td>
+                                </tr>
+
+                                <!-- Row 4 (Paid) -->
+                                <tr class="hoverable">
+                                    <td><strong>PR004</strong></td>
+                                    <td>Yarn Mastery</td>
+                                    <td><strong style="font-size:1.1rem;">₹6,300</strong></td>
+                                    <td>9 Orders</td>
+                                    <td>7 Mar 2026</td>
+                                    <td><span class="badge badge-paid">Paid</span></td>
+                                    <td><button class="btn-outline"
+                                            style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-eye"></i> View</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 4. PLATFORM EARNINGS REPORT
+            =============================================== -->
+            <div id="tab-earnings" class="tab-content">
+                <div class="grid-4">
+                    <div class="card stat-card"
+                        style="grid-column: span 1; display:flex; flex-direction:column; justify-content:center; align-items:flex-start; padding:1.5rem; background:linear-gradient(135deg, var(--primary), var(--primary-dark)); color:white;">
+                        <span style="font-size:0.8rem; text-transform:uppercase; opacity:0.8; margin-bottom:0.5rem;"><i
+                                class="fa-solid fa-piggy-bank"></i> Total Comm. Earned</span>
+                        <span
+                            style="font-size:1.8rem; font-family:var(--font-head); font-weight:bold; line-height:1.2;">₹2,45,000</span>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon icon-info"><i class="fa-solid fa-money-bill-transfer"></i></div>
+                        <div class="stat-info"><span class="stat-title">Total Payouts to Sellers</span><span
+                                class="stat-value">₹18,75,000</span></div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon icon-success"><i class="fa-solid fa-box-open"></i></div>
+                        <div class="stat-info"><span class="stat-title">Total Orders Processed</span><span
+                                class="stat-value">12,430</span></div>
+                    </div>
+                    <div class="card stat-card" style="border-left: 4px solid var(--success);">
+                        <div class="stat-info"><span class="stat-title" style="color:var(--success);">Net Platform
+                                Profit</span><span class="stat-value" style="color:var(--success);">₹2,30,500</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                        <h3 class="section-title" style="border:none; margin:0;"><i class="fa-solid fa-chart-area"></i>
+                            Seller Sales vs Platform Commission</h3>
+                        <div style="display:flex; gap:0.5rem;">
+                            <button class="btn-outline"
+                                style="padding:0.3rem 0.8rem; font-size:0.8rem; border-radius:20px;">Daily</button>
+                            <button class="btn-outline"
+                                style="padding:0.3rem 0.8rem; font-size:0.8rem; border-radius:20px;">Weekly</button>
+                            <button class="btn-primary"
+                                style="padding:0.3rem 0.8rem; font-size:0.8rem; border-radius:20px;">Monthly</button>
+                            <button class="btn-outline"
+                                style="padding:0.3rem 0.8rem; font-size:0.8rem; border-radius:20px;">Yearly</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="earningsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 5. TAX / GST SUMMARY
+            =============================================== -->
+            <div id="tab-tax" class="tab-content">
+                <div class="grid-2">
+                    <div class="tax-box">
+                        <div style="position:relative; z-index:2;">
+                            <h3
+                                style="font-size:1.2rem; margin-bottom:1.5rem; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:0.5rem;">
+                                <i class="fa-solid fa-building-columns"></i> GST / Tax Liability Summary
+                            </h3>
+                            <ul style="list-style:none; padding:0; font-size:1.1rem;">
+                                <li style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                                    <span>Platform Comm.</span> <strong>₹2,45,000</strong>
+                                </li>
+                                <li
+                                    style="display:flex; justify-content:space-between; margin-bottom:1.5rem; color:#d4b8e6; border-bottom:1px dashed rgba(255,255,255,0.3); padding-bottom:1rem;">
+                                    <span>GST Applies (18%)</span> <strong>₹44,100</strong>
+                                </li>
+
+                                <li style="display:flex; justify-content:space-between; margin-bottom:1rem;"><span>Total
+                                        Tax Collected</span> <strong>₹44,100</strong></li>
+                                <li
+                                    style="display:flex; justify-content:space-between; margin-bottom:1rem; color:#a8e6cf;">
+                                    <span>Tax Paid (Submitted)</span> <strong>- ₹30,000</strong>
+                                </li>
+                                <li
+                                    style="display:flex; justify-content:space-between; font-size:1.4rem; font-weight:bold; margin-top:1.5rem; padding-top:1rem; border-top:2px solid white;">
+                                    <span>Pending Tax</span> <span style="color:#ffbba7;">₹14,100</span>
+                                </li>
+                            </ul>
+
+                            <div
+                                style="margin-top:2rem; background:rgba(255,0,0,0.2); border:1px solid rgba(255,0,0,0.3); padding:1rem; border-radius:8px; display:flex; align-items:center; gap:0.8rem;">
+                                <i class="fa-solid fa-triangle-exclamation"
+                                    style="color:#ffbba7; font-size:1.5rem;"></i>
+                                <div>
+                                    <div style="font-weight:bold;">Tax Payment Deadline Approaching</div>
+                                    <div style="font-size:0.85rem; opacity:0.9;">Pending tax of ₹14,100 is due by 31 Mar
+                                        2026.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="card" style="height:100%;">
+                            <h3 class="section-title"><i class="fa-solid fa-file-arrow-down"></i> Compliance & Invoice
+                                Download</h3>
+                            <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.5rem;">Download
+                                necessary documentation for accounting and legal compliance.</p>
+
+                            <div style="display:flex; flex-direction:column; gap:1rem;">
+                                <button class="btn btn-outline" style="justify-content:flex-start; padding:1rem;"><i
+                                        class="fa-solid fa-file-pdf"
+                                        style="color:var(--danger); font-size:1.2rem; width:30px;"></i>
+                                    <span><strong>GST Report (PDF)</strong><br><span
+                                            style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">Detailed
+                                            breakdown of collected and paid GST.</span></span></button>
+
+                                <button class="btn btn-outline" style="justify-content:flex-start; padding:1rem;"><i
+                                        class="fa-solid fa-file-excel"
+                                        style="color:var(--success); font-size:1.2rem; width:30px;"></i>
+                                    <span><strong>Tax Summary (Excel)</strong><br><span
+                                            style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">Raw
+                                            spreadsheet data for accounting software.</span></span></button>
+
+                                <button class="btn btn-outline" style="justify-content:flex-start; padding:1rem;"><i
+                                        class="fa-solid fa-file-invoice"
+                                        style="color:var(--blue); font-size:1.2rem; width:30px;"></i>
+                                    <span><strong>Seller Commission Invoices</strong><br><span
+                                            style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">Bulk
+                                            download of invoices generated for seller fees.</span></span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- JavaScript for Interactions and Charts -->
+    <script>
+        // Sidebar active tab switching logic
+        function switchTab(tabId, btnElement) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Remove active style from buttons
+            document.querySelectorAll('.sidebar-link').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab and highlight button
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Expandable Detail Row Logic for Payout Management
+        function togglePayoutDetail(rowId) {
+            const row = document.getElementById(rowId);
+            if (row.classList.contains('open')) {
+                row.classList.remove('open');
+            } else {
+                // close others if needed, omitted for simplicity
+                row.classList.add('open');
+            }
+        }
+
+        // --- CHART.JS INITIALIZATION FOR EARNINGS ---
+
+        // Colors from theme
+        const primaryColor = '#3c50e0';
+        const primaryLight = 'rgba(60, 80, 224, 0.4)';
+        const textColor = '#8a99af';
+        const borderColor = 'rgba(255, 255, 255, 0.1)';
+
+        // Earnings Bar/Line Chart
+        const ctxEarn = document.getElementById('earningsChart').getContext('2d');
+        new Chart(ctxEarn, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        type: 'bar',
+                        label: 'Total Seller Sales (₹)',
+                        data: [250000, 310000, 280000, 420000, 390000, 500000],
+                        backgroundColor: 'rgba(60, 80, 224, 0.2)',
+                        borderColor: primaryColor,
+                        borderWidth: 1,
+                        borderRadius: 4
+                    },
+                    {
+                        type: 'line',
+                        label: 'Platform Commission (₹)',
+                        data: [25000, 31000, 28000, 42000, 39000, 50000],
+                        borderColor: primaryColor,
+                        backgroundColor: primaryColor,
+                        borderWidth: 3,
+                        tension: 0.3,
+                        pointBackgroundColor: 'white',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: borderColor, borderDash: [5, 5] },
+                        ticks: { color: textColor }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: textColor } },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: '#1a222c',
+                        titleColor: '#fff',
+                        bodyColor: '#ccc'
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+
+</html>

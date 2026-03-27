@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics & Reports | Plattera Admin</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Tenor+Sans&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            /* Admin Pure Black Theme */
+            --primary: #ffffff;
+            --primary-light: rgba(255, 255, 255, 0.1);
+            --primary-dark: #e0e0e0;
+            --secondary: #111111;
+
+            --bg-body: #000000;
+            --bg-card: #0a0a0a;
+            --bg-hover: #151515;
+
+            --text-dark: #ffffff;
+            --text-muted: #888888;
+
+            --border-color: rgba(255, 255, 255, 0.1);
+
+            /* Status Colors */
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.15);
+            --danger: #fb4848;
+            --danger-light: rgba(251, 72, 72, 0.15);
+            --info: #3ba2b8;
+            --info-light: rgba(59, 162, 184, 0.15);
+
+            --font-head: 'Crimson Pro', serif;
+            --font-body: 'Tenor Sans', sans-serif;
+
+            --shadow-sm: none;
+            --shadow-hover: 0 4px 15px rgba(255, 255, 255, 0.05);
+
+            --radius-md: 12px;
+            --radius-sm: 6px;
+            --transition: all 0.3s ease;
+
+            --sidebar-width: 300px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-dark);
+            background-color: var(--bg-body);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-head);
+            font-weight: 600;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* --- MAIN CONTENT LAYOUT --- */
+        .main-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem 3rem;
+            width: calc(100% - var(--sidebar-width));
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title h1 {
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            max-width: 600px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .form-select {
+            padding: 0.7rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            background: var(--bg-card);
+            color: var(--text-dark);
+            cursor: pointer;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .btn {
+            padding: 0.7rem 1.2rem;
+            border-radius: 50px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid transparent;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-color);
+            color: var(--text-dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-hover);
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--bg-hover);
+        }
+
+        /* Content Grid: Left Tabs (3fr) + Right Analytics Panel (1fr) */
+        .content-layout {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        /* --- TABS SYSTEM --- */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- CARDS & GRIDS --- */
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.2rem;
+            margin-bottom: 0;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .icon-primary {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .icon-success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .icon-warning {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .icon-info {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-family: var(--font-head);
+            font-weight: bold;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        /* --- TABLES --- */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            background: #fafafa;
+            white-space: nowrap;
+        }
+
+        tr.hoverable:hover {
+            background: var(--bg-hover);
+        }
+
+        .badge {
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .badge-success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge-danger {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .badge-warning {
+            background: #fff0e6;
+            color: #fd7e14;
+        }
+
+        .section-title {
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Mini Progress Bars */
+        .progress-bar {
+            width: 100%;
+            background-color: var(--border-color);
+            border-radius: 4px;
+            height: 6px;
+            overflow: hidden;
+            margin-top: 0.3rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .chart-container-sm {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+
+        /* Quick Analytics Right Panel */
+        .quick-panel {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            color: white;
+            position: sticky;
+            top: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .quick-panel h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 0.8rem;
+        }
+
+        .quick-metric {
+            margin-bottom: 1.2rem;
+            background: var(--bg-hover);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .qm-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .qm-value {
+            font-size: 1.6rem;
+            font-family: var(--font-head);
+            font-weight: bold;
+            margin-top: 0.2rem;
+        }
+
+        .qm-trend {
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .qm-trend.up {
+            color: #a8e6cf;
+        }
+
+        .qm-trend.down {
+            color: #ffbba7;
+        }
+
+        /* Forms in Export */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include 'admin/sidebar.html' %}
+
+    <!-- RIGHT MAIN CONTENT -->
+    <div class="main-wrapper">
+
+        <!-- PAGE HEADER -->
+        <header class="top-header">
+            <div class="page-title">
+                <h1>Analytics & Reports</h1>
+                <p>Analyze marketplace performance, track growth trends, and generate data reports for strategic
+                    decisions.</p>
+            </div>
+            <div class="header-actions">
+                <select class="form-select">
+                    <option>Last 7 Days</option>
+                    <option>Last 30 Days</option>
+                    <option selected>Last 6 Months</option>
+                    <option>Custom Date Range</option>
+                </select>
+                <button class="btn btn-outline"><i class="fa-solid fa-download"></i> Export Report</button>
+            </div>
+        </header>
+
+        <div class="content-layout">
+            <!-- DYNAMIC TABS AREA -->
+            <main class="tabs-area">
+
+                <!-- ==============================================
+                     1. REVENUE ANALYTICS
+                =============================================== -->
+                <div id="tab-revenue" class="tab-content active">
+                    <div class="grid-4">
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-primary"><i class="fa-solid fa-money-bill-trend-up"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Total Revenue</span>
+                                <span class="stat-value">₹48,25,000</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-success"><i class="fa-solid fa-calendar-days"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Monthly Revenue</span>
+                                <span class="stat-value">₹6,20,000</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-warning"><i class="fa-solid fa-percent"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Platform Comm.</span>
+                                <span class="stat-value">₹82,000</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-info"><i class="fa-solid fa-receipt"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Avg Order Value</span>
+                                <span class="stat-value">₹920</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <h3 class="section-title" style="border:none; margin:0;"><i
+                                    class="fa-solid fa-chart-line"></i> Revenue Trend Growth</h3>
+                            <div style="display:flex; gap:0.5rem;">
+                                <button class="btn-outline"
+                                    style="padding:0.3rem 0.8rem; font-size:0.8rem; border-radius:20px;">7D</button>
+                                <button class="btn-primary"
+                                    style="padding:0.3rem 0.8rem; font-size:0.8rem; border-radius:20px;">30D</button>
+                                <button class="btn-outline"
+                                    style="padding:0.3rem 0.8rem; font-size:0.8rem; border-radius:20px;">6M</button>
+                                <button class="btn-outline"
+                                    style="padding:0.3rem 0.8rem; font-size:0.8rem; border-radius:20px;">1Y</button>
+                            </div>
+                        </div>
+                        <div class="chart-container" style="margin-top:1rem;">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3 class="section-title"><i class="fa-solid fa-chart-pie"></i> Revenue Breakdown</h3>
+                            <div class="chart-container-sm">
+                                <canvas id="revenuePieChart"></canvas>
+                            </div>
+                            <ul style="margin-top:1rem; font-size:0.85rem;">
+                                <li style="display:flex; justify-content:space-between; margin-bottom:0.5rem;"><span
+                                        style="color:var(--primary);"><i class="fa-solid fa-circle"></i> Seller
+                                        Sales</span> <strong>65%</strong></li>
+                                <li style="display:flex; justify-content:space-between; margin-bottom:0.5rem;"><span
+                                        style="color:var(--info);"><i class="fa-solid fa-circle"></i> Admin
+                                        Direct</span> <strong>20%</strong></li>
+                                <li style="display:flex; justify-content:space-between;"><span
+                                        style="color:var(--warning);"><i class="fa-solid fa-circle"></i> Seasonal</span>
+                                    <strong>15%</strong>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h3 class="section-title"><i class="fa-solid fa-lightbulb"></i> Commission Insights</h3>
+                            <div
+                                style="background:var(--primary-light); padding:1.5rem; border-radius:8px; border:1px solid var(--primary); margin-bottom:1rem;">
+                                <div
+                                    style="font-size:0.85rem; color:var(--primary-dark); text-transform:uppercase; font-weight:bold;">
+                                    Average Commission Rate</div>
+                                <div
+                                    style="font-size:2rem; font-family:var(--font-head); font-weight:bold; color:var(--primary-dark);">
+                                    10%</div>
+                                <p style="font-size:0.8rem; color:var(--primary-dark); opacity:0.8;">Standard tiered
+                                    commission implemented across 840 sellers.</p>
+                            </div>
+                            <div
+                                style="background:#fff0e6; padding:1.5rem; border-radius:8px; border:1px solid rgba(253,126,20,0.3);">
+                                <div
+                                    style="font-size:0.85rem; color:#fd7e14; text-transform:uppercase; font-weight:bold;">
+                                    Top Commission Month</div>
+                                <div style="font-size:1.5rem; font-weight:bold; color:#fd7e14; margin:0.3rem 0;">
+                                    December <span style="font-size:1rem; opacity:0.8;">(₹1.2L)</span></div>
+                                <p style="font-size:0.8rem; color:#fd7e14; opacity:0.8;">Driven by holiday gifting &
+                                    ornaments.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==============================================
+                     2. BUYER PURCHASE TRENDS
+                =============================================== -->
+                <div id="tab-buyers" class="tab-content">
+                    <div class="grid-4">
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-info"><i class="fa-solid fa-users"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Total Buyers</span>
+                                <span class="stat-value">12,480</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-primary"><i class="fa-solid fa-user-check"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Active Monthly</span>
+                                <span class="stat-value">3,120</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-success"><i class="fa-solid fa-rotate-left"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Repeat Buyers</span>
+                                <span class="stat-value">38%</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-warning"><i class="fa-solid fa-basket-shopping"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Avg Frequency</span>
+                                <span class="stat-value">2.4x</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-arrow-trend-up"></i> Buyer Activity &
+                            Registrations</h3>
+                        <div class="chart-container">
+                            <canvas id="buyerChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3 class="section-title"><i class="fa-solid fa-cart-shopping"></i> Popular Categories</h3>
+                            <div class="chart-container-sm">
+                                <canvas id="popularCatChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3 class="section-title"><i class="fa-solid fa-map-location-dot"></i> Top Buyer Locations
+                            </h3>
+                            <ul style="list-style:none; padding:0;">
+                                <li style="margin-bottom:1rem;">
+                                    <div
+                                        style="display:flex; justify-content:space-between; margin-bottom:0.3rem; font-size:0.9rem;">
+                                        <strong>Mumbai</strong> <span>28%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width:28%;"></div>
+                                    </div>
+                                </li>
+                                <li style="margin-bottom:1rem;">
+                                    <div
+                                        style="display:flex; justify-content:space-between; margin-bottom:0.3rem; font-size:0.9rem;">
+                                        <strong>Delhi</strong> <span>22%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width:22%; background:var(--info);"></div>
+                                    </div>
+                                </li>
+                                <li style="margin-bottom:1rem;">
+                                    <div
+                                        style="display:flex; justify-content:space-between; margin-bottom:0.3rem; font-size:0.9rem;">
+                                        <strong>Bangalore</strong> <span>18%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width:18%; background:var(--warning);"></div>
+                                    </div>
+                                </li>
+                                <li style="margin-bottom:1rem;">
+                                    <div
+                                        style="display:flex; justify-content:space-between; margin-bottom:0.3rem; font-size:0.9rem;">
+                                        <strong>Ahmedabad</strong> <span>12%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width:12%; background:var(--success);"></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==============================================
+                     3. SELLER PERFORMANCE REPORT
+                =============================================== -->
+                <div id="tab-sellers" class="tab-content">
+                    <div class="grid-4">
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-primary"><i class="fa-solid fa-store"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Total Sellers</span>
+                                <span class="stat-value">840</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-success"><i class="fa-solid fa-shop"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Active Sellers</span>
+                                <span class="stat-value">520</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-warning"><i class="fa-solid fa-star"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Top Rated</span>
+                                <span class="stat-value">120</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-info"><i class="fa-solid fa-user-plus"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">New (This Mo.)</span>
+                                <span class="stat-value">38</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-trophy" style="color:var(--warning);"></i> Top 5
+                            Sellers Panel</h3>
+                        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                            <!-- Top Seller Card -->
+                            <div
+                                style="flex:1; min-width:180px; background:var(--warning-light); border:1px solid rgba(217,154,44,0.3); padding:1rem; border-radius:8px; text-align:center;">
+                                <div
+                                    style="width:50px; height:50px; background:white; border-radius:50%; margin:0 auto 0.5rem auto; display:flex; align-items:center; justify-content:center; color:var(--warning); font-size:1.2rem; font-weight:bold;">
+                                    1</div>
+                                <h4 style="font-size:1rem; margin-bottom:0.2rem;">Riya Crochet</h4>
+                                <div style="color:var(--warning); font-size:0.8rem; margin-bottom:0.5rem;">⭐ 4.9 (420
+                                    Orders)</div>
+                                <div style="font-weight:bold; font-size:1.1rem;">₹3.2L Rev</div>
+                            </div>
+                            <div
+                                style="flex:1; min-width:180px; background:#fafafa; border:1px solid var(--border-color); padding:1rem; border-radius:8px; text-align:center;">
+                                <div
+                                    style="width:50px; height:50px; background:var(--border-color); border-radius:50%; margin:0 auto 0.5rem auto; display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:1.2rem; font-weight:bold;">
+                                    2</div>
+                                <h4 style="font-size:1rem; margin-bottom:0.2rem;">YarnMagic</h4>
+                                <div style="color:var(--warning); font-size:0.8rem; margin-bottom:0.5rem;">⭐ 4.8 (380
+                                    Orders)</div>
+                                <div style="font-weight:bold; font-size:1.1rem;">₹2.8L Rev</div>
+                            </div>
+                            <div
+                                style="flex:1; min-width:180px; background:#fafafa; border:1px solid var(--border-color); padding:1rem; border-radius:8px; text-align:center;">
+                                <div
+                                    style="width:50px; height:50px; background:var(--border-color); border-radius:50%; margin:0 auto 0.5rem auto; display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:1.2rem; font-weight:bold;">
+                                    3</div>
+                                <h4 style="font-size:1rem; margin-bottom:0.2rem;">KnitNest</h4>
+                                <div style="color:var(--warning); font-size:0.8rem; margin-bottom:0.5rem;">⭐ 4.7 (310
+                                    Orders)</div>
+                                <div style="font-weight:bold; font-size:1.1rem;">₹2.4L Rev</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
+                            <h3 style="color:var(--primary-dark); font-size:1.2rem; margin:0;"><i
+                                    class="fa-solid fa-list-ul"></i> Comprehensive Seller Performance</h3>
+                            <button class="btn-outline" style="padding:0.3rem 0.8rem; font-size:0.8rem;"><i
+                                    class="fa-solid fa-filter"></i> Filter</button>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Seller</th>
+                                        <th>Total Sales</th>
+                                        <th>Revenue</th>
+                                        <th>Orders</th>
+                                        <th>Rating</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hoverable">
+                                        <td><strong>Riya Crochet</strong></td>
+                                        <td>420</td>
+                                        <td>₹3,20,000</td>
+                                        <td>420</td>
+                                        <td style="color:var(--warning);">⭐ 4.9</td>
+                                        <td><span class="badge badge-success">Top Seller</span></td>
+                                    </tr>
+                                    <tr class="hoverable">
+                                        <td><strong>CozyCrafts</strong></td>
+                                        <td>150</td>
+                                        <td>₹1,10,000</td>
+                                        <td>150</td>
+                                        <td style="color:var(--warning);">⭐ 4.5</td>
+                                        <td><span class="badge"
+                                                style="background:var(--info-light); color:var(--info);">Active</span>
+                                        </td>
+                                    </tr>
+                                    <!-- Low Performers Warning -->
+                                    <tr class="hoverable" style="background:var(--danger-light);">
+                                        <td><strong>TrendyKnits</strong></td>
+                                        <td>12</td>
+                                        <td>₹8,000</td>
+                                        <td>12</td>
+                                        <td style="color:var(--danger);">⭐ 2.8</td>
+                                        <td><span class="badge badge-danger">Needs Attention</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div
+                                style="margin-top:1rem; font-size:0.85rem; color:var(--danger); display:flex; gap:0.5rem; align-items:center;">
+                                <i class="fa-solid fa-triangle-exclamation"></i> <em>"TrendyKnits" has a high
+                                    cancellation rate. Review required.</em>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==============================================
+                     4. PRODUCT PERFORMANCE REPORT
+                =============================================== -->
+                <div id="tab-products" class="tab-content">
+                    <div class="grid-4">
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-primary"><i class="fa-solid fa-box-open"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Total Products</span>
+                                <span class="stat-value">1,280</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-success"><i class="fa-solid fa-boxes-stacked"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Active</span>
+                                <span class="stat-value">1,050</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-warning"><i class="fa-solid fa-star"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Avg Rating</span>
+                                <span class="stat-value">4.6 ⭐</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card"
+                            style="grid-column: span 1; display:flex; flex-direction:column; justify-content:center; align-items:flex-start; padding:1rem; background:linear-gradient(135deg, var(--primary), var(--primary-dark)); color:white;">
+                            <span style="font-size:0.75rem; text-transform:uppercase; opacity:0.8;">Best Seller</span>
+                            <span style="font-size:1.1rem; font-weight:bold; line-height:1.2;">Boho Crochet Tote</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-chart-area"></i> Product Views vs Orders Trend
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="productChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-ranking-star"></i> Top Performing Products</h3>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Seller</th>
+                                        <th>Sales</th>
+                                        <th>Views</th>
+                                        <th>Conversion Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hoverable">
+                                        <td><strong>Boho Crochet Tote</strong></td>
+                                        <td>YarnMagic</td>
+                                        <td>420</td>
+                                        <td>3,800</td>
+                                        <td><span class="badge badge-success">11.0%</span></td>
+                                    </tr>
+                                    <tr class="hoverable">
+                                        <td><strong>Amigurumi Bunny</strong></td>
+                                        <td>Riya Crochet</td>
+                                        <td>385</td>
+                                        <td>4,100</td>
+                                        <td><span class="badge" style="background:#e6f7f7; color:#4aa3a3;">9.3%</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hoverable" style="background:var(--warning-light);">
+                                        <td><strong>Woolen Beanie</strong></td>
+                                        <td>CozyCrafts</td>
+                                        <td>15</td>
+                                        <td>2,500</td>
+                                        <td><span class="badge badge-danger">0.6%</span> <span
+                                                style="font-size:0.75rem; color:var(--text-muted);">(High Views, Low
+                                                Conv)</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==============================================
+                     5. CATEGORY-WISE SALES
+                =============================================== -->
+                <div id="tab-categories" class="tab-content">
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3 class="section-title"><i class="fa-solid fa-chart-pie"></i> Category Revenue
+                                Distribution</h3>
+                            <div class="chart-container">
+                                <canvas id="catSalesPieChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3 class="section-title"><i class="fa-solid fa-snowflake"></i> Seasonal Highlights</h3>
+                            <div
+                                style="background:var(--primary-light); padding:1rem; border-radius:8px; display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                                <i class="fa-solid fa-mitten" style="font-size:2rem; color:var(--primary);"></i>
+                                <div>
+                                    <div style="font-weight:bold; color:var(--primary-dark);">Winter Peak</div>
+                                    <div style="font-size:0.85rem;">Scarves & Beanies sales increased by 140% in
+                                        Nov/Dec.</div>
+                                </div>
+                            </div>
+                            <div
+                                style="background:#fef5e6; padding:1rem; border-radius:8px; display:flex; align-items:center; gap:1rem;">
+                                <i class="fa-solid fa-gift" style="font-size:2rem; color:var(--warning);"></i>
+                                <div>
+                                    <div style="font-weight:bold; color:#d99a2c;">Festival Boom</div>
+                                    <div style="font-size:0.85rem;">Gift Items & Amigurumi see a 60% spike pre-Diwali.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-table"></i> Category Sales Breakdown</h3>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Total Products</th>
+                                        <th>Orders</th>
+                                        <th>Revenue</th>
+                                        <th>Trend</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hoverable">
+                                        <td><strong>Crochet Bags</strong></td>
+                                        <td>210</td>
+                                        <td>1,420</td>
+                                        <td>₹8,20,000</td>
+                                        <td style="color:var(--success);"><i class="fa-solid fa-arrow-trend-up"></i>
+                                            +12%</td>
+                                    </tr>
+                                    <tr class="hoverable">
+                                        <td><strong>Amigurumi Toys</strong></td>
+                                        <td>340</td>
+                                        <td>2,100</td>
+                                        <td>₹6,40,000</td>
+                                        <td style="color:var(--success);"><i class="fa-solid fa-arrow-trend-up"></i> +8%
+                                        </td>
+                                    </tr>
+                                    <tr class="hoverable">
+                                        <td><strong>Home Decor</strong></td>
+                                        <td>180</td>
+                                        <td>850</td>
+                                        <td>₹4,50,000</td>
+                                        <td style="color:var(--text-muted);"><i class="fa-solid fa-minus"></i> 0%</td>
+                                    </tr>
+                                    <tr class="hoverable">
+                                        <td><strong>Baby Products</strong></td>
+                                        <td>120</td>
+                                        <td>920</td>
+                                        <td>₹3,80,000</td>
+                                        <td style="color:var(--danger);"><i class="fa-solid fa-arrow-trend-down"></i>
+                                            -3%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==============================================
+                     6. LEARNING IMPACT REPORT
+                =============================================== -->
+                <div id="tab-learning" class="tab-content">
+                    <div class="grid-3">
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-primary"><i class="fa-solid fa-book-reader"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Sellers Learning</span>
+                                <span class="stat-value">420</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-info"><i class="fa-solid fa-layer-group"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Modules Completed</span>
+                                <span class="stat-value">1,850</span>
+                            </div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-icon icon-success"><i class="fa-solid fa-certificate"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-title">Certificates Issued</span>
+                                <span class="stat-value">310</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3 class="section-title"><i class="fa-solid fa-chart-line"></i> Learning vs Performance
+                                (Avg. Seller)</h3>
+                            <div class="chart-container-sm">
+                                <canvas id="learningChart"></canvas>
+                            </div>
+                            <div
+                                style="margin-top:1.5rem; display:flex; justify-content:space-around; text-align:center;">
+                                <div>
+                                    <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">
+                                        Before Training</div>
+                                    <div style="font-size:1.2rem; font-weight:bold; color:var(--danger);">₹8,000 /mo
+                                    </div>
+                                </div>
+                                <div>
+                                    <i class="fa-solid fa-arrow-right"
+                                        style="color:var(--primary); font-size:1.2rem; margin-top:0.8rem;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">
+                                        After Training</div>
+                                    <div style="font-size:1.2rem; font-weight:bold; color:var(--success);">₹18,000 /mo
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 class="section-title"><i class="fa-solid fa-medal"></i> Top Learned Sellers</h3>
+                            <ul style="list-style:none; padding:0;">
+                                <li
+                                    style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; background:var(--bg-hover); border-radius:8px; margin-bottom:0.8rem; border:1px solid var(--border-color);">
+                                    <div style="display:flex; align-items:center; gap:0.8rem;">
+                                        <div
+                                            style="width:35px; height:35px; background:var(--primary); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+                                            1</div>
+                                        <div>
+                                            <div style="font-weight:bold; font-size:0.95rem;">Riya Crochet</div>
+                                            <div style="font-size:0.8rem; color:var(--primary);">12 Modules Completed
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="text-align:right;">
+                                        <div style="font-size:0.85rem; color:var(--text-muted);">Sales Growth</div>
+                                        <div style="font-weight:bold; color:var(--success);">+45%</div>
+                                    </div>
+                                </li>
+                                <li
+                                    style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; background:var(--bg-hover); border-radius:8px; margin-bottom:0.8rem; border:1px solid var(--border-color);">
+                                    <div style="display:flex; align-items:center; gap:0.8rem;">
+                                        <div
+                                            style="width:35px; height:35px; background:var(--secondary); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+                                            2</div>
+                                        <div>
+                                            <div style="font-weight:bold; font-size:0.95rem;">YarnMagic</div>
+                                            <div style="font-size:0.8rem; color:var(--primary);">9 Modules Completed
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="text-align:right;">
+                                        <div style="font-size:0.85rem; color:var(--text-muted);">Sales Growth</div>
+                                        <div style="font-weight:bold; color:var(--success);">+32%</div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin-top:1rem; text-align:center;">
+                                Strong correlation observed between completed business modules and monthly revenue.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==============================================
+                     7. EXPORT DATA REPORTS
+                =============================================== -->
+                <div id="tab-export" class="tab-content">
+                    <div class="card" style="max-width: 600px;">
+                        <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i
+                                class="fa-solid fa-file-export"></i> Generate Custom Reports</h2>
+
+                        <div class="form-group">
+                            <label class="form-label">Select Report Type</label>
+                            <select class="form-control" style="background:var(--bg-hover);">
+                                <option>Sales Report (Revenue & Orders)</option>
+                                <option>Seller Performance Report</option>
+                                <option>Product Sales Report</option>
+                                <option>Buyer Activity Report</option>
+                                <option>Learning Progress Report</option>
+                            </select>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                            <div class="form-group">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">End Date</label>
+                                <input type="date" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Export Format</label>
+                            <div style="display:flex; gap:1rem; margin-top:0.5rem;">
+                                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;"><input
+                                        type="radio" name="format" checked> <i class="fa-solid fa-file-csv"
+                                        style="color:#28a745;"></i> CSV</label>
+                                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;"><input
+                                        type="radio" name="format"> <i class="fa-solid fa-file-excel"
+                                        style="color:#1d6f42;"></i> Excel</label>
+                                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;"><input
+                                        type="radio" name="format"> <i class="fa-solid fa-file-pdf"
+                                        style="color:#dc3545;"></i> PDF</label>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary"
+                            style="width:100%; justify-content:center; padding:1rem; font-size:1rem; margin-top:1rem;">
+                            <i class="fa-solid fa-cloud-arrow-down"></i> Generate Report
+                        </button>
+                    </div>
+                </div>
+
+            </main>
+
+            <!-- QUICK ANALYTICS PANEL (Right Side) -->
+            <aside class="quick-panel">
+                <h3><i class="fa-solid fa-heart-pulse"></i> Marketplace Health</h3>
+
+                <div class="quick-metric">
+                    <div class="qm-label">Conversion Rate</div>
+                    <div class="qm-value">4.2%</div>
+                    <div class="qm-trend up"><i class="fa-solid fa-arrow-trend-up"></i> +0.4% from last month</div>
+                </div>
+
+                <div class="quick-metric">
+                    <div class="qm-label">Refund Rate</div>
+                    <div class="qm-value">2.1%</div>
+                    <div class="qm-trend up" style="color:#a8e6cf;"><i class="fa-solid fa-arrow-trend-down"></i>
+                        Improved</div>
+                </div>
+
+                <div class="quick-metric">
+                    <div class="qm-label">Cancellation Rate</div>
+                    <div class="qm-value">3.4%</div>
+                    <div class="qm-trend down"><i class="fa-solid fa-circle-exclamation"></i> Slightly High</div>
+                </div>
+
+                <div class="quick-metric">
+                    <div class="qm-label">Repeat Buyers</div>
+                    <div class="qm-value">38%</div>
+                    <div class="qm-trend up"><i class="fa-solid fa-arrow-trend-up"></i> +2% from last month</div>
+                </div>
+
+                <button class="btn btn-outline"
+                    style="width:100%; justify-content:center; background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:white; margin-top:1rem;">
+                    View Detailed Audit
+                </button>
+            </aside>
+        </div>
+    </div>
+
+    <!-- JavaScript for Interactions and Charts -->
+    <script>
+        // Sidebar active tab switching logic
+        function switchTab(tabId, btnElement) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Remove active style from buttons
+            document.querySelectorAll('.sidebar-link').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab and highlight button
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- CHART.JS INITIALIZATION ---
+
+        // Colors from theme
+        const primaryColor = '#3c50e0';
+        const primaryLight = 'rgba(60, 80, 224, 0.4)';
+        const infoColor = '#3ba2b8';
+        const warningColor = '#f59e0b';
+        const textColor = '#8a99af';
+        const borderColor = 'rgba(255, 255, 255, 0.1)';
+
+        // 1. Revenue Line Chart
+        const ctxRev = document.getElementById('revenueChart').getContext('2d');
+        new Chart(ctxRev, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Revenue (₹)',
+                    data: [320000, 380000, 410000, 450000, 480000, 620000],
+                    borderColor: primaryColor,
+                    backgroundColor: 'rgba(122, 92, 140, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { backgroundColor: '#1a222c', titleColor: '#fff', bodyColor: '#ccc' }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: borderColor },
+                        ticks: { color: textColor }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    }
+                }
+            }
+        });
+
+        // 2. Revenue Breakdown Pie
+        const ctxRevPie = document.getElementById('revenuePieChart').getContext('2d');
+        new Chart(ctxRevPie, {
+            type: 'doughnut',
+            data: {
+                labels: ['Seller Sales', 'Admin Direct', 'Seasonal'],
+                datasets: [{
+                    data: [65, 20, 15],
+                    backgroundColor: [primaryColor, infoColor, warningColor],
+                    borderWidth: 0
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+
+        // 3. Buyer Bar Chart
+        const ctxBuyer = document.getElementById('buyerChart').getContext('2d');
+        new Chart(ctxBuyer, {
+            type: 'bar',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [
+                    { label: 'New Registrations', data: [120, 150, 180, 210], backgroundColor: primaryLight },
+                    { label: 'Active Purchases', data: [800, 850, 900, 1100], backgroundColor: primaryColor }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: textColor } }
+                },
+                scales: {
+                    y: {
+                        grid: { color: borderColor },
+                        ticks: { color: textColor }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    }
+                }
+            }
+        });
+
+        // 4. Popular Category Bar Horizontal
+        const ctxCat = document.getElementById('popularCatChart').getContext('2d');
+        new Chart(ctxCat, {
+            type: 'bar',
+            data: {
+                labels: ['Bags', 'Amigurumi', 'Baby', 'Decor', 'Wearables'],
+                datasets: [{
+                    data: [35, 25, 15, 15, 10],
+                    backgroundColor: [primaryColor, infoColor, warningColor, '#529b68', '#d4b8e6'],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        grid: { color: borderColor },
+                        ticks: { color: textColor }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    }
+                }
+            }
+        });
+
+        // 5. Product Trend Line Chart
+        const ctxProd = document.getElementById('productChart').getContext('2d');
+        new Chart(ctxProd, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [
+                    { label: 'Views', data: [1200, 1900, 1500, 2200, 1800, 2800, 3100], borderColor: primaryLight, tension: 0.4 },
+                    { label: 'Orders', data: [120, 180, 150, 210, 170, 290, 340], borderColor: successColor = '#529b68', tension: 0.4 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: textColor } }
+                },
+                scales: {
+                    y: {
+                        grid: { color: borderColor },
+                        ticks: { color: textColor }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    }
+                }
+            }
+        });
+
+        // 6. Category Pie Chart
+        const ctxCatPie = document.getElementById('catSalesPieChart').getContext('2d');
+        new Chart(ctxCatPie, {
+            type: 'pie',
+            data: {
+                labels: ['Bags (32%)', 'Amigurumi (25%)', 'Decor (18%)', 'Baby (15%)', 'Wearables (10%)'],
+                datasets: [{
+                    data: [32, 25, 18, 15, 10],
+                    backgroundColor: [primaryColor, warningColor, '#529b68', infoColor, primaryLight],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { color: textColor }
+                    }
+                }
+            }
+        });
+
+        // 7. Learning Line Chart
+        const ctxLearn = document.getElementById('learningChart').getContext('2d');
+        new Chart(ctxLearn, {
+            type: 'bar',
+            data: {
+                labels: ['Month 1', 'Month 2', 'Month 3 (Course)', 'Month 4', 'Month 5'],
+                datasets: [{
+                    label: 'Avg Seller Revenue',
+                    data: [8000, 8500, 9000, 15000, 18000],
+                    backgroundColor: [primaryLight, primaryLight, warningColor, primaryColor, primaryColor]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        grid: { color: borderColor },
+                        ticks: { color: textColor }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+
+</html>

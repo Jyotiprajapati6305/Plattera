@@ -1,0 +1,81 @@
+{% extends "seller/layout.html" %}
+
+{% block title %}Orders | Plattera Seller{% endblock %}
+
+{% block header_content %}
+<h1>Order Management</h1>
+<p>Track your sales and fulfill artisan orders.</p>
+{% endblock %}
+
+{% block content %}
+<div class="card"
+    style="background: white; border-radius: 16px; padding: 1.8rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h3 style="font-size: 1.3rem; color: var(--primary);"><i class="fa-solid fa-box"></i> Order History</h3>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Order ID</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Seller</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Product</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Qty</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Buyer</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Amount</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Date</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 1rem; font-weight: 700;">#{{ order.order_id }}</td>
+                    <td style="padding: 1rem; color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">{{
+                        order.seller_name if order.seller_name else 'Unknown' }}</td>
+                    <td style="padding: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.8rem;">
+                            {% if order.is_custom %}
+                            <div
+                                style="width: 40px; height: 40px; border-radius: 5px; background: #fff3e0; display: flex; align-items: center; justify-content: center; color: #e65100;">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            </div>
+                            {% else %}
+                            <img src="{{ url_for('static', filename='uploads/products/' + order.p_image if order.p_image else 'default.png') }}"
+                                style="width: 40px; height: 40px; border-radius: 5px; object-fit: cover;">
+                            {% endif %}
+                            <span>
+                                {{ order.p_name }}
+                                {% if order.is_custom %}
+                                <span
+                                    style="font-size: 0.7rem; background: #fff3e0; color: #e65100; padding: 2px 6px; border-radius: 4px; margin-left: 5px; font-weight: bold;">CUSTOM</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </td>
+                    <td style="padding: 1rem; font-weight: bold;">x{{ order.quantity }}</td>
+                    <td style="padding: 1rem;">{{ order.buyer_name }}</td>
+                    <td style="padding: 1rem; font-weight: bold;">₹ {{ "{:,.2f}".format(order.amount) }}</td>
+                    <td style="padding: 1rem; font-size: 0.9rem; color: var(--text-muted);">{{ order.created_at[:10] }}
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span
+                            style="background: var(--primary-light); color: var(--primary); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">
+                            {{ order.order_status|title }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not orders %}
+                <tr>
+                    <td colspan="8" style="padding: 3rem; text-align: center; color: var(--text-muted);">
+                        No orders found.
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

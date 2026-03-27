@@ -1,0 +1,77 @@
+{% extends "seller/layout.html" %}
+
+{% block title %}Earnings | Plattera Seller{% endblock %}
+
+{% block header_content %}
+<h1>Earnings & Revenue</h1>
+<p>Track your financial progress and withdraw your artisan profits.</p>
+{% endblock %}
+
+{% block content %}
+<div
+    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+    <div class="card"
+        style="background: white; border-radius: 16px; padding: 2rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">
+                Available for Payout</div>
+            <div
+                style="font-size: 2.2rem; font-family: var(--font-head); font-weight: bold; margin-top: 0.5rem; color: var(--success);">
+                ₹ {{ "{:,.2f}".format(monthly_data[0].revenue * 0.9 if monthly_data else 0) }}</div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">* After 10% Plattera commission</p>
+        </div>
+        <button class="btn-sm fill"
+            style="padding: 0.8rem 1.5rem; background: var(--primary); color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer;">Withdraw
+            Now</button>
+    </div>
+
+    <div class="card"
+        style="background: white; border-radius: 16px; padding: 2rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);">
+        <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Total
+            Sales (Lifetime)</div>
+        <div style="font-size: 2.2rem; font-family: var(--font-head); font-weight: bold; margin-top: 0.5rem;">₹ {{
+            "{:,.2f}".format(monthly_data|sum(attribute='revenue')) if monthly_data else '0.00' }}</div>
+        <div style="font-size: 0.85rem; color: var(--success); font-weight: bold; margin-top: 0.5rem;"><i
+                class="fa-solid fa-chart-line"></i> Growing monthly</div>
+    </div>
+</div>
+
+<div class="card"
+    style="background: white; border-radius: 16px; padding: 1.8rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);">
+    <h3 style="font-size: 1.3rem; color: var(--primary); margin-bottom: 2rem;"><i
+            class="fa-solid fa-clock-rotate-left"></i> Monthly Breakdown</h3>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Month</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Gross Revenue</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Commission (10%)</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Net Earnings</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in monthly_data %}
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 1rem; font-weight: bold;">{{ item.month }}</td>
+                    <td style="padding: 1rem;">₹ {{ "{:,.2f}".format(item.revenue) }}</td>
+                    <td style="padding: 1rem; color: var(--danger);">₹ {{ "{:,.2f}".format(item.revenue * 0.1) }}</td>
+                    <td style="padding: 1rem; font-weight: bold; color: var(--success);">₹ {{
+                        "{:,.2f}".format(item.revenue * 0.9) }}</td>
+                    <td style="padding: 1rem;"><span
+                            style="background: var(--success-light); color: var(--success); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">Paid</span>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not monthly_data %}
+                <tr>
+                    <td colspan="5" style="padding: 3rem; text-align: center; color: var(--text-muted);">No sales data
+                        available yet.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

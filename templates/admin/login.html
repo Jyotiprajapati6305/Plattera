@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    /* Hide regular site header for admin */
+    .header,
+    .header-spacer,
+    .top-bar {
+        display: none !important;
+    }
+
+    .admin-login-card {
+        max-width: 400px;
+        margin: 100px auto;
+        border-radius: 20px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    .admin-header {
+        background: #2e2a28;
+        color: white;
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    .admin-header h2 {
+        font-family: var(--font-heading);
+        margin: 0;
+    }
+
+    .btn-admin {
+        background: #2e2a28;
+        color: white;
+        border-radius: 10px;
+        padding: 12px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .btn-admin:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        background: #453e3a;
+        color: white;
+    }
+</style>
+
+<div class="container">
+    <div class="admin-login-card card">
+        <div class="admin-header">
+            <h2>Admin Login</h2>
+            <p class="mb-0 text-white-50">Authorized Personnel Only</p>
+        </div>
+        <div class="card-body p-4">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label small text-uppercase fw-bold text-muted">Admin Email</label>
+                    <input type="email" name="email" class="form-control" placeholder="admin@plattera.com" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label small text-uppercase fw-bold text-muted">Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-admin w-100">Access Dashboard</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

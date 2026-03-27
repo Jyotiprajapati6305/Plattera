@@ -1,0 +1,172 @@
+<style>
+    .plattera-footer {
+        background-color: #1a1a1a;
+        color: #ffffff;
+        padding: 5rem 0 2rem;
+        font-family: var(--font-body, 'Tenor Sans', sans-serif);
+    }
+
+    .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 4rem;
+        margin-bottom: 4rem;
+    }
+
+    @media (max-width: 900px) {
+        .footer-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .footer-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .footer-brand h3 {
+        font-family: var(--font-heading, 'Crimson Pro', serif);
+        font-size: 2.2rem;
+        color: #BF4646;
+        /* Plattera Red */
+        margin-bottom: 1.2rem;
+    }
+
+    .footer-brand p {
+        color: #aaaaaa;
+        margin-bottom: 2rem;
+        max-width: 300px;
+        line-height: 1.8;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .social-links a {
+        width: 42px;
+        height: 42px;
+        background: rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: white;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .social-links a:hover {
+        background: #BF4646;
+        transform: translateY(-4px);
+        color: white;
+    }
+
+    .footer-links h4 {
+        color: white;
+        font-size: 1.15rem;
+        margin-bottom: 1.6rem;
+        position: relative;
+        display: inline-block;
+        font-family: var(--font-heading);
+    }
+
+    .footer-links h4::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 32px;
+        height: 2px;
+        background: #BF4646;
+    }
+
+    .footer-links ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-links li {
+        margin-bottom: 0.9rem;
+    }
+
+    .footer-links a {
+        color: #aaaaaa;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .footer-links a:hover {
+        color: #BF4646;
+        padding-left: 6px;
+    }
+
+    .footer-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 2rem;
+        text-align: center;
+        color: #777777;
+        font-size: 0.9rem;
+    }
+
+    .footer-bottom i {
+        color: #BF4646;
+        margin: 0 4px;
+    }
+</style>
+
+<footer class="plattera-footer">
+    <div class="plattera-container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h3>Plattera</h3>
+                <p>A curated crochet marketplace empowering independent artisans and connecting them with crochet lovers
+                    worldwide.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="Pinterest"><i class="fa-brands fa-pinterest"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="{{ url_for('product.gallery') }}">Our Collections</a></li>
+                    <li><a href="#">About Plattera</a></li>
+                    <li><a href="#">Artisan Story</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Help Center (FAQ)</a></li>
+                    <li><a href="{{ url_for('complaint.my_complaints') }}">Contact Support</a></li>
+                    <li><a href="{{ url_for('order.order_history') }}">Track Order</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                    <li><a href="#">Cookie Settings</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Plattera. All rights reserved. Made with <i class="fas fa-heart"></i> for the crochet
+                community.</p>
+        </div>
+    </div>
+</footer>

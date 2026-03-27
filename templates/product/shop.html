@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+{% block title %}Collection | Plattera{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #d4a373;
+        --primary-dark: #bc8249;
+        --text-dark: #2e2a28;
+        --text-light: #777;
+        --bg-offwhite: #fcfbf9;
+        --font-headings: var(--font-heading, 'Crimson Pro', serif);
+        --font-body: var(--font-body, 'Tenor Sans', sans-serif);
+        --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+        --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    .shop-container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 2.5rem 2rem 5rem;
+    }
+
+    .shop-header {
+        margin-bottom: 4rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+
+    .shop-title h1 {
+        font-family: var(--font-headings);
+        font-size: 2.5rem;
+        /* Reduced from 3.5rem */
+        font-weight: 500;
+        color: var(--text-dark);
+        margin: 0;
+        letter-spacing: -1px;
+    }
+
+    .shop-title p {
+        color: var(--text-light);
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+        font-weight: 300;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        margin-bottom: 3rem;
+        position: sticky;
+        top: 110px;
+        z-index: 100;
+    }
+
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .filter-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-dark);
+        opacity: 0.6;
+    }
+
+    .filter-select,
+    .filter-input {
+        padding: 0.6rem 1rem;
+        border: 1px solid #f0f0f0;
+        border-radius: 12px;
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        color: var(--text-dark);
+        background: #fbfbfb;
+        transition: var(--transition);
+        outline: none;
+    }
+
+    .filter-select:focus,
+    .filter-input:focus {
+        border-color: var(--primary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.1);
+    }
+
+    .search-input-wrapper {
+        position: relative;
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .search-input-wrapper i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-light);
+        font-size: 0.9rem;
+    }
+
+    .search-input-wrapper .filter-input {
+        width: 100%;
+        padding-left: 2.8rem;
+    }
+
+    .btn-filter-apply {
+        padding: 0.6rem 1.5rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .btn-filter-apply:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+    }
+
+    /* Product Grid */
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 3rem;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+    }
+
+    .product-card:hover {
+        transform: translateY(-12px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .product-img-wrapper {
+        position: relative;
+        padding-top: 110%;
+        overflow: hidden;
+        background: #f9f9f9;
+        border-radius: 20px;
+        margin: 10px;
+    }
+
+    .product-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .product-card:hover .product-img {
+        transform: scale(1.1);
+    }
+
+    .product-info {
+        padding: 1.5rem 2rem 2rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-category {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--primary);
+        margin-bottom: 0.8rem;
+    }
+
+    .product-title {
+        font-family: var(--font-headings);
+        font-size: 1.5rem;
+        /* Reduced from 1.8rem */
+        margin-bottom: 0.8rem;
+        color: var(--text-dark);
+        line-height: 1.2;
+    }
+
+    .product-price {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .product-footer {
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-view-product {
+        width: 45px;
+        height: 45px;
+        background: #fbfbfb;
+        color: var(--text-dark);
+        border: 1px solid #f0f0f0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+    }
+
+    .product-card:hover .btn-view-product {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        transform: rotate(-45deg);
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 10rem 2rem;
+        background: white;
+        border-radius: 40px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    @media (max-width: 768px) {
+        .shop-container {
+            padding: 2rem 1.5rem;
+        }
+
+        .shop-title h1 {
+            font-size: 2.8rem;
+        }
+
+        .filter-bar {
+            top: 90px;
+            padding: 1.5rem;
+            gap: 1rem;
+        }
+
+        .search-input-wrapper {
+            min-width: 100%;
+        }
+
+        .product-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="shop-container">
+    <header class="shop-header">
+        <div class="shop-title">
+            <h1>Our Collection</h1>
+            <p>Discover unique handcrafted pieces from India's finest artisans.</p>
+        </div>
+        <div style="color: var(--text-light); font-size: 0.9rem; font-weight: 500;">
+            Showing {{ products|length }} unique items
+        </div>
+    </header>
+
+    <form method="GET" action="{{ url_for('product.shop') }}" class="filter-bar">
+        <!-- Search -->
+        <div class="search-input-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" name="q" value="{{ current_q }}" placeholder="Search our collection..."
+                class="filter-input">
+        </div>
+
+        <!-- Category -->
+        <div class="filter-group">
+            <span class="filter-label">In</span>
+            <select name="category" class="filter-select">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat['c_id'] }}" {{ 'selected' if current_category==cat['c_id'] else '' }}>
+                    {{ cat['category_name'] }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Sort -->
+        <div class="filter-group">
+            <span class="filter-label">Sort</span>
+            <select name="sort" class="filter-select">
+                <option value="newest" {{ 'selected' if current_sort=='newest' }}>New Arrivals</option>
+                <option value="price_asc" {{ 'selected' if current_sort=='price_asc' }}>Price: Low to High</option>
+                <option value="price_desc" {{ 'selected' if current_sort=='price_desc' }}>Price: High to Low</option>
+                <option value="rating" {{ 'selected' if current_sort=='rating' }}>Highest Rated</option>
+            </select>
+        </div>
+
+        <!-- Price -->
+        <div class="filter-group">
+            <input type="number" name="min_price" value="{{ current_min_price }}" placeholder="Min ₹"
+                class="filter-input" style="width: 100px;">
+            <input type="number" name="max_price" value="{{ current_max_price }}" placeholder="Max ₹"
+                class="filter-input" style="width: 100px;">
+        </div>
+
+        <button type="submit" class="btn-filter-apply">Filter</button>
+        {% if current_q or current_category or current_min_price or current_max_price %}
+        <a href="{{ url_for('product.shop') }}"
+            style="font-size: 0.85rem; color: var(--primary); text-decoration: underline; font-weight: 500;">Reset</a>
+        {% endif %}
+    </form>
+
+    <main class="products-main">
+        {% if products %}
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-img-wrapper">
+                    {% if product['image_url'] %}
+                    <img src="{{ url_for('static', filename='uploads/products/' + product['image_url'].split('/')[-1]) if not product['image_url'].startswith('http') else product['image_url'] }}"
+                        alt="{{ product['product_name'] }}" class="product-img"
+                        onerror="this.src='https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=800'">
+                    {% else %}
+                    <div
+                        style="position:absolute;inset:0;background:linear-gradient(135deg,#ffecd2,#fcb69f);display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-heart" style="font-size:2.5rem;color:rgba(255,255,255,0.5);"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    {% if product['category_name'] %}
+                    <p class="product-category">{{ product['category_name'] }}</p>
+                    {% endif %}
+                    <h3 class="product-title">{{ product['product_name'] }}</h3>
+
+                    <div style="color: #fca311; font-size: 0.85rem; margin-bottom: 1.5rem;">
+                        {% set rating = product['avg_rating']|float %}
+                        {% for i in range(5) %}
+                        <i class="fa{% if i < rating|int %}-solid{% else %}-regular{% endif %} fa-star"></i>
+                        {% endfor %}
+                        <span style="color: var(--text-light); margin-left: 5px;">({{ product['review_count'] }})</span>
+                    </div>
+
+                    <div class="product-footer">
+                        <span class="product-price">₹{{ "%.0f"|format(product['price']|float) }}</span>
+                        <a href="{{ url_for('product.product_detail', product_id=product['p_id']) }}"
+                            class="btn-view-product" title="View Details">
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-results">
+            <i class="fas fa-search"
+                style="font-size:4rem;margin-bottom:2rem;display:block;color:var(--primary);opacity: 0.2;"></i>
+            <h2>No masterpieces found.</h2>
+            <p>Try refining your search or filters to find what you're looking for.</p>
+            <a href="{{ url_for('product.shop') }}" class="btn-filter-apply"
+                style="margin-top: 2rem; display: inline-block; text-decoration: none;">Clear All Filters</a>
+        </div>
+        {% endif %}
+    </main>
+</div>
+{% endblock %}

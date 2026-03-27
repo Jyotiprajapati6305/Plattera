@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Refined Clean Glassmorphism Design */
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.25);
+        /* Whiter, cleaner glass */
+        --glass-border: rgba(255, 255, 255, 0.4);
+        --accent-gold: #b08d57;
+        /* Slightly deeper gold for contrast */
+        --text-dark: #1a1a1a;
+        --text-muted: #444444;
+    }
+
+    .header-spacer {
+        display: none !important;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        font-family: 'Tenor Sans', sans-serif;
+    }
+
+    /* Background with neutral styling */
+    .seller-auth-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("{{ url_for('static', filename='uploads/products/wall-hangging.png') }}") center center/cover no-repeat;
+        z-index: -1;
+    }
+
+    .seller-auth-bg::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(4px);
+    }
+
+    .seller-auth-wrapper {
+        min-height: 100vh;
+        width: 100vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 140px 20px 40px 20px;
+        /* Increased top padding shifted it downside */
+        box-sizing: border-box;
+    }
+
+    /* Clean White Glass Card */
+    .seller-glass-card {
+        width: 100%;
+        max-width: 1050px;
+        display: flex;
+        background: var(--glass-bg);
+        backdrop-filter: blur(35px) saturate(150%);
+        -webkit-backdrop-filter: blur(35px) saturate(150%);
+        border: 1px solid var(--glass-border);
+        border-radius: 40px;
+        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.15);
+        position: relative;
+        z-index: 10;
+        animation: cardFade 0.8s ease-out;
+        overflow: hidden;
+        max-height: 85vh;
+    }
+
+    @keyframes cardFade {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Left Info Side */
+    .card-info-side {
+        flex: 1;
+        padding: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border-right: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .info-tag {
+        color: var(--accent-gold);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 4px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .card-info-side h2 {
+        font-family: var(--font-heading, serif);
+        font-size: 3rem;
+        color: var(--text-dark);
+        line-height: 1.15;
+        margin-bottom: 25px;
+        font-weight: 400;
+    }
+
+    .info-features {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        color: var(--text-muted);
+        font-size: 1rem;
+    }
+
+    .feature-item i {
+        color: var(--accent-gold);
+        font-size: 1.1rem;
+        width: 25px;
+        text-align: center;
+    }
+
+    /* Right Form Side */
+    .card-form-side {
+        flex: 1.2;
+        padding: 50px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Custom Scrollbar */
+    .card-form-side::-webkit-scrollbar {
+        width: 3px;
+    }
+
+    .card-form-side::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .form-header {
+        margin-bottom: 35px;
+        text-align: left;
+    }
+
+    .form-header h1 {
+        font-family: var(--font-heading, serif);
+        font-size: 2.2rem;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+    }
+
+    .form-header p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    .form-group-custom {
+        margin-bottom: 18px;
+    }
+
+    .form-control-custom {
+        background: rgba(255, 255, 255, 0.4) !important;
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+        border-radius: 100px !important;
+        padding: 16px 24px !important;
+        color: var(--text-dark) !important;
+        font-size: 0.95rem !important;
+        transition: all 0.3s ease !important;
+        width: 100%;
+        outline: none;
+    }
+
+    .form-control-custom:focus {
+        background: rgba(255, 255, 255, 0.6) !important;
+        border-color: var(--accent-gold) !important;
+        box-shadow: 0 0 15px rgba(176, 141, 87, 0.1) !important;
+    }
+
+    .form-control-custom::placeholder {
+        color: #777;
+    }
+
+    .btn-seller-submit {
+        background: var(--accent-gold);
+        color: white;
+        border: none;
+        border-radius: 100px;
+        padding: 18px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        width: 100%;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        margin-top: 15px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+
+    .btn-seller-submit:hover {
+        transform: translateY(-2px);
+        background: #9d7d4c;
+        box-shadow: 0 10px 25px rgba(176, 141, 87, 0.3);
+    }
+
+    .login-footer {
+        text-align: center;
+        margin-top: 25px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .login-footer a {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 700;
+        margin: 0 5px;
+    }
+
+    .login-footer a:hover {
+        color: var(--accent-gold);
+        text-decoration: underline;
+    }
+
+    .row-compact {
+        display: flex;
+        gap: 15px;
+    }
+
+    .col-half {
+        flex: 1;
+    }
+
+    @media (max-width: 900px) {
+        .seller-glass-card {
+            flex-direction: column;
+            max-width: 500px;
+            max-height: 90vh;
+            border-radius: 40px;
+        }
+
+        .card-info-side {
+            padding: 30px;
+            border-right: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-info-side h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .card-form-side {
+            padding: 30px;
+        }
+
+        .form-header {
+            margin-bottom: 20px;
+        }
+
+        .form-header h1 {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+
+<div class="seller-auth-bg"></div>
+
+<div class="seller-auth-wrapper">
+    <div class="seller-glass-card">
+        <!-- Left Panel -->
+        <div class="card-info-side">
+            <span class="info-tag">Artisan Network</span>
+            <h2>Your Craft,<br>Your Story,<br>Your Shop.</h2>
+
+            <ul class="info-features">
+                <li class="feature-item">
+                    <i class="fas fa-magic"></i>
+                    <span>Simple, Guided Setup</span>
+                </li>
+                <li class="feature-item">
+                    <i class="fas fa-bullseye"></i>
+                    <span>Targeted Audience Reach</span>
+                </li>
+                <li class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Reliable Order Handling</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="card-form-side">
+            <div class="form-header">
+                <h1>Create Artisan Account</h1>
+                <p>Start your journey with us today.</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('auth.register_seller') }}">
+                <div class="row-compact">
+                    <div class="col-half form-group-custom">
+                        <input type="text" name="first_name" class="form-control-custom" placeholder="First Name"
+                            required>
+                    </div>
+                    <div class="col-half form-group-custom">
+                        <input type="text" name="last_name" class="form-control-custom" placeholder="Last Name"
+                            required>
+                    </div>
+                </div>
+
+                <div class="form-group-custom">
+                    <input type="email" name="email" class="form-control-custom" placeholder="Email Address" required>
+                </div>
+
+                <div class="form-group-custom">
+                    <input type="tel" name="phone_number" class="form-control-custom" placeholder="WhatsApp Number"
+                        required>
+                </div>
+
+                <div class="form-group-custom">
+                    <input type="text" name="shop_name" class="form-control-custom" placeholder="Shop Name (Optional)">
+                </div>
+
+                <div class="form-group-custom">
+                    <input type="text" name="address" class="form-control-custom" placeholder="Workshop Address"
+                        required>
+                </div>
+
+                <div class="form-group-custom">
+                    <input type="password" name="password" class="form-control-custom" placeholder="Password" required>
+                </div>
+
+                <button type="submit" class="btn-seller-submit">Register Now</button>
+
+                <div class="login-footer">
+                    Already have an account? <a href="{{ url_for('auth.login') }}">Log In</a>
+                    <br><br>
+                    <a href="{{ url_for('auth.register') }}" style="font-size: 0.95rem; font-weight: 600;">Switch to
+                        Buyer
+                        Registration</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block footer %}{% endblock %}
+{% endblock %}

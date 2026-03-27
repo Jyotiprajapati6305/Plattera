@@ -1,0 +1,93 @@
+<!-- SIDEBAR -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_sidebar.css') }}">
+
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-logo"><i class="fa-solid fa-shapes"></i></div>
+        <span class="brand-text">Plattera Admin</span>
+    </div>
+
+    <!-- MENU SECTION -->
+    <div class="sidebar-section">
+        <div class="sidebar-section-title">MENU</div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="{{ url_for('admin.dashboard') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard <i class="fa-solid fa-chevron-down arrow"></i>
+                </a>
+                <ul class="sidebar-submenu" {% if request.endpoint=='admin.dashboard' %}style="display: block;" {% endif
+                    %}>
+                    <li><a href="{{ url_for('admin.dashboard') }}"
+                            class="submenu-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">eCommerce</a>
+                    </li>
+                    <li><a href="{{ url_for('admin.analytics') }}"
+                            class="submenu-link {% if request.endpoint == 'admin.analytics' %}active{% endif %}">Analytics</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <i class="fa-solid fa-calendar-days"></i> Calendar
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ url_for('admin.manage_products') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.manage_products' %}active{% endif %}">
+                    <i class="fa-solid fa-box-archive"></i> Product Catalog
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ url_for('admin.manage_orders') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.manage_orders' %}active{% endif %}">
+                    <i class="fa-solid fa-truck-fast"></i> Orders & Logistics
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- MANAGEMENT SECTION -->
+    <div class="sidebar-section">
+        <div class="sidebar-section-title">MANAGEMENT</div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="{{ url_for('admin.manage_sellers') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.manage_sellers' %}active{% endif %}">
+                    <i class="fa-solid fa-user-gear"></i> User Management
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ url_for('admin.finance') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.finance' %}active{% endif %}">
+                    <i class="fa-solid fa-wallet"></i> Finance & Payouts
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ url_for('admin.learning') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.learning' %}active{% endif %}">
+                    <i class="fa-solid fa-graduation-cap"></i> Learning Academy
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- OTHERS SECTION -->
+    <div class="sidebar-section">
+        <div class="sidebar-section-title">OTHERS</div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="{{ url_for('admin.settings') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.settings' %}active{% endif %}">
+                    <i class="fa-solid fa-sliders"></i> Platform Settings
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ url_for('admin.logout') }}" class="sidebar-link logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- SIDEBAR FOOTER (Optional, can be used for version/copyright) -->
+</aside>

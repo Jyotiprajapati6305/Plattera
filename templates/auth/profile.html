@@ -1,0 +1,507 @@
+{% extends "base.html" %}
+{% block title %}My Profile | Plattera{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --text-dark: #2d2a26;
+        --text-muted: #6c757d;
+        --primary-gold: #c48b71;
+        --bg-shade: #fbf9f7;
+        --white: #ffffff;
+        --border-color: #eee;
+        --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .profile-page-wrapper {
+        background-color: var(--bg-shade);
+        min-height: 100vh;
+        padding: 120px 0 80px;
+        margin-top: -100px;
+        position: relative;
+    }
+
+    .profile-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 40px;
+    }
+
+    /* Side Navigation */
+    .profile-nav {
+        background: var(--white);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+        height: fit-content;
+    }
+
+    .profile-pic-container {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .profile-pic-circle {
+        width: 100px;
+        height: 100px;
+        background: var(--primary-gold);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin: 0 auto 15px;
+        border: 4px solid var(--white);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-nav-name {
+        font-family: 'Crimson Pro', serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .profile-nav-role {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: var(--primary-gold);
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    .nav-list {
+        list-style: none;
+        margin-top: 30px;
+    }
+
+    .nav-item {
+        margin-bottom: 10px;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        border-radius: 12px;
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        cursor: pointer;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font-size: 0.95rem;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        background: #fdfaf6;
+        color: var(--primary-gold);
+        transform: translateX(5px);
+    }
+
+    .nav-link i {
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    /* Main Content Area */
+    .profile-main {
+        background: var(--white);
+        padding: 50px;
+        border-radius: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    }
+
+    .content-pane {
+        display: none;
+        animation: fadeIn 0.4s ease;
+    }
+
+    .content-pane.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .pane-header {
+        margin-bottom: 40px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 20px;
+    }
+
+    .pane-header h2 {
+        font-family: 'Crimson Pro', serif;
+        font-size: 2.2rem;
+        color: var(--text-dark);
+        margin-bottom: 5px;
+    }
+
+    .pane-header p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    /* Typical Profile Info Display */
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid #f9f9f9;
+        align-items: center;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: var(--text-dark);
+        width: 200px;
+    }
+
+    .info-value {
+        color: var(--text-muted);
+        flex: 1;
+    }
+
+    /* Form Styling */
+    .edit-form {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group.full {
+        grid-column: span 2;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .form-input {
+        padding: 14px 18px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        outline: none;
+        font-family: inherit;
+        transition: var(--transition);
+    }
+
+    .form-input:focus {
+        border-color: var(--primary-gold);
+        box-shadow: 0 0 0 4px rgba(196, 139, 113, 0.1);
+    }
+
+    .btn-action {
+        padding: 14px 28px;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-primary {
+        background: var(--text-dark);
+        color: var(--white);
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-gold);
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background: #f5f5f5;
+        color: var(--text-dark);
+    }
+
+    .btn-secondary:hover {
+        background: #eee;
+    }
+
+    /* Wishlist & Typical Dashboard links */
+    .empty-state {
+        text-align: center;
+        padding: 60px 0;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: var(--text-muted);
+        margin-bottom: 25px;
+    }
+
+    @media (max-width: 900px) {
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-nav {
+            margin-bottom: 0;
+        }
+
+        .profile-main {
+            padding: 30px;
+        }
+
+        .edit-form {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: span 1;
+        }
+
+        .info-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+    }
+</style>
+
+<div class="profile-page-wrapper">
+    <div class="profile-container">
+        <div class="profile-grid">
+            <!-- Sidebar Navigation -->
+            <aside class="profile-nav">
+                <div class="profile-pic-container">
+                    <div class="profile-pic-circle">
+                        {{ (current_user.first_name or current_user.u_name)[0]|upper }}
+                    </div>
+                    <h3 class="profile-nav-name">{{ current_user.u_name }}</h3>
+                    <span class="profile-nav-role">{{ current_user.u_role|title }}</span>
+                </div>
+
+                <div class="nav-list">
+                    <button class="nav-link active" onclick="switchPane('personal-info')" id="nav-info">
+                        <i class="fas fa-user"></i> Personal Info
+                    </button>
+                    <button class="nav-link" onclick="switchPane('edit-profile')" id="nav-edit">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                    <button class="nav-link" onclick="switchPane('wishlist')" id="nav-wishlist">
+                        <i class="fas fa-heart"></i> My Wishlist
+                    </button>
+                    <a href="{{ url_for('order.order_history') }}" class="nav-link">
+                        <i class="fas fa-shopping-bag"></i> My Orders
+                    </a>
+                    <a href="{{ url_for('auth.dashboard') }}" class="nav-link">
+                        <i class="fas fa-th-large"></i> Go to Dashboard
+                    </a>
+                    <a href="{{ url_for('auth.logout') }}" class="nav-link" style="color: #d9534f; margin-top: 30px;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="profile-main">
+
+                <!-- PERSONAL INFO PANE -->
+                <div class="content-pane active" id="personal-info">
+                    <div class="pane-header">
+                        <h2>Personal Information</h2>
+                        <p>Manage your personal details and account settings.</p>
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">Display Name</span>
+                        <span class="info-value">{{ current_user.u_name }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Full Name</span>
+                        <span class="info-value">{{ current_user.first_name or '' }} {{ current_user.last_name or ''
+                            }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email Address</span>
+                        <span class="info-value">{{ current_user.u_email }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Member Since</span>
+                        <span class="info-value">
+                            {% if current_user.created_at %}
+                            {{ current_user.created_at[:10] }}
+                            {% else %}
+                            February 2026
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="info-row" style="border:none;">
+                        <span class="info-label">Account Role</span>
+                        <span class="info-value">{{ current_user.u_role|title }}</span>
+                    </div>
+
+                    <div style="margin-top: 40px;">
+                        <button class="btn-action btn-primary" onclick="switchPane('edit-profile')">
+                            Update Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- EDIT PROFILE PANE -->
+                <div class="content-pane" id="edit-profile">
+                    <div class="pane-header">
+                        <h2>Edit Profile</h2>
+                        <p>Update your name and other details shown across the platform.</p>
+                    </div>
+
+                    <form action="{{ url_for('auth.profile') }}" method="POST" class="edit-form">
+                        <div class="form-group full">
+                            <label class="form-label">Display Name (Visible to others)</label>
+                            <input type="text" name="u_name" class="form-input" value="{{ current_user.u_name }}"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">First Name</label>
+                            <input type="text" name="first_name" class="form-input"
+                                value="{{ current_user.first_name or '' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" name="last_name" class="form-input"
+                                value="{{ current_user.last_name or '' }}" required>
+                        </div>
+                        <div class="form-group full">
+                            <label class="form-label">Email Address (Cannot be changed)</label>
+                            <input type="email" class="form-input" value="{{ current_user.u_email }}" disabled
+                                style="background: #f9f9f9;">
+                        </div>
+
+                        <div class="form-group full" style="margin-top: 20px; display: flex; gap: 15px;">
+                            <button type="submit" class="btn-action btn-primary">Save Changes</button>
+                            <button type="button" class="btn-action btn-secondary"
+                                onclick="switchPane('personal-info')">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- WISHLIST PANE -->
+                <div class="content-pane" id="wishlist">
+                    <div class="pane-header">
+                        <h2>My Wishlist</h2>
+                        <p>Items you've saved for later. Keep track of what you love.</p>
+                    </div>
+
+                    {% if wishlist_items %}
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+                        {% for item in wishlist_items %}
+                        <div style="border: 1px solid #eee; border-radius: 12px; padding: 15px; text-align: center; transition: all 0.3s; background: white;"
+                            onmouseover="this.style.boxShadow='0 10px 25px rgba(0,0,0,0.05)'"
+                            onmouseout="this.style.boxShadow='none'">
+                            <div
+                                style="width: 100%; height: 180px; border-radius: 8px; overflow: hidden; margin-bottom: 15px; background: #fdfaf6;">
+                                {% if item['image_url'] %}
+                                <img src="{{ url_for('static', filename='uploads/products/' + item['image_url'].split('/')[-1]) if not item['image_url'].startswith('http') else item['image_url'] }}"
+                                    alt="{{ item['p_name'] }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                <i class="fas fa-heart"
+                                    style="font-size: 3rem; color: #eedbd3; line-height: 180px;"></i>
+                                {% endif %}
+                            </div>
+                            <h3
+                                style="font-size: 1.1rem; margin-bottom: 8px; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                {{ item['p_name'] }}</h3>
+                            <p
+                                style="color: var(--primary-gold); font-weight: 600; font-size: 1.1rem; margin-bottom: 15px;">
+                                ₹{{ "%.0f"|format(item['p_price']|float) }}</p>
+                            <a href="{{ url_for('product.product_detail', product_id=item['p_id']) }}"
+                                class="btn-action btn-secondary"
+                                style="padding: 10px; font-size: 0.9rem; text-decoration: none; display: block; width: 100%; text-align: center;">View
+                                Details</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="far fa-heart"></i>
+                        <h3>Your wishlist is empty</h3>
+                        <p>Start hearting artisanal products to see them here.</p>
+                        <a href="{{ url_for('product.gallery') }}" class="btn-action btn-primary"
+                            style="text-decoration:none;">
+                            Explore Gallery
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+            </main>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchPane(paneId) {
+        // Update URL hash for bookmarking/refresh
+        window.location.hash = paneId;
+
+        // Hide all panes
+        document.querySelectorAll('.content-pane').forEach(pane => pane.classList.remove('active'));
+        // Show target pane
+        document.getElementById(paneId).classList.add('active');
+
+        // Update nav buttons
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
+        // Map pane IDs to nav button IDs or just search
+        if (paneId === 'personal-info') document.getElementById('nav-info').classList.add('active');
+        if (paneId === 'edit-profile') document.getElementById('nav-edit').classList.add('active');
+        if (paneId === 'wishlist') document.getElementById('nav-wishlist').classList.add('active');
+    }
+
+    // Handle initial hash on load
+    window.addEventListener('load', () => {
+        const hash = window.location.hash.slice(1);
+        if (hash && document.getElementById(hash)) {
+            switchPane(hash);
+        }
+    });
+</script>
+{% endblock %}

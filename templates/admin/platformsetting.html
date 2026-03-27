@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Settings | Plattera Admin</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Tenor+Sans&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Quill Rich Text Editor CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Admin Pure Black Theme */
+            --primary: #ffffff;
+            --primary-light: rgba(255, 255, 255, 0.1);
+            --primary-dark: #e0e0e0;
+            --secondary: #111111;
+
+            --bg-body: #000000;
+            --bg-card: #0a0a0a;
+            --bg-hover: #151515;
+
+            --text-dark: #ffffff;
+            --text-muted: #888888;
+
+            --border-color: rgba(255, 255, 255, 0.1);
+
+            /* Status Colors */
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.15);
+            --danger: #fb4848;
+            --danger-light: rgba(251, 72, 72, 0.15);
+            --info: #3ba2b8;
+            --info-light: rgba(59, 162, 184, 0.15);
+
+            --font-head: 'Crimson Pro', serif;
+            --font-body: 'Tenor Sans', sans-serif;
+
+            --shadow-sm: none;
+            --shadow-hover: 0 4px 15px rgba(255, 255, 255, 0.05);
+
+            --radius-md: 12px;
+            --radius-sm: 6px;
+            --transition: all 0.3s ease;
+
+            --sidebar-width: 300px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-dark);
+            background-color: var(--bg-body);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-head);
+            font-weight: 600;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* --- MAIN CONTENT LAYOUT --- */
+        .main-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem 3rem;
+            width: calc(100% - var(--sidebar-width));
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title h1 {
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            max-width: 600px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.2rem;
+            border-radius: 50px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid transparent;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-color);
+            color: var(--text-dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-hover);
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--bg-hover);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #428256;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c34141;
+        }
+
+        /* --- TABS SYSTEM --- */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- CARDS & GRIDS --- */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* --- FORMS --- */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.95rem;
+            background: #fff;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Custom Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border-color);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--success);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-hover);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+        /* --- TABLES --- */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            background: #fafafa;
+            white-space: nowrap;
+        }
+
+        tr.hoverable:hover {
+            background: var(--bg-hover);
+        }
+
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .badge-active {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge-disabled {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .badge-scheduled {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .badge-info {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        .banner-img {
+            width: 80px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .role-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Quill Override */
+        .ql-toolbar {
+            border-radius: 8px 8px 0 0 !important;
+            border-color: var(--border-color) !important;
+            background: #fafafa;
+        }
+
+        .ql-container {
+            border-radius: 0 0 8px 8px !important;
+            border-color: var(--border-color) !important;
+            font-family: inherit !important;
+            font-size: 0.95rem !important;
+            height: 300px;
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include 'admin/sidebar.html' %}
+
+    <!-- RIGHT MAIN CONTENT -->
+    <div class="main-wrapper">
+
+        <!-- PAGE HEADER -->
+        <header class="top-header">
+            <div class="page-title">
+                <h1>Platform Settings</h1>
+                <p>Global configuration hub for payments, shipping, banners, policies, SEO, and admin access control.
+                </p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline"><i class="fa-solid fa-rotate-right"></i> Clear System Cache</button>
+                <button class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Global Settings</button>
+            </div>
+        </header>
+
+        <main class="tabs-area">
+
+            <!-- ==============================================
+                 1. PAYMENT GATEWAY SETUP
+            =============================================== -->
+            <div id="tab-payment" class="tab-content active">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-building-columns"></i> Supported Payment Methods
+                        </h3>
+
+                        <div class="toggle-row">
+                            <div>
+                                <h4 style="margin-bottom:0.2rem; color:var(--primary-dark);">Razorpay <span
+                                        class="badge badge-active" style="margin-left:0.5rem;">Primary</span></h4>
+                                <p style="font-size:0.85rem; color:var(--text-muted);">Credit Card, Debit, NetBanking
+                                </p>
+                            </div>
+                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div>
+                                <h4 style="margin-bottom:0.2rem; color:var(--primary-dark);">UPI (Unified Payments)</h4>
+                                <p style="font-size:0.85rem; color:var(--text-muted);">GPay, PhonePe, Paytm</p>
+                            </div>
+                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div>
+                                <h4 style="margin-bottom:0.2rem; color:var(--primary-dark);">Stripe</h4>
+                                <p style="font-size:0.85rem; color:var(--text-muted);">International Cards</p>
+                            </div>
+                            <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div>
+                                <h4 style="margin-bottom:0.2rem; color:var(--primary-dark);">Cash on Delivery (COD)</h4>
+                                <p style="font-size:0.85rem; color:var(--text-muted);">Pay on arrival</p>
+                            </div>
+                            <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-key"></i> Razorpay Configuration</h3>
+                        <div class="form-group">
+                            <label class="form-label">Key ID</label>
+                            <input type="password" class="form-control" value="rzp_live_abcdef123456">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Key Secret</label>
+                            <input type="password" class="form-control" value="************************">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Webhook URL (Auto-generated)</label>
+                            <input type="text" class="form-control" value="https://api.plattera.com/webhook/razorpay"
+                                readonly style="background:var(--bg-hover);">
+                        </div>
+
+                        <h4 style="margin:1.5rem 0 1rem 0; font-size:1rem; color:var(--primary-dark);">Checkout
+                            Preferences</h4>
+                        <label
+                            style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem; font-size:0.9rem; cursor:pointer;"><input
+                                type="checkbox"> Enable Test Mode (Sandbox)</label>
+                        <label
+                            style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem; font-size:0.9rem; cursor:pointer;"><input
+                                type="checkbox" checked> Enable Auto-Refund Processing</label>
+                        <label
+                            style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;"><input
+                                type="checkbox" checked> Allow Multiple Payment Methods</label>
+
+                        <div style="margin-top:2rem; display:flex; gap:1rem;">
+                            <button class="btn btn-success"><i class="fa-solid fa-check"></i> Save Keys</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 2. SHIPPING CONFIGURATION
+            =============================================== -->
+            <div id="tab-shipping" class="tab-content">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-box-open"></i> Standard Shipping Rates</h3>
+                        <div class="form-group">
+                            <label class="form-label">Flat Rate Shipping Fee</label>
+                            <input type="text" class="form-control" value="₹60">
+                            <span
+                                style="font-size:0.8rem; color:var(--text-muted); display:block; margin-top:0.3rem;">Applied
+                                if no specific zone rules match.</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Free Shipping Threshold</label>
+                            <input type="text" class="form-control" value="₹999">
+                            <span
+                                style="font-size:0.8rem; color:var(--text-muted); display:block; margin-top:0.3rem;">Orders
+                                exceeding this amount ship free.</span>
+                        </div>
+
+                        <h4 style="margin:1.5rem 0 1rem 0; font-size:1rem; color:var(--primary-dark);">Weight Based
+                            Rules</h4>
+                        <div class="table-wrap">
+                            <table style="font-size:0.85rem;">
+                                <thead>
+                                    <tr>
+                                        <th>Weight Range</th>
+                                        <th>Shipping Cost</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>0 kg - 1 kg</td>
+                                        <td>₹60</td>
+                                        <td><i class="fa-solid fa-pen"
+                                                style="color:var(--primary); cursor:pointer;"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>1 kg - 5 kg</td>
+                                        <td>₹120</td>
+                                        <td><i class="fa-solid fa-pen"
+                                                style="color:var(--primary); cursor:pointer;"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>5 kg+</td>
+                                        <td>₹200</td>
+                                        <td><i class="fa-solid fa-pen"
+                                                style="color:var(--primary); cursor:pointer;"></i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button class="btn btn-outline" style="margin-top:1rem; font-size:0.8rem;"><i
+                                class="fa-solid fa-plus"></i> Add Weight Rule</button>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-map-location-dot"></i> Delivery Settings & Zones
+                        </h3>
+                        <div class="form-group">
+                            <label class="form-label">Estimated Delivery Time (Global)</label>
+                            <input type="text" class="form-control" value="5 - 7 Business Days">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Platform Default Courier Partner</label>
+                            <select class="form-control">
+                                <option>Delhivery</option>
+                                <option>Bluedart</option>
+                                <option>India Post</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Seller Handling Time</label>
+                            <input type="text" class="form-control" value="Max 48 Hours">
+                        </div>
+
+                        <h4 style="margin:1.5rem 0 1rem 0; font-size:1rem; color:var(--primary-dark);">Specific Shipping
+                            Zones</h4>
+                        <div
+                            style="background:var(--bg-hover); padding:1rem; border-radius:8px; border:1px solid var(--border-color); margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center;">
+                            <div><strong>Zone 1 (Local City)</strong> <br> <span
+                                    style="font-size:0.8rem; color:var(--text-muted);">Radius: 50km</span></div>
+                            <div style="font-weight:bold; color:var(--success);">₹40</div>
+                        </div>
+                        <div
+                            style="background:var(--bg-hover); padding:1rem; border-radius:8px; border:1px solid var(--border-color); margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center;">
+                            <div><strong>Zone 2 (Intra-State)</strong> <br> <span
+                                    style="font-size:0.8rem; color:var(--text-muted);">Same State bounds</span></div>
+                            <div style="font-weight:bold; color:var(--success);">₹60</div>
+                        </div>
+                        <div
+                            style="background:var(--bg-hover); padding:1rem; border-radius:8px; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+                            <div><strong>Zone 3 (Nationwide)</strong> <br> <span
+                                    style="font-size:0.8rem; color:var(--text-muted);">Rest of India</span></div>
+                            <div style="font-weight:bold; color:var(--success);">₹100</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 3. BANNER MANAGEMENT
+            =============================================== -->
+            <div id="tab-banners" class="tab-content">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                        <h3 class="section-title" style="margin:0; border:none;"><i class="fa-solid fa-images"></i>
+                            Plattera Marketing Banners</h3>
+                        <button class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add New Banner</button>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Banner Title</th>
+                                    <th>Location Page</th>
+                                    <th>Status</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hoverable">
+                                    <td><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150"
+                                            class="banner-img"></td>
+                                    <td><strong>Summer Crochet Sale</strong></td>
+                                    <td>Homepage Slider</td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>1 Jun 2026</td>
+                                    <td>10 Jun 2026</td>
+                                    <td>
+                                        <button class="btn-outline" style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i
+                                                class="fa-solid fa-pen"></i></button>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; color:var(--danger); border-color:rgba(217,76,76,0.3);"><i
+                                                class="fa-solid fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="hoverable">
+                                    <td><img src="https://images.unsplash.com/photo-1629858535805-d14283eb97c1?w=150"
+                                            class="banner-img"></td>
+                                    <td><strong>Mega Toy Discount</strong></td>
+                                    <td>Category (Amigurumi)</td>
+                                    <td><span class="badge badge-scheduled">Scheduled</span></td>
+                                    <td>15 Jun 2026</td>
+                                    <td>20 Jun 2026</td>
+                                    <td>
+                                        <button class="btn-outline" style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i
+                                                class="fa-solid fa-pen"></i></button>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; color:var(--danger); border-color:rgba(217,76,76,0.3);"><i
+                                                class="fa-solid fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="hoverable">
+                                    <td><img src="https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=150"
+                                            class="banner-img"></td>
+                                    <td><strong>App Launch Promo</strong></td>
+                                    <td>Mobile App Topseller</td>
+                                    <td><span class="badge badge-disabled">Ended</span></td>
+                                    <td>1 Jan 2026</td>
+                                    <td>15 Jan 2026</td>
+                                    <td>
+                                        <button class="btn-outline" style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i
+                                                class="fa-solid fa-pen"></i></button>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; color:var(--danger); border-color:rgba(217,76,76,0.3);"><i
+                                                class="fa-solid fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 4. ANNOUNCEMENTS / NOTIFICATIONS
+            =============================================== -->
+            <div id="tab-announcements" class="tab-content">
+                <div class="grid-2" style="grid-template-columns: 2fr 1fr;">
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-bullhorn"></i> Global Notification System</h3>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Announcement Title</th>
+                                        <th>Target Audience</th>
+                                        <th>Status</th>
+                                        <th>Created Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hoverable">
+                                        <td><strong>System Maintenance Notice</strong></td>
+                                        <td><span class="badge" style="background:#e0e0e0; color:#333;">All Users</span>
+                                        </td>
+                                        <td><span class="badge badge-active">Active</span></td>
+                                        <td>8 Mar 2026</td>
+                                        <td><button class="btn-outline"
+                                                style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i
+                                                    class="fa-solid fa-pen"></i></button></td>
+                                    </tr>
+                                    <tr class="hoverable">
+                                        <td><strong>Policy Update: Seller Fees</strong></td>
+                                        <td><span class="badge badge-info">Sellers Only</span></td>
+                                        <td><span class="badge badge-active">Active</span></td>
+                                        <td>5 Mar 2026</td>
+                                        <td><button class="btn-outline"
+                                                style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i
+                                                    class="fa-solid fa-pen"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card" style="background:var(--primary-light); border-color:var(--primary);">
+                        <h3 class="section-title"><i class="fa-solid fa-paper-plane"></i> Publish New Alert</h3>
+                        <div class="form-group">
+                            <label class="form-label">Alert Title</label>
+                            <input type="text" class="form-control" placeholder="e.g. Flash Sale Live Now!">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Message Content</label>
+                            <textarea class="form-control" placeholder="Type notification text..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Audience</label>
+                            <select class="form-control">
+                                <option>All Users</option>
+                                <option>Sellers Only</option>
+                                <option>Customers Only</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Alert Type (Color)</label>
+                            <select class="form-control">
+                                <option>Information (Blue)</option>
+                                <option>Warning (Yellow)</option>
+                                <option>Critical (Red)</option>
+                                <option>Success (Green)</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" style="width:100%; justify-content:center;"><i
+                                class="fa-solid fa-broadcast-tower"></i> Broadcast Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 5. POLICY MANAGEMENT
+            =============================================== -->
+            <div id="tab-policy" class="tab-content">
+                <div class="grid-2" style="grid-template-columns: 1fr 2fr;">
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-file-contract"></i> Legal Documents</h3>
+                        <ul style="list-style:none; padding:0;">
+                            <li style="padding:1rem; background:var(--bg-hover); border:1px solid var(--border-color); border-radius:8px; margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center; cursor:pointer;"
+                                class="active">
+                                <strong>Terms & Conditions</strong>
+                                <i class="fa-solid fa-chevron-right" style="color:var(--primary);"></i>
+                            </li>
+                            <li
+                                style="padding:1rem; background:transparent; border:1px solid var(--border-color); border-radius:8px; margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                                <strong>Privacy Policy</strong>
+                                <i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i>
+                            </li>
+                            <li
+                                style="padding:1rem; background:transparent; border:1px solid var(--border-color); border-radius:8px; margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                                <strong>Return & Refund Policy</strong>
+                                <i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i>
+                            </li>
+                            <li
+                                style="padding:1rem; background:transparent; border:1px solid var(--border-color); border-radius:8px; margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                                <strong>Shipping Policy</strong>
+                                <i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i>
+                            </li>
+                            <li
+                                style="padding:1rem; background:transparent; border:1px solid var(--border-color); border-radius:8px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                                <strong>Seller Agreement</strong>
+                                <i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                            <h3 style="color:var(--primary-dark); margin:0;">Editing: Terms & Conditions</h3>
+                            <span style="font-size:0.8rem; color:var(--text-muted);">Last Updated: 2 Feb 2026</span>
+                        </div>
+
+                        <!-- Quill Editor Container mocked -->
+                        <div
+                            style="border:1px solid var(--border-color); border-radius:8px; overflow:hidden; margin-bottom:1.5rem;">
+                            <div
+                                style="background:#fafafa; border-bottom:1px solid var(--border-color); padding:0.5rem; display:flex; gap:0.5rem;">
+                                <!-- Mock toolbar icons -->
+                                <button class="btn-outline"
+                                    style="padding:0.3rem 0.5rem; border:none; background:transparent;"><i
+                                        class="fa-solid fa-bold"></i></button>
+                                <button class="btn-outline"
+                                    style="padding:0.3rem 0.5rem; border:none; background:transparent;"><i
+                                        class="fa-solid fa-italic"></i></button>
+                                <button class="btn-outline"
+                                    style="padding:0.3rem 0.5rem; border:none; background:transparent;"><i
+                                        class="fa-solid fa-underline"></i></button>
+                                <div style="width:1px; background:var(--border-color); margin:0 0.5rem;"></div>
+                                <button class="btn-outline"
+                                    style="padding:0.3rem 0.5rem; border:none; background:transparent;"><i
+                                        class="fa-solid fa-list-ul"></i></button>
+                                <button class="btn-outline"
+                                    style="padding:0.3rem 0.5rem; border:none; background:transparent;"><i
+                                        class="fa-solid fa-list-ol"></i></button>
+                                <button class="btn-outline"
+                                    style="padding:0.3rem 0.5rem; border:none; background:transparent;"><i
+                                        class="fa-solid fa-link"></i></button>
+                            </div>
+                            <div
+                                style="padding:1.5rem; height:350px; overflow-y:auto; font-size:0.95rem; line-height:1.7;">
+                                <p><strong>1. Introduction</strong><br>Welcome to Plattera. By accessing our platform,
+                                    you agree to abide by these Terms and Conditions. Please read them carefully.</p>
+                                <p><strong>2. User Accounts</strong><br>Sellers and Buyers must register for an account
+                                    to engage in transactions. You are responsible for maintaining the confidentiality
+                                    of your login credentials.</p>
+                                <p><strong>3. Transactions & Fees</strong><br>Plattera facilitates transactions between
+                                    artisans and buyers. A standard commission fee is deducted from seller payouts as
+                                    defined in the Finance agreement.</p>
+                                <p><strong>4. Intellectual Property</strong><br>All content uploaded must be original.
+                                    Plattera respects copyright laws and will remove infringing materials.</p>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <label
+                                style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; font-weight:bold;"><input
+                                    type="checkbox" checked> Publish Status (Live)</label>
+                            <button class="btn btn-primary"><i class="fa-solid fa-cloud-arrow-up"></i> Update
+                                Policy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 6. ADMIN ROLES & PERMISSIONS
+            =============================================== -->
+            <div id="tab-roles" class="tab-content">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                        <h3 class="section-title" style="margin:0; border:none;"><i class="fa-solid fa-users-gear"></i>
+                            System Administrators</h3>
+                        <button class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Add Admin</button>
+                    </div>
+
+                    <div class="grid-4" style="margin-bottom:2rem;">
+                        <div
+                            style="background:var(--primary-dark); color:white; padding:1.5rem; border-radius:8px; text-align:center;">
+                            <i class="fa-solid fa-user-shield" style="font-size:2rem; margin-bottom:0.5rem;"></i>
+                            <h4 style="margin-bottom:0.2rem;">Super Admin</h4>
+                            <p style="font-size:0.8rem; opacity:0.8;">Full Platform Access</p>
+                        </div>
+                        <div
+                            style="background:var(--primary); color:white; padding:1.5rem; border-radius:8px; text-align:center;">
+                            <i class="fa-solid fa-box" style="font-size:2rem; margin-bottom:0.5rem;"></i>
+                            <h4 style="margin-bottom:0.2rem;">Product Manager</h4>
+                            <p style="font-size:0.8rem; opacity:0.8;">Products & Categories</p>
+                        </div>
+                        <div
+                            style="background:var(--success); color:white; padding:1.5rem; border-radius:8px; text-align:center;">
+                            <i class="fa-solid fa-vault" style="font-size:2rem; margin-bottom:0.5rem;"></i>
+                            <h4 style="margin-bottom:0.2rem;">Finance Manager</h4>
+                            <p style="font-size:0.8rem; opacity:0.8;">Payouts & Revenue</p>
+                        </div>
+                        <div
+                            style="background:var(--info); color:white; padding:1.5rem; border-radius:8px; text-align:center;">
+                            <i class="fa-solid fa-headset" style="font-size:2rem; margin-bottom:0.5rem;"></i>
+                            <h4 style="margin-bottom:0.2rem;">Support Manager</h4>
+                            <p style="font-size:0.8rem; opacity:0.8;">Tickets & Disputes</p>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Admin Name</th>
+                                    <th>Email Address</th>
+                                    <th>Assigned Role</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hoverable">
+                                    <td><strong>John Doe</strong></td>
+                                    <td>john.admin@plattera.com</td>
+                                    <td><span class="badge" style="background:var(--primary-dark); color:white;">Super
+                                            Admin</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>
+                                        <button class="btn-outline" style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i
+                                                class="fa-solid fa-pen"></i> Edit</button>
+                                    </td>
+                                </tr>
+                                <tr class="hoverable">
+                                    <td><strong>Sarah Jenkins</strong></td>
+                                    <td>sarah.f@plattera.com</td>
+                                    <td><span class="badge" style="background:var(--success); color:white;">Finance
+                                            Manager</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>
+                                        <button class="btn-outline" style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i
+                                                class="fa-solid fa-pen"></i> Edit</button>
+                                    </td>
+                                </tr>
+                                <tr class="hoverable">
+                                    <td><strong>Michael T.</strong></td>
+                                    <td>mike.support@plattera.com</td>
+                                    <td><span class="badge" style="background:var(--info); color:white;">Support
+                                            Manager</span></td>
+                                    <td><span class="badge badge-disabled">Suspended</span></td>
+                                    <td>
+                                        <button class="btn-outline" style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i
+                                                class="fa-solid fa-pen"></i> Edit</button>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; color:var(--danger); border-color:rgba(217,76,76,0.3);"><i
+                                                class="fa-solid fa-user-minus"></i> Remove</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 7. SEO SETTINGS & ADVANCED
+            =============================================== -->
+            <div id="tab-seo" class="tab-content">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3 class="section-title"><i class="fa-solid fa-magnifying-glass"></i> Global SEO Variables</h3>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.5rem;">Define how search
+                            engines index and display the Plattera marketplace organically.</p>
+
+                        <div class="form-group">
+                            <label class="form-label">Global Meta Title</label>
+                            <input type="text" class="form-control"
+                                value="Plattera - Best Online Marketplace for Premium Handmade Crochet">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Meta Description</label>
+                            <textarea class="form-control"
+                                style="min-height:90px;">Shop thousands of handcrafted crochet products, amigurumi, and wearables from verified artisans with secure payments and fast nationwide delivery.</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Meta Keywords (Comma separated)</label>
+                            <input type="text" class="form-control"
+                                value="online shopping, crochet marketplace, handmade goods, buy amigurumi india, artisan fashion">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Canonical URL Base</label>
+                            <input type="url" class="form-control" value="https://www.plattera.com">
+                        </div>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                        <div class="card" style="margin-bottom:0;">
+                            <h3 class="section-title"><i class="fa-solid fa-share-nodes"></i> Social Media & OpenGraph
+                                Optimization</h3>
+                            <div class="form-group">
+                                <label class="form-label">Open Graph Title (Facebook/LinkedIn)</label>
+                                <input type="text" class="form-control" value="Discover Handmade Magic on Plattera">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label class="form-label">Default OG Image (Social Preview)</label>
+                                <div
+                                    style="display:flex; align-items:center; gap:1rem; background:var(--bg-hover); padding:1rem; border:1px solid var(--border-color); border-radius:8px;">
+                                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100"
+                                        style="width:60px; height:60px; border-radius:4px; object-fit:cover;">
+                                    <div>
+                                        <div style="font-weight:bold; font-size:0.9rem;">plattera-social-preview.jpg
+                                        </div>
+                                        <div style="font-size:0.8rem; color:var(--text-muted);">1200 x 630px optimal
+                                            size.</div>
+                                    </div>
+                                    <button class="btn btn-outline"
+                                        style="margin-left:auto; padding:0.4rem 0.8rem; font-size:0.8rem;">Change
+                                        Image</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin-bottom:0;">
+                            <h3 class="section-title"><i class="fa-solid fa-code-merge"></i> Advanced Sitemaps &
+                                Analytics</h3>
+                            <div class="toggle-row" style="padding:0.8rem; margin-bottom:0.5rem;">
+                                <div style="font-size:0.9rem; font-weight:bold;">Auto-Update XML Sitemap Daily</div>
+                                <label class="switch"><input type="checkbox" checked><span
+                                        class="slider"></span></label>
+                            </div>
+                            <div class="toggle-row" style="padding:0.8rem;">
+                                <div style="font-size:0.9rem; font-weight:bold;">Google Analytics (GA4) Integration
+                                    Active</div>
+                                <label class="switch"><input type="checkbox" checked><span
+                                        class="slider"></span></label>
+                            </div>
+                            <button class="btn btn-outline"
+                                style="width:100%; justify-content:center; margin-top:0.5rem;"><i
+                                    class="fa-solid fa-upload"></i> Force Manual Sitemap Submit to Google</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- JavaScript for Interactions -->
+    <script>
+        // Sidebar active tab switching logic
+        function switchTab(tabId, btnElement) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Remove active style from buttons
+            document.querySelectorAll('.sidebar-link').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab and highlight button
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+
+</html>

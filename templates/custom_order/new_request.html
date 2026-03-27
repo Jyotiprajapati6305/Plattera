@@ -1,0 +1,608 @@
+{% extends "base.html" %}
+{% block title %}Custom Order Request | Plattera{% endblock %}
+
+{% block content %}
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    :root {
+        --primary: #D4A373;
+        --primary-light: #e6c5a5;
+        --secondary: #f0ebe1;
+        --accent: #e5e5e5;
+        --text-dark: #2d2a26;
+        --text-light: #6c757d;
+        --bg-light: #fafafa;
+        --white: #ffffff;
+        --success: #2e7d32;
+        --danger: #d97757;
+        --shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        --shadow-hover: 0 20px 45px rgba(212, 163, 115, 0.15);
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .header-spacer {
+        height: 100px;
+    }
+
+    body {
+        background-color: #f7f3f0;
+        color: var(--text-dark);
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .ambient-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle at 80% 20%, rgba(212, 163, 115, 0.05), transparent 30%),
+            radial-gradient(circle at 20% 80%, rgba(212, 163, 115, 0.05), transparent 30%);
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .co-container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+        position: relative;
+    }
+
+    .layout-grid {
+        display: grid;
+        grid-template-columns: 1.8fr 1.2fr;
+        gap: 4rem;
+        align-items: start;
+    }
+
+    .form-section {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+    }
+
+    .form-group {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(0, 0, 0, 0.02);
+        transition: var(--transition);
+        animation: slideInUp 0.6s ease-out both;
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-group:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-5px);
+    }
+
+    .group-title {
+        font-size: 1.5rem;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+    }
+
+    .group-title i {
+        color: var(--primary);
+    }
+
+    .group-desc {
+        font-size: 0.95rem;
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+    }
+
+    .custom-select {
+        width: 100%;
+        padding: 15px 20px;
+        font-size: 1.1rem;
+        border: 2px solid var(--accent);
+        border-radius: 12px;
+        background: var(--bg-light);
+        color: var(--text-dark);
+        appearance: none;
+        cursor: pointer;
+        transition: var(--transition);
+        font-weight: 500;
+        font-family: inherit;
+    }
+
+    .custom-select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.1);
+    }
+
+    .options-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+    }
+
+    .option-card {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .option-card input {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .card-content {
+        border: 2px solid var(--accent);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: var(--transition);
+        background: var(--bg-light);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .option-card:hover .card-content {
+        border-color: var(--primary-light);
+    }
+
+    .option-card input:checked~.card-content {
+        border-color: var(--primary);
+        background: #fff9f5;
+        box-shadow: 0 5px 15px rgba(212, 163, 115, 0.15);
+    }
+
+    .option-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+    }
+
+    .option-price {
+        font-size: 0.95rem;
+        color: var(--text-light);
+        font-weight: 500;
+    }
+
+    .option-price.free {
+        color: var(--success);
+    }
+
+    .custom-textarea {
+        width: 100%;
+        padding: 15px 20px;
+        border: 2px solid var(--accent);
+        border-radius: 12px;
+        background: var(--bg-light);
+        color: var(--text-dark);
+        font-family: inherit;
+        font-size: 1rem;
+        resize: none;
+        transition: var(--transition);
+    }
+
+    .upload-area {
+        border: 2px dashed var(--accent);
+        padding: 3rem 2rem;
+        border-radius: 20px;
+        text-align: center;
+        background: var(--bg-light);
+        transition: var(--transition);
+        cursor: pointer;
+        position: relative;
+    }
+
+    .qty-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .qty-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        border: 2px solid var(--accent);
+        background: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .qty-input {
+        width: 60px;
+        text-align: center;
+        border: none;
+        background: transparent;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .summary-panel {
+        position: sticky;
+        top: 130px;
+    }
+
+    .summary-card {
+        background: white;
+        border-radius: 30px;
+        box-shadow: var(--shadow-hover);
+        border: 1px solid rgba(212, 163, 115, 0.2);
+        overflow: hidden;
+    }
+
+    .summary-header {
+        padding: 2.5rem 2.5rem 1.5rem;
+        background: linear-gradient(to right, #fff9f5, #fff);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .summary-body {
+        padding: 2rem 2.5rem;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        font-size: 1.05rem;
+        border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
+    }
+
+    .total-amount {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: var(--primary);
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 1.2rem;
+        background: var(--text-dark);
+        color: white;
+        border-radius: 18px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        transition: var(--transition);
+    }
+
+    .btn-submit:hover {
+        background: var(--primary);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(212, 163, 115, 0.2);
+    }
+
+    .view-requests-link {
+        display: block;
+        text-align: center;
+        margin-top: 1.5rem;
+        color: var(--text-light);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: var(--transition);
+        opacity: 0.8;
+    }
+
+    .view-requests-link i {
+        margin-right: 8px;
+        color: var(--primary);
+    }
+
+    .view-requests-link:hover {
+        opacity: 1;
+        transform: translateY(-2px);
+        color: var(--primary);
+    }
+
+    @keyframes pulse-price {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+            color: #d97757;
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .price-updated {
+        animation: pulse-price 0.5s ease;
+    }
+</style>
+
+<div class="ambient-bg"></div>
+
+<div class="co-container">
+    <form id="customOrderForm" method="POST" action="{{ url_for('custom_order.new_request') }}"
+        enctype="multipart/form-data">
+        <div class="layout-grid">
+
+            <div class="form-section">
+                <!-- 0. Artisan -->
+                <div class="form-group">
+                    <h2 class="group-title"><i class="fas fa-store"></i> Artisan Selection</h2>
+                    <p class="group-desc">Who would you like to build your piece?</p>
+                    <div style="position: relative;">
+                        <select class="custom-select" name="seller_id" id="artisanSelect" required
+                            onchange="calculateTotal()">
+                            <option value="" disabled {{ 'selected' if not current_seller_id else '' }}>Choose
+                                Artisan...</option>
+                            {% for seller in sellers %}
+                            <option value="{{ seller.seller_id }}"
+                                data-shop="{{ seller.first_name }} {{ seller.last_name if seller.last_name else '' }}"
+                                {{ 'selected' if current_seller_id==seller.seller_id else '' }}>
+                                {{ seller.first_name }} {{ seller.last_name if seller.last_name else '' }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 1. Type -->
+                <div class="form-group">
+                    <h2 class="group-title"><i class="fas fa-cube"></i> Product Category</h2>
+                    <p class="group-desc">Base structure for your custom request.</p>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <select class="custom-select" name="product_type" id="productType" required
+                            onchange="calculateTotal()" style="flex: 1;">
+                            <option value="0" data-name="Not Selected" data-img="" selected>Select Category...</option>
+                            {% for c in categories %}
+                            {% set base_price_val = 1000 if c.c_name == 'Home & Living' else (1200 if c.c_name == 'Bags
+                            & Totes' else (1500 if c.c_name == 'Apparel & Wear' else 800)) %}
+                            <option value="{{ base_price_val }}" data-name="{{ c.c_name }}" {% if c.c_image
+                                %}data-img="{{ url_for('static', filename='uploads/products/' ~ c.c_image.split('/')[-1]) }}"
+                                {% else %}data-img="" {% endif %}>
+                                {{ c.c_name }} (Base: ₹{{ base_price_val }})
+                            </option>
+                            {% endfor %}
+                            <option value="800" data-name="Crochet Toy" data-img="">Crochet Toy (Base: ₹800)</option>
+                            <option value="1200" data-name="Amigurumi Doll" data-img="">Amigurumi Doll (Base: ₹1200)
+                            </option>
+                            <option value="1500" data-name="Other Custom Item" data-img="">Other Custom Item (Base:
+                                ₹1500)</option>
+                        </select>
+                        <div id="categoryPreview"
+                            style="display:none; width: 60px; height: 60px; border-radius: 12px; border: 2px solid var(--accent); background-size: cover; background-position: center; flex-shrink: 0; transition: all 0.3s; background-color: var(--bg-light);">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Size -->
+                <div class="form-group">
+                    <h2 class="group-title"><i class="fas fa-ruler-combined"></i> Size Selection</h2>
+                    <div class="options-grid">
+                        <label class="option-card">
+                            <input type="radio" name="product_size" value="0" data-name="Small" checked
+                                onchange="calculateTotal()">
+                            <div class="card-content">
+                                <span class="option-title">Small</span>
+                                <span class="option-price free">+₹0</span>
+                            </div>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="product_size" value="350" data-name="Medium"
+                                onchange="calculateTotal()">
+                            <div class="card-content">
+                                <span class="option-title">Medium</span>
+                                <span class="option-price">+₹350</span>
+                            </div>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="product_size" value="700" data-name="Large"
+                                onchange="calculateTotal()">
+                            <div class="card-content">
+                                <span class="option-title">Large</span>
+                                <span class="option-price">+₹700</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 3. Complexity -->
+                <div class="form-group">
+                    <h2 class="group-title"><i class="fas fa-palette"></i> Pattern Complexity</h2>
+                    <div class="options-grid">
+                        <label class="option-card">
+                            <input type="radio" name="color_complexity" value="0" data-name="Standard" checked
+                                onchange="calculateTotal()">
+                            <div class="card-content">
+                                <span class="option-title">Standard</span>
+                                <span class="option-price free">+₹0</span>
+                            </div>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="color_complexity" value="250" data-name="Multi-color"
+                                onchange="calculateTotal()">
+                            <div class="card-content">
+                                <span class="option-title">Multi-color</span>
+                                <span class="option-price">+₹250</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 4. Add-ons -->
+                <div class="form-group">
+                    <h2 class="group-title"><i class="fas fa-plus-circle"></i> Personalization Add-ons</h2>
+                    <div class="options-grid">
+                        <label class="option-card">
+                            <input type="checkbox" name="personalization" value="150" data-name="Embroidery"
+                                onchange="calculateTotal()">
+                            <div class="card-content">
+                                <span class="option-title">Embroidery</span>
+                                <span class="option-price">+₹150</span>
+                            </div>
+                        </label>
+                        <label class="option-card">
+                            <input type="checkbox" name="personalization" value="100" data-name="Gift Wrap"
+                                onchange="calculateTotal()">
+                            <div class="card-content">
+                                <span class="option-title">Gift Wrap</span>
+                                <span class="option-price">+₹100</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div style="margin-top: 1.5rem;">
+                        <textarea name="custom_message" class="custom-textarea" rows="3"
+                            placeholder="Provide extra details (colors, names, etc.)"></textarea>
+                    </div>
+                </div>
+
+                <!-- 5. Reference -->
+                <div class="form-group">
+                    <h2 class="group-title"><i class="fas fa-image"></i> Reference Image</h2>
+                    <div class="upload-area">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <span style="font-weight: 500;">Click to Upload</span>
+                        <input type="file" name="reference_image" class="file-input" onchange="handleFile(this.files)">
+                    </div>
+                    <div id="filePreview" style="margin-top: 10px;"></div>
+                </div>
+
+                <!-- 6. Quantity -->
+                <div class="form-group">
+                    <h2 class="group-title"><i class="fas fa-shopping-basket"></i> Quantity</h2>
+                    <div class="qty-wrapper">
+                        <button type="button" class="qty-btn" onclick="updateQty(-1)"><i
+                                class="fas fa-minus"></i></button>
+                        <input type="number" name="quantity" class="qty-input" id="qtyInput" value="1" readonly>
+                        <button type="button" class="qty-btn" onclick="updateQty(1)"><i
+                                class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUMMARY -->
+            <div class="summary-panel">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <h3><i class="fas fa-receipt"></i> Order Summary</h3>
+                    </div>
+                    <div class="summary-body">
+                        <div class="summary-row">
+                            <span>Artisan</span>
+                            <span id="dispArtisan" style="font-weight: 600;">Not Selected</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Category</span>
+                            <span id="dispType">None</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="dispSub" style="font-weight: 700;">₹0</span>
+                        </div>
+                        <div class="summary-row" style="border: none;">
+                            <span>Quantity</span>
+                            <span id="dispQty">x 1</span>
+                        </div>
+                    </div>
+                    <div class="summary-header"
+                        style="background: var(--bg-light); border-top: 1px solid #eee; text-align: center; padding: 2rem;">
+                        <div style="color: var(--text-light); margin-bottom: 5px;">Estimated Total</div>
+                        <div class="total-amount" id="dispTotal">₹00</div>
+                        <input type="hidden" name="estimated_price" id="estimatedPriceInput" value="0">
+                    </div>
+                    <div style="padding: 2rem; padding-top: 0;">
+                        <button type="submit" class="btn-submit">Submit Request</button>
+                        <a href="{{ url_for('custom_order.my_requests') }}" class="view-requests-link">
+                            <i class="fas fa-history"></i> See My Custom Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    function updateQty(d) {
+        let i = document.getElementById('qtyInput');
+        let v = parseInt(i.value) + d;
+        if (v >= 1) { i.value = v; calculateTotal(); }
+    }
+
+    function handleFile(f) {
+        let p = document.getElementById('filePreview');
+        p.innerHTML = f[0] ? `<span style="background:#fff9f5; padding:5px 15px; border-radius:20px; border:1px solid #e6c5a5; font-size:0.9rem;">${f[0].name}</span>` : '';
+    }
+
+    function calculateTotal() {
+        const art = document.getElementById('artisanSelect');
+        const typ = document.getElementById('productType');
+        const preview = document.getElementById('categoryPreview');
+        const siz = document.querySelector('input[name="product_size"]:checked');
+        const cpx = document.querySelector('input[name="color_complexity"]:checked');
+        const ads = document.querySelectorAll('input[name="personalization"]:checked');
+        const qty = parseInt(document.getElementById('qtyInput').value);
+
+        // Handle Image preview
+        if (typ.selectedIndex > 0) {
+            let imgUrl = typ.options[typ.selectedIndex].getAttribute('data-img');
+            if (imgUrl) {
+                preview.style.display = 'block';
+                preview.style.backgroundImage = `url('${imgUrl}')`;
+            } else {
+                preview.style.display = 'none';
+            }
+        } else {
+            preview.style.display = 'none';
+        }
+
+        let base = parseInt(typ.value);
+        let subt = 0;
+        let final = 0;
+
+        if (base > 0) {
+            subt = base + parseInt(siz.value) + parseInt(cpx.value);
+            ads.forEach(a => subt += parseInt(a.value));
+            final = subt * qty;
+        }
+
+        const dispTotal = document.getElementById('dispTotal');
+        const oldVal = dispTotal.innerText;
+        dispTotal.innerText = final === 0 ? '₹00' : '₹' + final;
+        document.getElementById('estimatedPriceInput').value = final;
+
+        if (final > 0 && oldVal !== dispTotal.innerText) {
+            dispTotal.classList.remove('price-updated');
+            void dispTotal.offsetWidth;
+            dispTotal.classList.add('price-updated');
+        }
+
+        document.getElementById('dispArtisan').innerText = art.selectedIndex > 0 ? art.options[art.selectedIndex].getAttribute('data-shop') : 'Not Selected';
+        document.getElementById('dispType').innerText = typ.selectedIndex > 0 ? typ.options[typ.selectedIndex].getAttribute('data-name') : 'None';
+        document.getElementById('dispSub').innerText = '₹' + subt;
+        document.getElementById('dispQty').innerText = 'x ' + qty;
+    }
+
+    window.onload = calculateTotal;
+</script>
+{% endblock %}

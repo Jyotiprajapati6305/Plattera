@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block title %}My Complaints | Plattera{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #d4a373;
+        --font-headings: var(--font-heading, 'Crimson Pro', serif);
+        --text-dark: #2e2a28;
+        --text-light: #777;
+    }
+
+    .plattera-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 160px 2rem 6rem;
+    }
+
+    .comp-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .comp-header h1 {
+        font-family: var(--font-headings);
+        font-size: 3rem;
+        font-style: italic;
+    }
+
+    .btn-new-comp {
+        padding: 0.7rem 1.5rem;
+        background: var(--primary);
+        color: white;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .btn-new-comp:hover {
+        background: #bc8249;
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    .comp-card {
+        background: white;
+        border-radius: 14px;
+        padding: 1.8rem;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid #eee;
+    }
+
+    .comp-card[data-status="open"] {
+        border-left-color: #ef5350;
+    }
+
+    .comp-card[data-status="resolved"] {
+        border-left-color: #66bb6a;
+    }
+
+    .comp-card[data-status="closed"] {
+        border-left-color: #aaa;
+    }
+
+    .comp-order {
+        font-size: 0.8rem;
+        color: var(--primary);
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+    }
+
+    .comp-text {
+        color: var(--text-dark);
+        line-height: 1.7;
+        margin-bottom: 0.8rem;
+    }
+
+    .comp-meta {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    .status-pill {
+        padding: 3px 12px;
+        border-radius: 50px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .st-open {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .st-resolved {
+        background: #e8f5e9;
+        color: #388e3c;
+    }
+
+    .st-closed {
+        background: #f5f5f5;
+        color: #666;
+    }
+
+    .empty-msg {
+        text-align: center;
+        padding: 5rem;
+        color: var(--text-light);
+    }
+
+    .empty-msg i {
+        font-size: 3.5rem;
+        display: block;
+        margin-bottom: 1.5rem;
+        color: #ddd;
+    }
+</style>
+
+<div class="comp-page">
+    <div class="comp-header">
+        <h1>My Complaints</h1>
+        <a href="{{ url_for('complaint.new_complaint') }}" class="btn-new-comp"><i class="fas fa-plus"></i> New
+            Complaint</a>
+    </div>
+
+    {% if complaints %}
+    {% for c in complaints %}
+    <div class="comp-card" data-status="{{ c['complaint_status'] }}">
+        {% if c['order_number'] %}
+        <p class="comp-order"><i class="fas fa-receipt"></i> Order #{{ c['order_number'] }}</p>
+        {% endif %}
+        <p class="comp-text">{{ c['complaint_text'] }}</p>
+        <div class="comp-meta">
+            <span>{{ c['created_at'][:10] }}</span>
+            <span class="status-pill st-{{ c['complaint_status'] }}">{{ c['complaint_status']|capitalize }}</span>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="empty-msg">
+        <i class="fas fa-headset"></i>
+        <p>No complaints submitted. We hope everything is perfect!</p>
+        <a href="{{ url_for('complaint.new_complaint') }}"
+            style="margin-top:1.5rem;display:inline-block;padding:0.8rem 2rem;background:var(--primary);color:white;border-radius:50px;font-weight:600;">Raise
+            an Issue</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

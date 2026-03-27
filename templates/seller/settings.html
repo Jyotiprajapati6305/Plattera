@@ -1,0 +1,50 @@
+{% extends "seller/layout.html" %}
+
+{% block title %}Settings | Plattera Seller{% endblock %}
+
+{% block header_content %}
+<h1>Shop Settings</h1>
+<p>Customize your storefront and update your business profile.</p>
+{% endblock %}
+
+{% block content %}
+<div class="card"
+    style="background: white; border-radius: 16px; padding: 2rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); max-width: 800px; margin: 0 auto;">
+    <h3 style="font-size: 1.3rem; color: var(--primary); margin-bottom: 2rem;"><i class="fa-solid fa-store"></i> Store
+        Profile</h3>
+
+    <form method="POST">
+        <div style="margin-bottom: 1.5rem;">
+            <label
+                style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Shop
+                Name</label>
+            <input type="text" name="shop_name" value="{{ profile.shop_name if profile else '' }}"
+                style="width: 100%; padding: 0.5rem; font-size: 0.95rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: var(--font-body);">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label
+                style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Store
+                Bio / Description</label>
+            <textarea name="bio" rows="4"
+                style="width: 100%; padding: 0.5rem; font-size: 0.95rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: var(--font-body);">{{ profile.seller_bio if profile else '' }}</textarea>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label
+                style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--text-muted); font-size: 0.9rem;">Workshop
+                Address</label>
+            <input type="text" name="address" value="{{ profile.workshop_address if profile else '' }}"
+                style="width: 100%; padding: 0.5rem; font-size: 0.95rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: var(--font-body);">
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button type="submit" class="btn-sm fill"
+                style="padding: 0.8rem 2rem; background: var(--primary); color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer;">Save
+                Changes</button>
+            <button type="reset" class="btn-sm"
+                style="padding: 0.8rem 2rem; border: 1px solid var(--border-color); background: transparent; border-radius: 50px; font-weight: bold; cursor: pointer;">Reset</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

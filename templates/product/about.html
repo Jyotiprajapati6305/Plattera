@@ -1,0 +1,690 @@
+{% extends "base.html" %}
+{% block title %}About Us | Plattera{% endblock %}
+
+{% block content %}
+<style>
+    /* Reset and Top Alignment */
+    .header-spacer {
+        display: none !important;
+        /* Force fit to top */
+    }
+
+    .about-page-wrapper {
+        --primary: #b58b7a;
+        --primary-dark: #8d6e63;
+        --secondary: #e9edc9;
+        --accent: #fefae0;
+        --text-dark: #2e2a28;
+        --text-light: #6b635e;
+        --bg-warm: #fbf9f7;
+        --white: #ffffff;
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        --shadow-premium: 0 20px 40px rgba(0, 0, 0, 0.06);
+
+        font-family: var(--font-body, 'Tenor Sans', sans-serif);
+        font-size: 1rem;
+        /* Reduced from 1.05rem */
+        color: var(--text-dark);
+        background-color: var(--bg-warm);
+        line-height: 1.8;
+        overflow-x: hidden;
+    }
+
+    .about-page-wrapper h1,
+    .about-page-wrapper h2,
+    .about-page-wrapper h3,
+    .about-page-wrapper h4 {
+        font-family: var(--font-heading, 'Crimson Pro', serif);
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .section-padding {
+        padding: 5rem 0;
+    }
+
+    .section-title {
+        font-size: 2.4rem;
+        /* Reduced from 3.2rem */
+        margin-bottom: 2rem;
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background-color: var(--primary);
+        border-radius: 2px;
+    }
+
+    .center-title {
+        text-align: center;
+    }
+
+    .center-title::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* --- 2. Our Story --- */
+    .story-section {
+        background-color: var(--white);
+        padding-top: clamp(60px, 10vh, 100px);
+        margin-top: 0;
+    }
+
+    .story-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5rem;
+        align-items: center;
+    }
+
+    .story-content p {
+        font-size: 1.1rem;
+        /* Reduced from 1.25rem */
+        margin-bottom: 1.5rem;
+    }
+
+    .story-list {
+        list-style: none;
+        margin: 2.5rem 0;
+    }
+
+    .story-list li {
+        margin-bottom: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        font-weight: 500;
+        font-size: 1.05rem;
+        /* Reduced from 1.2rem */
+    }
+
+    .story-list i {
+        color: #e63946;
+        font-size: 1.3rem;
+    }
+
+    .story-highlight {
+        font-family: var(--font-heading, 'Crimson Pro', serif);
+        font-size: 1.5rem;
+        /* Reduced from 1.8rem */
+        color: var(--primary-dark);
+        border-left: 5px solid var(--primary);
+        padding-left: 2rem;
+        margin-top: 3rem;
+        font-style: italic;
+        line-height: 1.4;
+    }
+
+    .story-image {
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+        position: relative;
+    }
+
+    .story-image img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: transform 0.8s ease;
+    }
+
+    .story-image:hover img {
+        transform: scale(1.05);
+    }
+
+    /* --- 3. Why Crochet Only --- */
+    .why-section {
+        background: linear-gradient(rgba(181, 139, 122, 0.9), rgba(181, 139, 122, 0.9)),
+            url('https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=1920&q=80') center/cover fixed no-repeat;
+        color: var(--white);
+        text-align: center;
+    }
+
+    .why-section h2,
+    .why-section p {
+        color: var(--white);
+    }
+
+    .why-section .section-title::after {
+        background-color: var(--white);
+    }
+
+    .crochet-phil {
+        font-family: var(--font-heading, 'Crimson Pro', serif);
+        font-size: 1.8rem;
+        /* Reduced from 2.5rem */
+        margin: 4rem 0;
+        font-style: italic;
+        line-height: 1.4;
+    }
+
+    .why-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 2.5rem;
+        margin-top: 4rem;
+    }
+
+    .why-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        padding: 3rem 2rem;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: var(--transition);
+    }
+
+    .why-card:hover {
+        transform: translateY(-12px);
+        background: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .why-card i {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        display: block;
+    }
+
+    /* --- 4/5. Mission & Vision --- */
+    .mv-section {
+        background-color: var(--bg-warm);
+    }
+
+    .mv-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+    }
+
+    .mv-card {
+        background: var(--white);
+        padding: 3rem 2.5rem;
+        border-radius: 30px;
+        box-shadow: var(--shadow-premium);
+        text-align: center;
+        transition: var(--transition);
+        border-top: 6px solid var(--primary);
+    }
+
+    .mv-card:hover {
+        transform: translateY(-8px);
+    }
+
+    .mv-icon {
+        width: 100px;
+        height: 100px;
+        background: var(--accent);
+        color: var(--primary-dark);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        margin: 0 auto 2.5rem;
+    }
+
+    .mv-card h3 {
+        font-size: 1.8rem;
+        /* Reduced from 2.5rem */
+        margin-bottom: 1.2rem;
+    }
+
+    .mv-card p {
+        font-size: 1.2rem;
+        /* Increased from default */
+        color: var(--text-light);
+        line-height: 1.8;
+    }
+
+    /* --- 6. Difference --- */
+    .diff-section {
+        background-color: var(--white);
+    }
+
+    .diff-grid {
+        display: flex;
+        gap: 2rem;
+        margin-top: 4rem;
+        perspective: 1000px;
+    }
+
+    .diff-card {
+        flex: 1;
+        background: var(--bg-warm);
+        padding: 4rem 2rem;
+        border-radius: 24px;
+        text-align: center;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .diff-card:hover {
+        flex: 1.5;
+        background: var(--accent);
+        transform: rotateY(-5deg) translateY(-10px);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+    }
+
+    .diff-icon-emoji {
+        font-size: 2.5rem;
+        /* Reduced from 3.5rem */
+        margin-bottom: 1.5rem;
+        display: block;
+    }
+
+    /* --- 7. Support --- */
+    .support-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+            url('https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=1920&q=80') center/cover fixed no-repeat;
+        color: var(--white);
+        text-align: center;
+    }
+
+    .support-grid {
+        display: flex;
+        justify-content: center;
+        gap: 6rem;
+        margin: 5rem 0;
+        flex-wrap: wrap;
+    }
+
+    .support-item i {
+        font-size: 2.5rem;
+        /* Reduced from 3.5rem */
+        color: var(--secondary);
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .support-item span {
+        font-family: var(--font-heading, 'Crimson Pro', serif);
+        font-size: 1.4rem;
+        font-weight: 600;
+    }
+
+    /* --- 8. Commitment --- */
+    .commit-section {
+        background-color: var(--white);
+    }
+
+    .commit-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 6rem;
+        align-items: center;
+    }
+
+    .commit-list {
+        list-style: none;
+    }
+
+    .commit-list li {
+        background: var(--bg-warm);
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        font-size: 1.15rem;
+        font-weight: 600;
+        transition: var(--transition);
+        border: 1px solid rgba(0, 0, 0, 0.02);
+    }
+
+    .commit-list li:hover {
+        transform: translateX(15px);
+        border-left: 6px solid var(--primary);
+        background: var(--white);
+        box-shadow: var(--shadow-premium);
+    }
+
+    .commit-list i {
+        font-size: 1.8rem;
+        color: var(--primary);
+    }
+
+    /* --- 9. Closing --- */
+    .closing-section {
+        background-color: var(--accent);
+        text-align: center;
+    }
+
+    .tag-cloud {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin: 4rem 0;
+    }
+
+    .badge-tag {
+        background: var(--white);
+        padding: 1.2rem 2.5rem;
+        border-radius: 50px;
+        font-weight: 700;
+        color: var(--primary-dark);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        transition: var(--transition);
+    }
+
+    .badge-tag:hover {
+        transform: scale(1.1);
+        background: var(--primary);
+        color: var(--white);
+    }
+
+    /* --- 10. Final CTA --- */
+    .cta-section {
+        background: var(--white);
+        text-align: center;
+    }
+
+    .btn-group-premium {
+        display: flex;
+        justify-content: center;
+        gap: 2.5rem;
+        margin-top: 4rem;
+    }
+
+    .btn-premium {
+        padding: 1.5rem 4rem;
+        border-radius: 100px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: var(--transition);
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-p-main {
+        background: var(--primary);
+        color: var(--white);
+        box-shadow: 0 15px 30px rgba(181, 139, 122, 0.4);
+    }
+
+    .btn-p-main:hover {
+        background: var(--primary-dark);
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(181, 139, 122, 0.5);
+    }
+
+    .btn-p-outline {
+        border: 2px solid var(--text-dark);
+        color: var(--text-dark);
+    }
+
+    .btn-p-outline:hover {
+        background: var(--text-dark);
+        color: var(--white);
+        transform: translateY(-5px);
+    }
+
+    /* Reveal Animations */
+    .reveal {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    @media (max-width: 992px) {
+
+        .story-grid,
+        .mv-grid,
+        .commit-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .diff-grid {
+            flex-direction: column;
+        }
+
+        .section-padding {
+            padding: 5rem 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+        }
+    }
+</style>
+
+<div class="about-page-wrapper">
+    <!-- 2. Our Story -->
+    <section class="story-section section-padding">
+        <div class="plattera-container">
+            <div class="story-grid">
+                <div class="story-content reveal">
+                    <h2 class="section-title">Our Story</h2>
+                    <p>Plattera was born from a simple observation — talented crochet artisans were creating beautiful
+                        handmade pieces, yet selling through unstructured channels like social media messages and
+                        informal orders.</p>
+                    <p>Despite their creativity and dedication, many artisans struggled with:</p>
+                    <ul class="story-list">
+                        <li><i class="fa-solid fa-circle-xmark"></i> Limited digital visibility</li>
+                        <li><i class="fa-solid fa-circle-xmark"></i> Manual order management</li>
+                        <li><i class="fa-solid fa-circle-xmark"></i> Payment confusion</li>
+                        <li><i class="fa-solid fa-circle-xmark"></i> Lack of professional storefronts</li>
+                        <li><i class="fa-solid fa-circle-xmark"></i> No structured review systems</li>
+                    </ul>
+                    <div class="story-highlight">
+                        "We believed crochet artisans deserved more. Plattera was created to provide a structured,
+                        transparent, and professional digital ecosystem exclusively for crochet creators."
+                    </div>
+                </div>
+                <div class="story-image reveal">
+                    <img src="https://images.unsplash.com/photo-1629853926662-f7034b07c87c?auto=format&fit=crop&w=800&q=80"
+                        alt="Crochet Hooks and Yarn">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Why Crochet Only -->
+    <section class="why-section section-padding">
+        <div class="plattera-container">
+            <h2 class="section-title center-title">Why a Crochet-Only Marketplace?</h2>
+            <div class="crochet-phil reveal">
+                Crochet is not mass production.<br>
+                It is patience. It is precision.<br>
+                It is storytelling through stitches.
+            </div>
+            <p style="font-size: 1.3rem;" class="reveal">By focusing exclusively on crochet:</p>
+            <div class="why-grid">
+                <div class="why-card reveal">
+                    <i class="fa-solid fa-medal"></i>
+                    <p>Strict quality standards maintained</p>
+                </div>
+                <div class="why-card reveal">
+                    <i class="fa-solid fa-hand-holding-heart"></i>
+                    <p>Preserving handmade authenticity</p>
+                </div>
+                <div class="why-card reveal">
+                    <i class="fa-solid fa-robot"></i>
+                    <p>Avoiding machine-made imitations</p>
+                </div>
+                <div class="why-card reveal">
+                    <i class="fa-solid fa-star"></i>
+                    <p>Dedicated space for artisans to shine</p>
+                </div>
+            </div>
+            <div style="margin-top: 5rem; font-size: 1.8rem; font-family: var(--font-heading, 'Crimson Pro', serif);"
+                class="reveal">
+                Plattera is not a general marketplace — it is a curated crochet community.
+            </div>
+        </div>
+    </section>
+
+    <!-- 4/5. Mission & Vision -->
+    <section class="mv-section section-padding">
+        <div class="plattera-container">
+            <div class="mv-grid">
+                <div class="mv-card reveal">
+                    <div class="mv-icon"><i class="fa-solid fa-bullseye"></i></div>
+                    <h3>Our Mission</h3>
+                    <p>To empower independent crochet artisans with structured digital tools that transform creativity
+                        into sustainable income — while delivering buyers a trustworthy and transparent handmade
+                        shopping experience.</p>
+                </div>
+                <div class="mv-card reveal">
+                    <div class="mv-icon"><i class="fa-regular fa-eye"></i></div>
+                    <h3>Our Vision</h3>
+                    <p>To become the leading crochet-only marketplace where craftsmanship is valued, custom orders are
+                        simplified, and creativity meets structured commerce seamlessly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Difference -->
+    <section class="diff-section section-padding">
+        <div class="plattera-container">
+            <h2 class="section-title center-title">What Makes Plattera Different?</h2>
+            <div class="diff-grid">
+                <div class="diff-card reveal">
+                    <span class="diff-icon-emoji">🧵</span>
+                    <h4>Dedicated Focus</h4>
+                    <p>We specialize only in crochet for deep category focus.</p>
+                </div>
+                <div class="diff-card reveal">
+                    <span class="diff-icon-emoji">🎨</span>
+                    <h4>Custom Workflows</h4>
+                    <p>Organized bill-estimating for bespoke requests.</p>
+                </div>
+                <div class="diff-card reveal">
+                    <span class="diff-icon-emoji">🔒</span>
+                    <h4>Order Security</h4>
+                    <p>Safe payment processing and transparent tracking.</p>
+                </div>
+                <div class="diff-card reveal">
+                    <span class="diff-icon-emoji">📊</span>
+                    <h4>Smarter Selling</h4>
+                    <p>Professional dashboards for independent artisans.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Support Small -->
+    <section class="support-section section-padding">
+        <div class="plattera-container">
+            <h2 class="section-title center-title">Supporting Independent Creators</h2>
+            <div class="support-grid">
+                <div class="support-item reveal">
+                    <i class="fa-solid fa-house-chimney-user"></i>
+                    <span>Home-based artisans</span>
+                </div>
+                <div class="support-item reveal">
+                    <i class="fa-solid fa-venus"></i>
+                    <span>Women-led businesses</span>
+                </div>
+                <div class="support-item reveal">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>Passion-driven dreams</span>
+                </div>
+            </div>
+            <div style="font-size: 1.6rem; max-width: 900px; margin: 4rem auto 0; font-family: var(--font-heading, 'Crimson Pro', serif); font-style: italic;"
+                class="reveal">
+                "When you purchase from Plattera, you support a real story and a real dream. Every stitch you buy
+                supports a small business."
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Commitment -->
+    <section class="commit-section section-padding">
+        <div class="plattera-container">
+            <h2 class="section-title center-title">Our Commitment</h2>
+            <div class="commit-grid">
+                <div>
+                    <ul class="commit-list">
+                        <li class="reveal"><i class="fa-solid fa-user-check"></i> Vetted Artisan Onboarding</li>
+                        <li class="reveal"><i class="fa-solid fa-magnifying-glass"></i> Quality Assurance Checks</li>
+                        <li class="reveal"><i class="fa-solid fa-credit-card"></i> Safe & Secure Transactions</li>
+                        <li class="reveal"><i class="fa-solid fa-comments"></i> Transparent Communication</li>
+                    </ul>
+                </div>
+                <div style="text-align: center;" class="reveal">
+                    <i class="fa-solid fa-handshake"
+                        style="font-size: 5rem; color: var(--secondary); margin-bottom: 2rem; display: block;"></i>
+                    <h4 style="font-size: 1.8rem;">Trust is our Foundation</h4>
+                    <p>We believe trust is at the heart of every handmade transaction.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. Closing -->
+    <section class="closing-section section-padding">
+        <div class="plattera-container">
+            <h2 class="section-title center-title">More Than a Marketplace</h2>
+            <div class="tag-cloud">
+                <div class="badge-tag reveal">Digital Empowerment</div>
+                <div class="badge-tag reveal">Sustainable Fashion</div>
+                <div class="badge-tag reveal">Curated Community</div>
+                <div class="badge-tag reveal">Craftsmanship First</div>
+            </div>
+            <div style="font-size: 2rem; font-family: var(--font-heading, 'Crimson Pro', serif); font-style: italic;"
+                class="reveal">
+                We invite you to explore, support, and celebrate the art of handmade crochet with us.
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. Final CTA -->
+    <section class="cta-section section-padding">
+        <div class="plattera-container">
+            <h2 style="font-size: 2.2rem; margin-bottom: 1.5rem;" class="reveal">Ready to explore handcrafted treasures?
+            </h2>
+            <div class="btn-group-premium reveal">
+                {% if not current_user.is_authenticated %}
+                <a href="{{ url_for('auth.login') }}" class="btn-premium btn-p-main">Get Started</a>
+                <a href="{{ url_for('auth.register') }}" class="btn-premium btn-p-outline">Join as Artisan</a>
+                {% else %}
+                <a href="{{ url_for('product.gallery') }}" class="btn-premium btn-p-main">Start Shopping</a>
+                <a href="{{ url_for('custom_order.new_request') }}" class="btn-premium btn-p-outline">Request Custom</a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
+    });
+</script>
+{% endblock %}

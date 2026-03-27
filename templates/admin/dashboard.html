@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Plattera</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Tenor+Sans&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            /* Admin Pure Black Theme */
+            --primary: #ffffff;
+            --primary-light: rgba(255, 255, 255, 0.1);
+            --primary-dark: #e0e0e0;
+            --secondary: #111111;
+
+            --bg-body: #000000;
+            --bg-card: #0a0a0a;
+            --bg-hover: #151515;
+
+            --text-dark: #ffffff;
+            --text-muted: #888888;
+
+            --border-color: rgba(255, 255, 255, 0.1);
+
+            /* Status Colors */
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.15);
+            --danger: #fb4848;
+            --danger-light: rgba(251, 72, 72, 0.15);
+            --info: #3ba2b8;
+            --info-light: rgba(59, 162, 184, 0.15);
+
+            --font-head: 'Crimson Pro', serif;
+            --font-body: 'Tenor Sans', sans-serif;
+
+            --shadow-sm: none;
+            --shadow-hover: 0 4px 15px rgba(255, 255, 255, 0.05);
+
+            --radius-md: 12px;
+            --radius-sm: 6px;
+            --transition: all 0.3s ease;
+
+            --sidebar-width: 300px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-dark);
+            background-color: var(--bg-body);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-head);
+            font-weight: 600;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --- TOP HEADER --- */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem 3rem;
+            width: calc(100% - var(--sidebar-width));
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            /* Stacks sections automatically */
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title h1 {
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .role-badge {
+            background: var(--warning-light);
+            color: var(--warning);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .icon-btn:hover {
+            color: var(--primary);
+        }
+
+        .noti-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+        }
+
+        .profile-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+            padding-left: 1rem;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* --- CARDS & PANELS --- */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 1.8rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .section-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Grid Utilities inside sections */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* --- CHARTS --- */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        /* --- OVERVIEW STAT CARDS --- */
+        .stat-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--text-dark);
+            font-family: var(--font-head);
+            line-height: 1;
+        }
+
+        .stat-trend {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
+
+        .trend-neutral {
+            color: var(--text-muted);
+        }
+
+        .stat-link {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 1rem;
+        }
+
+        .action-panel {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            background: var(--bg-hover);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .action-header {
+            color: white;
+        }
+
+        .action-header h3 {
+            margin-bottom: 0.2rem;
+            font-size: 1.3rem;
+        }
+
+        .action-header p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            background: white;
+            color: #000000;
+            transform: translateY(-2px);
+        }
+
+        /* --- PENDING ACTIONS & LISTS --- */
+        .pending-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .pending-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.2rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            transition: var(--transition);
+        }
+
+        .pending-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .pending-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .pending-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--warning-light);
+            color: var(--warning);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .btn-sm-action {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-sm-action:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* --- TABLES --- */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .data-table th {
+            color: var(--text-muted);
+            font-weight: bold;
+            background: var(--bg-hover);
+        }
+
+        .data-table tr:hover {
+            background: var(--bg-hover);
+        }
+
+        /* --- ACTIVITY FEED --- */
+        .activity-feed {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+        }
+
+        .activity-text {
+            font-size: 0.95rem;
+        }
+
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .badge-pending {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        @media screen and (max-width: 1024px) {
+
+            .grid-2,
+            .grid-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .action-panel {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include 'admin/sidebar.html' %}
+
+    <!-- MAIN DASHBOARD -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <header class="top-header">
+            <div class="page-title">
+                <h1>Admin Dashboard</h1>
+                <p>Monitor platform performance, manage approvals, and control growth in one place.</p>
+            </div>
+
+            <div class="header-actions">
+                <div class="role-badge"><i class="fa-solid fa-crown"></i> Super Admin</div>
+                <button class="icon-btn"><i class="fa-solid fa-bell"></i><span class="noti-dot"></span></button>
+                <div class="profile-dropdown">
+                    <div class="profile-img" style="background: var(--text-dark); color: var(--bg-body);">A</div>
+                    <div>
+                        <div style="font-weight: bold; font-size: 0.9rem;">Admin User</div>
+                        <a href="{{ url_for('admin.logout') }}" style="font-size: 0.8rem; color: var(--danger);"><i
+                                class="fa-solid fa-power-off"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==============================================
+             SECTION 1: CHARTS & GRAPHS (AT TOP) 
+        =============================================== -->
+        <div class="section-container">
+            <h2 class="section-title"><i class="fa-solid fa-chart-pie"></i> Orders Breakdown</h2>
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h3 class="card-title">Orders Breakdown</h3>
+                </div>
+                <div class="chart-container" style="display: flex; justify-content: center; max-height: 280px;">
+                    <canvas id="ordersChart"></canvas>
+                </div>
+            </div>
+
+            <h2 class="section-title"><i class="fa-solid fa-chart-area"></i> Revenue Trend</h2>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Revenue Overview</h3>
+                    <select
+                        style="padding: 0.3rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: inherit; background: var(--bg-card); color: var(--text-dark);">
+                        <option>Last 30 Days</option>
+                        <option>Last 7 Days</option>
+                        <option>Last 6 Months</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SECTION 2: OVERVIEW CARDS 
+        =============================================== -->
+        <div class="section-container">
+            <h2 class="section-title"><i class="fa-solid fa-chart-pie"></i> Platform Metrics</h2>
+            <div class="grid-4">
+                <div class="card stat-card">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-title">Total Sellers</div>
+                            <div class="stat-value">{{ stats.total_sellers }}</div>
+                        </div>
+                        <div class="stat-icon" style="background: var(--info-light); color: var(--info);"><i
+                                class="fa-solid fa-store"></i></div>
+                    </div>
+                </div>
+
+                <div class="card stat-card">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-title">Total Buyers</div>
+                            <div class="stat-value">{{ stats.total_buyers }}</div>
+                        </div>
+                        <div class="stat-icon" style="background: var(--primary-light); color: var(--primary);"><i
+                                class="fa-solid fa-users"></i></div>
+                    </div>
+                </div>
+
+                <div class="card stat-card">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-title">Live Products</div>
+                            <div class="stat-value">{{ stats.live_products }}</div>
+                        </div>
+                        <div class="stat-icon" style="background: var(--success-light); color: var(--success);"><i
+                                class="fa-solid fa-tags"></i></div>
+                    </div>
+                </div>
+
+                <div class="card stat-card">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-title">Pending Approvals</div>
+                            <div class="stat-value">{{ stats.pending_approvals }}</div>
+                        </div>
+                        <div class="stat-icon" style="background: var(--warning-light); color: var(--warning);"><i
+                                class="fa-solid fa-clock"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SECTION 3: QUICK ACTION PANEL
+        =============================================== -->
+        <div class="action-panel">
+            <div class="action-header">
+                <h3>Admin Quick Actions</h3>
+                <p>Shortcuts for daily marketplace management</p>
+            </div>
+            <div class="action-buttons">
+                <a class="action-btn" href="{{ url_for('admin.manage_products') }}"><i
+                        class="fa-solid fa-plus-circle"></i> Add Product</a>
+                <a class="action-btn" href="{{ url_for('admin.manage_sellers') }}"><i
+                        class="fa-solid fa-user-check"></i> Approve Seller</a>
+                <a class="action-btn" href="{{ url_for('admin.manage_products') }}#tab-pending"><i
+                        class="fa-solid fa-box-check"></i> Approve Product</a>
+                <a class="action-btn" href="{{ url_for('admin.settings') }}"><i class="fa-solid fa-bullhorn"></i> Post
+                    Announcement</a>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SECTION 4: PENDING ACTION CENTER (Full Width)
+        =============================================== -->
+        <div class="section-container">
+            <h2 class="section-title"><i class="fa-solid fa-clipboard-list" style="color: var(--warning);"></i> Pending
+                Action Center</h2>
+            <div class="card" id="pending-actions" style="border: 1px solid var(--warning);">
+                <div class="pending-list" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+
+                    <div class="pending-item">
+                        <div class="pending-info">
+                            <div class="pending-icon"><i class="fa-solid fa-user-clock"></i></div>
+                            <div>
+                                <h4 style="font-size: 1rem;">Seller Approvals</h4>
+                                <p style="font-size: 0.85rem; color: var(--warning);">6 New Sellers Awaiting Onboarding
+                                </p>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('admin.manage_sellers') }}" class="btn-sm-action">Review Sellers</a>
+                    </div>
+
+                    <div class="pending-item">
+                        <div class="pending-info">
+                            <div class="pending-icon"><i class="fa-solid fa-tags"></i></div>
+                            <div>
+                                <h4 style="font-size: 1rem;">Product Approvals</h4>
+                                <p style="font-size: 0.85rem; color: var(--warning);">38 Handcrafted Items Pending</p>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('admin.manage_products') }}" class="btn-sm-action">Review Catalog</a>
+                    </div>
+
+                    <div class="pending-item"
+                        style="background: var(--danger-light); border-color: rgba(217, 76, 76, 0.2);">
+                        <div class="pending-info">
+                            <div class="pending-icon" style="color: var(--danger); background: white;"><i
+                                    class="fa-solid fa-triangle-exclamation"></i></div>
+                            <div>
+                                <h4 style="font-size: 1rem;">Reported Listings</h4>
+                                <p style="font-size: 0.85rem; color: var(--danger);">3 Products Flagged by Community</p>
+                            </div>
+                        </div>
+                        <button class="btn-sm-action"
+                            style="border-color: var(--danger); color: var(--danger);">Investigate</button>
+                    </div>
+
+                    <div class="pending-item"
+                        style="background: var(--info-light); border-color: rgba(74, 163, 163, 0.2);">
+                        <div class="pending-info">
+                            <div class="pending-icon" style="color: var(--info); background: white;"><i
+                                    class="fa-solid fa-money-bill-transfer"></i></div>
+                            <div>
+                                <h4 style="font-size: 1rem;">Payout Requests</h4>
+                                <p style="font-size: 0.85rem; color: var(--info);">12 Sellers Requested Withdrawals</p>
+                            </div>
+                        </div>
+                        <button class="btn-sm-action" style="border-color: var(--info); color: var(--info);">Process
+                            Funds</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SECTION 5: TOP PERFORMERS & ACTIVITY
+        =============================================== -->
+        <div class="grid-2">
+            <!-- Top Performers List -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fa-solid fa-trophy" style="color: var(--warning);"></i> Top
+                        Marketplace Sellers</h3>
+                    <a href="usermanage.html" class="stat-link" style="margin: 0;">View Full Rankings</a>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Seller Name</th>
+                            <th>Products</th>
+                            <th>Revenue Generated</th>
+                            <th>Platform Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>YarnCraft Studio</strong></td>
+                            <td>42 Live</td>
+                            <td style="color: var(--success); font-weight: bold;">₹45,000</td>
+                            <td>⭐ 4.9</td>
+                        </tr>
+                        <tr>
+                            <td><strong>CozyHooks Knitwear</strong></td>
+                            <td>18 Live</td>
+                            <td style="color: var(--success); font-weight: bold;">₹38,500</td>
+                            <td>⭐ 4.8</td>
+                        </tr>
+                        <tr>
+                            <td><strong>KnotMagic Decor</strong></td>
+                            <td>25 Live</td>
+                            <td style="color: var(--success); font-weight: bold;">₹31,200</td>
+                            <td>⭐ 4.7</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Recent Activity Log -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Real-time Activity Log</h3>
+                </div>
+
+                <div class="activity-feed">
+                    <div class="activity-item">
+                        <div class="activity-icon"><i class="fa-solid fa-user-plus"></i></div>
+                        <div>
+                            <div class="activity-time">Just now</div>
+                            <div class="activity-text">New seller <strong>CozyHooks</strong> registered account and is
+                                awaiting verification pipeline.</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: var(--success-light); color: var(--success);"><i
+                                class="fa-solid fa-check"></i></div>
+                        <div>
+                            <div class="activity-time">2 hours ago</div>
+                            <div class="activity-text">Product <strong>Boho Crochet Sling Bag</strong> was successfully
+                                approved by Admin queue.</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: var(--warning-light); color: var(--warning);"><i
+                                class="fa-solid fa-rotate-left"></i></div>
+                        <div>
+                            <div class="activity-time">5 hours ago</div>
+                            <div class="activity-text">Customer refund request officially approved for Delivery Order
+                                <strong>#PLT1245</strong>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Chart.js Scripts -->
+    <script>
+        // Revenue Line Chart Data
+        const revCtx = document.getElementById('revenueChart').getContext('2d');
+        const revenueChart = new Chart(revCtx, {
+            type: 'line',
+            data: {
+                labels: ['1st', '5th', '10th', '15th', '20th', '25th', '30th'],
+                datasets: [{
+                    label: 'Revenue (₹)',
+                    data: [12000, 19000, 15000, 25000, 22000, 30000, 45000],
+                    borderColor: '#ffffff',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#000000',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.1)', drawBorder: false },
+                        ticks: { color: '#8a99af' }
+                    },
+                    x: {
+                        grid: { display: false, drawBorder: false },
+                        ticks: { color: '#8a99af' }
+                    }
+                }
+            }
+        });
+
+        // Orders Pie Chart Data
+        const orderCtx = document.getElementById('ordersChart').getContext('2d');
+        const ordersChart = new Chart(orderCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Completed (78%)', 'Active (14%)', 'Cancelled (5%)', 'Refunded (3%)'],
+                datasets: [{
+                    data: [78, 14, 5, 3],
+                    backgroundColor: [
+                        '#10b981', // Success Green
+                        '#f59e0b', // Active Yellow
+                        '#64748b', // Cancelled Grey
+                        '#fb4848'  // Refunded Red
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            color: '#8a99af',
+                            font: { family: "'Tenor Sans', sans-serif" }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

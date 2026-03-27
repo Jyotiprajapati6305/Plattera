@@ -1,0 +1,596 @@
+{% extends "base.html" %}
+{% block title %}Your Cart | Plattera{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary: #D4A373;
+        --primary-light: #e6c5a5;
+        --secondary: #f0ebe1;
+        --accent: #e5e5e5;
+        --text-dark: #2d2a26;
+        --text-light: #6c757d;
+        --bg-light: #fafafa;
+        --white: #ffffff;
+        --success: #2e7d32;
+        --danger: #d97757;
+        --warning: #f5b041;
+        --shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        --shadow-hover: 0 20px 45px rgba(212, 163, 115, 0.15);
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .cart-page-wrapper {
+        font-family: var(--font-body, 'Tenor Sans', sans-serif);
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+        overflow-x: hidden;
+        margin-top: -100px;
+    }
+
+    .ambient-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle at 80% 20%, rgba(212, 163, 115, 0.05), transparent 30%),
+            radial-gradient(circle at 20% 80%, rgba(212, 163, 115, 0.05), transparent 30%);
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .container {
+        max-width: var(--container-width, 1400px);
+        margin: 0 auto;
+        padding: 0 2rem;
+        position: relative;
+    }
+
+    .fade-up {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    .fade-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .page-header {
+        position: relative;
+        height: 380px;
+        overflow: hidden;
+        margin: 2rem auto 4rem;
+        max-width: var(--container-width, 1400px);
+        border-radius: 40px;
+        box-shadow: 0 20px 40px rgba(212, 163, 115, 0.15);
+        display: flex;
+        align-items: center;
+    }
+
+    .header-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 140%;
+        background-image: url('https://images.unsplash.com/photo-1610484826967-09c5720778c7?w=1600&q=80');
+        background-size: cover;
+        background-position: center 30%;
+        z-index: 1;
+    }
+
+    .header-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(250, 250, 250, 0.95) 0%, rgba(250, 250, 250, 0.7) 40%, rgba(212, 163, 115, 0.2) 100%);
+        backdrop-filter: blur(10px);
+        z-index: 2;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 3;
+        color: var(--text-dark);
+        padding: 0 4rem;
+        width: 100%;
+    }
+
+    .breadcrumb {
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        color: var(--text-light);
+        background: white;
+        padding: 8px 18px;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .page-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(to right, var(--text-dark), var(--primary));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .progress-container {
+        max-width: 600px;
+        margin: -7rem auto 4rem;
+        background: white;
+        padding: 1.5rem 2rem;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        position: relative;
+        z-index: 10;
+    }
+
+    .progress-steps {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    .progress-steps::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 10%;
+        width: 80%;
+        height: 2px;
+        background: var(--accent);
+        transform: translateY(-50%);
+        z-index: 1;
+    }
+
+    .step {
+        position: relative;
+        z-index: 2;
+        background: white;
+        padding: 0 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-light);
+    }
+
+    .step.active {
+        color: var(--primary);
+    }
+
+    .step-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--bg-light);
+        border: 2px solid var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+    }
+
+    .step.active .step-icon {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        box-shadow: 0 5px 15px rgba(212, 163, 115, 0.4);
+    }
+
+    .layout-grid {
+        display: grid;
+        grid-template-columns: 1.8fr 1.2fr;
+        gap: 3rem;
+        margin-bottom: 6rem;
+        align-items: start;
+    }
+
+    /* Items */
+    .cart-card {
+        background: white;
+        border-radius: 24px;
+        padding: 1.5rem;
+        display: flex;
+        gap: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        transition: var(--transition);
+        margin-bottom: 1.5rem;
+    }
+
+    .cart-card:hover {
+        box-shadow: var(--shadow-hover);
+    }
+
+    .product-image {
+        width: 140px;
+        height: 140px;
+        border-radius: 16px;
+        object-fit: cover;
+    }
+
+    .product-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .p-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        text-decoration: none;
+    }
+
+    .s-name {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        text-decoration: none;
+        margin-bottom: 10px;
+    }
+
+    .line-total {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .qty-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--bg-light);
+        padding: 5px;
+        border-radius: 20px;
+        border: 1px solid var(--accent);
+        width: fit-content;
+    }
+
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        background: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .qty-input {
+        width: 40px;
+        text-align: center;
+        border: none;
+        background: transparent;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 18px;
+        border-radius: 16px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        background: var(--primary);
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        transition: var(--transition);
+    }
+
+    .btn-primary:hover {
+        background: #c59667;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(212, 163, 115, 0.4);
+    }
+
+    .summary-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: var(--shadow-hover);
+        border: 1px solid rgba(212, 163, 115, 0.2);
+        overflow: hidden;
+        position: sticky;
+        top: 120px;
+    }
+
+    .summary-header {
+        padding: 2rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .summary-body {
+        padding: 1.5rem 2rem;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        color: var(--text-light);
+    }
+
+    .summary-total {
+        background: var(--bg-light);
+        padding: 1.5rem 2rem;
+    }
+
+    @media (max-width: 900px) {
+        .layout-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-card {
+            position: relative;
+            top: 0;
+        }
+
+        .page-header {
+            height: 300px;
+            padding-top: 50px;
+        }
+
+        .header-content {
+            padding: 0 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .container {
+            padding: 0 1rem;
+        }
+
+        .cart-card {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+        }
+
+        .p-name {
+            font-size: 1.1rem;
+        }
+
+        .line-total {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        .qty-wrapper {
+            margin: 0 auto;
+        }
+
+        .progress-container {
+            margin-top: -3rem;
+            padding: 1rem;
+        }
+
+        .step span {
+            display: none;
+        }
+
+        .summary-header,
+        .summary-body,
+        .summary-total {
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+<div class="cart-page-wrapper">
+    <div class="ambient-bg"></div>
+
+    <div class="page-header">
+        <div class="header-bg"></div>
+        <div class="header-overlay"></div>
+        <div class="header-content fade-up">
+            <div class="breadcrumb">
+                <a href="{{ url_for('product.home') }}">Home</a> <i class="fas fa-chevron-right"
+                    style="font-size: 0.7rem;"></i> <span>Cart</span>
+            </div>
+            <h1 class="page-title">Your Cart</h1>
+            <p class="page-subtitle">Review your handcrafted selections before checking out.</p>
+        </div>
+    </div>
+
+    <div class="progress-container fade-up">
+        <div class="progress-steps">
+            <div class="step active">
+                <div class="step-icon"><i class="fas fa-shopping-bag"></i></div><span>Cart</span>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-truck"></i></div><span>Checkout</span>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-credit-card"></i></div><span>Payment</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        {% if cart_items %}
+        <div class="layout-grid">
+            <div class="cart-items-wrapper">
+                {% for ci in cart_items %}
+                <div class="cart-card fade-up">
+                    {% if ci.type == 'product' %}
+                    {% if ci.product['image_url'] %}
+                    <img src="{{ url_for('static', filename='uploads/products/' + ci.product['image_url'].split('/')[-1]) if not ci.product['image_url'].startswith('http') else ci.product['image_url'] }}"
+                        alt="{{ ci.product['product_name'] }}" class="product-image">
+                    {% else %}
+                    <div class="product-image"
+                        style="background:var(--secondary); display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-yarn fa-2xl" style="color: var(--primary);"></i>
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    {% if ci.image_url %}
+                    <img src="{{ url_for('static', filename='uploads/custom_requests/' + ci.image_url) }}"
+                        alt="Custom Plan" class="product-image">
+                    {% else %}
+                    <div class="product-image"
+                        style="background:var(--secondary); display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-wand-magic-sparkles fa-2xl" style="color: var(--primary);"></i>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+
+                    <div class="product-info">
+                        <div style="display:flex; justify-content: space-between;">
+                            <div>
+                                {% if ci.type == 'product' %}
+                                <a href="{{ url_for('product.product_detail', product_id=ci.product['p_id']) }}"
+                                    class="p-name">{{ ci.product['product_name'] }}</a>
+                                {% else %}
+                                <span class="p-name">{{ ci.product_name }}</span>
+                                <div
+                                    style="background: #fff3e0; color: #e65100; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-left: 10px; vertical-align: middle;">
+                                    <i class="fas fa-clock"></i> Payment Pending
+                                </div>
+                                {% endif %}
+                                <br>
+                                <span class="s-name">By {{ ci.product['shop_name'] if ci.type == 'product' else
+                                    ci.shop_name or 'Plattera Artisan' }}</span>
+
+                                {% if ci.details %}
+                                <div
+                                    style="font-size: 0.85rem; color: var(--text-light); margin-top: 5px; font-style: italic;">
+                                    "{{ ci.details[:80] }}{% if ci.details|length > 80 %}...{% endif %}"
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="line-total">₹{{ "%.0f"|format(ci.subtotal) }}</div>
+                        </div>
+
+                        <div
+                            style="display:flex; justify-content: space-between; align-items: center; margin-top: auto;">
+                            <!-- Quantity Setup -->
+                            {% if ci.type == 'product' %}
+                            <form action="{{ url_for('cart.update_quantity', product_id=ci.product['p_id']) }}"
+                                method="POST" class="qty-form">
+                                <div class="qty-wrapper">
+                                    <button type="submit" name="quantity" value="{{ ci.quantity - 1 }}" class="qty-btn"
+                                        {% if ci.quantity <=1 %}disabled{% endif %}><i
+                                            class="fas fa-minus"></i></button>
+                                    <input type="number" name="quantity_display" class="qty-input"
+                                        value="{{ ci.quantity }}" readonly>
+                                    <button type="submit" name="quantity" value="{{ ci.quantity + 1 }}"
+                                        class="qty-btn"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </form>
+                            {% else %}
+                            <div class="qty-wrapper" style="opacity: 0.7; background: #eee;">
+                                <span style="padding: 0 15px; font-size: 0.9rem; font-weight: bold;">Qty: {{ ci.quantity
+                                    }}</span>
+                            </div>
+                            {% endif %}
+
+                            {% if ci.type == 'product' %}
+                            <form action="{{ url_for('cart.remove_from_cart', product_id=ci.product['p_id']) }}"
+                                method="POST">
+                                <button type="submit"
+                                    style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:600;"><i
+                                        class="far fa-trash-alt"></i> Remove</button>
+                            </form>
+                            {% else %}
+                            <div style="font-size: 0.85rem; color: var(--text-light);">
+                                Handcrafted for you
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="summary-panel fade-up">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <h3>Order Summary</h3>
+                    </div>
+                    <div class="summary-body">
+                        <div class="summary-row"><span>Items ({{ cart_items|length }})</span><span>₹{{
+                                "%.0f"|format(total) }}</span></div>
+                        <div class="summary-row"><span>Shipping</span><span style="color:var(--success);">Free</span>
+                        </div>
+                    </div>
+                    <div class="summary-total">
+                        <div style="display:flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight:700; font-size:1.2rem;">Total Payable</span>
+                            <span style="font-size:2rem; font-weight:700; color:var(--primary);">₹{{
+                                "%.0f"|format(total) }}</span>
+                        </div>
+                    </div>
+                    <div style="padding: 2rem;">
+                        <a href="{{ url_for('cart.checkout') }}" class="btn-primary"
+                            style="text-decoration:none;">Proceed to Checkout <i class="fas fa-arrow-right"></i></a>
+                        <div
+                            style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px; font-size:0.8rem; color:var(--text-light); text-align:center;">
+                            <div><i class="fas fa-lock"></i> Secure Payment</div>
+                            <div><i class="fas fa-hand-sparkles"></i> Verified Arts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div style="text-align:center; padding: 100px 20px;" class="fade-up">
+            <i class="fas fa-shopping-bag" style="font-size:5rem; color:var(--accent); margin-bottom:20px;"></i>
+            <h2>Your cart is empty</h2>
+            <p>Looks like you haven't added any handmade crochet items yet.</p>
+            <a href="{{ url_for('product.gallery') }}" class="btn-primary"
+                style="display:inline-flex; width:auto; padding:15px 40px; margin-top:20px; text-decoration:none;">Explore
+                Gallery</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const reveals = document.querySelectorAll('.fade-up');
+        reveals.forEach(el => el.classList.add('visible'));
+
+        // Handle quantity displays and forms
+        const qtyForms = document.querySelectorAll('.qty-form');
+        qtyForms.forEach(form => {
+            const btns = form.querySelectorAll('.qty-btn');
+            btns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // Form will submit with the new value
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

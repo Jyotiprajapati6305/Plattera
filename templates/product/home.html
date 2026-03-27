@@ -1,0 +1,1154 @@
+{% extends 'base.html' %}
+
+{% block title %}Plattera | Curated Crochet Marketplace{% endblock %}
+
+{% block content %}
+<!-- GLOBAL STYLES (from user) -->
+<style>
+    :root {
+        --primary: #BF4646;
+        --primary-dark: #9E3737;
+        --secondary: #e9edc9;
+        --accent: #FDE8D4;
+        --text-dark: #333333;
+        --text-light: #777777;
+        --bg-light: #FFF4EA;
+        --bg-offwhite: #FFF4EA;
+        --font-heading: 'Crimson Pro', serif;
+        --font-body: 'Tenor Sans', sans-serif;
+        --transition: all 0.3s ease;
+        --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .container-wide {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .btn-plattera {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        gap: 0.5rem;
+        font-family: var(--font-body);
+    }
+
+    .btn-plattera-primary {
+        background-color: var(--primary);
+        color: white;
+        box-shadow: 0 4px 15px rgba(191, 70, 70, 0.4);
+    }
+
+    .btn-plattera-primary:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(191, 70, 70, 0.6);
+    }
+
+    .btn-plattera-secondary {
+        background-color: transparent;
+        color: var(--text-dark);
+        border: 2px solid var(--text-dark);
+    }
+
+    .btn-plattera-secondary:hover {
+        background-color: var(--text-dark);
+        color: white;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .section-title {
+        font-size: 2.8rem;
+        margin-bottom: 1rem;
+        position: relative;
+        display: inline-block;
+        font-family: var(--font-heading);
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background-color: var(--primary);
+        border-radius: 2px;
+    }
+
+    .section-subtitle {
+        color: var(--text-light);
+        font-size: 1.15rem;
+        max-width: 650px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+</style>
+
+<!-- =========================================
+     1. HERO SECTION
+========================================= -->
+<style>
+    .hero {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        background: #fdf6f5;
+        color: #1a1a1a;
+        padding: 0 10%;
+        overflow: hidden;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 3;
+        flex: 1.4;
+        max-width: 800px;
+        text-align: left;
+    }
+
+    .hero h1 {
+        font-size: 48px;
+        color: #2E2A28;
+        margin-bottom: 24px;
+        line-height: 1.1;
+        font-weight: 600;
+        font-family: var(--font-heading) !important;
+        letter-spacing: -2px;
+    }
+
+    .hero h1 i {
+        font-family: var(--font-heading) !important;
+        font-weight: 300;
+        font-style: italic;
+        display: inline-block;
+        padding-bottom: 5px;
+    }
+
+    .hero p {
+        font-family: var(--font-heading);
+        font-size: 20px;
+        opacity: 0.9;
+        margin-bottom: 40px;
+        line-height: 1.6;
+    }
+
+    .hero-buttons .btn-plattera {
+        font-family: var(--font-heading);
+        font-weight: 500;
+        letter-spacing: 1px;
+    }
+
+    .hero h1 span {
+        display: block;
+        overflow: hidden;
+    }
+
+    @keyframes textReveal {
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes archReveal3D {
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @keyframes floatFrame {
+
+        0%,
+        100% {
+            transform: translateY(0) rotate(0deg);
+        }
+
+        50% {
+            transform: translateY(-20px) rotate(1deg);
+        }
+    }
+
+    @keyframes yarnSpin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes stitchFlow {
+        0% {
+            left: -100%;
+        }
+
+        100% {
+            left: 100%;
+        }
+    }
+
+    @media (max-width: 1100px) {
+        .hero {
+            flex-direction: column;
+            text-align: center;
+            justify-content: center;
+            padding: 60px 5%;
+            height: auto;
+            min-height: 100vh;
+        }
+
+        .hero-content {
+            max-width: 100%;
+            margin-bottom: 50px;
+            flex: none;
+        }
+
+        .hero-buttons {
+            justify-content: center;
+        }
+
+        .crochet-deco {
+            justify-content: center;
+        }
+
+        .hero-video-wrapper {
+            width: 350px;
+            height: 480px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+        }
+    }
+</style>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>
+            <span><i>Where Every Stitch</i></span>
+            <span><i>Tells a Story</i></span>
+        </h1>
+        <p>A curated crochet-only marketplace connecting you with skilled artisans and handcrafted creations made with
+            heart.</p>
+
+        <div class="hero-buttons">
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('product.gallery') }}" class="btn-plattera btn-plattera-primary"><i
+                    class="fa-solid fa-bag-shopping"></i> Explore Shop</a>
+            {% if current_user.role == 'artisan' %}
+            <a href="{{ url_for('auth.seller_dashboard') }}" class="btn-plattera btn-plattera-secondary"><i
+                    class="fa-solid fa-gauge"></i> Seller Dashboard</a>
+            {% else %}
+            <a href="{{ url_for('order.order_history') }}" class="btn-plattera btn-plattera-secondary"><i
+                    class="fa-solid fa-clock-rotate-left"></i> My Orders</a>
+            {% endif %}
+            {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn-plattera btn-plattera-primary"><i
+                    class="fa-solid fa-lock"></i> Login to Explore</a>
+            <a href="{{ url_for('auth.register') }}" class="btn-plattera btn-plattera-secondary"><i
+                    class="fa-solid fa-wand-magic-sparkles"></i> Create Account</a>
+            {% endif %}
+        </div>
+
+        <div class="crochet-deco">
+            <i class="fa-solid fa-scroll yarn-ball"></i>
+            <div class="stitch-path"></div>
+            <span style="font-family: var(--font-heading); font-style: italic; color: #bf4646; font-size: 1.1rem;">Crafting your
+                story...</span>
+        </div>
+    </div>
+
+    <div class="hero-video-wrapper">
+        <video autoplay muted loop playsinline>
+            <source src="{{ url_for('static', filename='videos/hero_crochet.mp4') }}" type="video/mp4">
+            <!-- Fallback if video not found -->
+            <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&q=80&w=800"
+                alt="Crochet">
+        </video>
+    </div>
+</section>
+
+<!-- =========================================
+     2. WHY PLATTERA SECTION
+========================================= -->
+<style>
+    .why-plattera {
+        padding: 8rem 0;
+        background-color: var(--bg-offwhite);
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2.5rem;
+        margin-top: 3rem;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 3rem 2rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+        border: 1px solid rgba(0, 0, 0, 0.02);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .feature-icon {
+        width: 70px;
+        height: 70px;
+        background: var(--accent);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 1.8rem;
+        color: var(--primary);
+        transition: var(--transition);
+    }
+
+    .feature-card:hover .feature-icon {
+        background: var(--primary);
+        color: white;
+    }
+
+    .feature-card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+        font-family: var(--font-headings);
+    }
+
+    .feature-card p {
+        color: var(--text-light);
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+</style>
+
+<section class="why-plattera">
+    <div class="container-wide">
+        <div class="section-header">
+            <h2 class="section-title">Why Choose Plattera?</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-yarn"></i></div>
+                <h3>100% Crochet-Only</h3>
+                <p>No mass production. Only authentic handmade crochet crafted with deep intention and care.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-palette"></i></div>
+                <h3>Empowering Artisans</h3>
+                <p>Supporting home-based creators with professional storefronts to showcase their incredible art.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                <h3>Structured Custom Orders</h3>
+                <p>Request personalized crochet designs easily through our streamlined and transparent process.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <h3>Secure Shopping</h3>
+                <p>Verified reviews, comprehensive order tracking, and secure payment processing for peace of mind.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================
+     3. EXPLORE CATEGORIES (MARQUEE)
+========================================= -->
+<style>
+    .categories-marquee {
+        padding: 6rem 0;
+        background-color: white;
+        overflow: hidden;
+    }
+
+    .marquee-wrapper {
+        margin-top: 3rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        width: 100%;
+    }
+
+    .marquee-container {
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .marquee-track {
+        display: flex;
+        gap: 2rem;
+        width: max-content;
+    }
+
+    .track-ltr {
+        animation: scrollLTR 60s linear infinite;
+    }
+
+    .track-rtl {
+        animation: scrollRTL 60s linear infinite;
+    }
+
+    @keyframes scrollLTR {
+        0% {
+            transform: translateX(-50%);
+        }
+
+        100% {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes scrollRTL {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    .category-card {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        width: 220px;
+        height: 300px;
+        flex-shrink: 0;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .cat-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .cat-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 60%);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1.5rem;
+        transition: background 0.4s;
+    }
+
+    .category-card:hover .cat-img {
+        transform: scale(1.1);
+    }
+
+    .cat-name {
+        color: white;
+        font-size: 1.3rem;
+        font-family: var(--font-headings);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .cat-hint {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+</style>
+
+<section class="categories-marquee">
+    <div class="section-header">
+        <h2 class="section-title">Explore Collections</h2>
+        <p class="section-subtitle">Discover our curated categories of premium handmade goodness.</p>
+    </div>
+    <div class="marquee-wrapper">
+        <div class="marquee-container">
+            <div class="marquee-track track-ltr" id="track1"></div>
+        </div>
+        <div class="marquee-container">
+            <div class="marquee-track track-rtl" id="track2"></div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const categories = [
+            {% for cat in categories %}
+            {
+            name: "{{ cat.category_name }}",
+            url: "{{ url_for('product.gallery', category=cat.c_id) }}",
+            image: "{{ url_for('static', filename='uploads/categories/' + cat.image) if cat.image else 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80' }}"
+        },
+        {% endfor %}
+        ];
+
+    const isLoggedIn = {{ 'true' if current_user.is_authenticated else 'false' }};
+    const loginUrl = "{{ url_for('auth.login') }}";
+
+    function createCatCard(cat) {
+        const link = isLoggedIn ? cat.url : loginUrl;
+        const hint = isLoggedIn ? '<i class="fa-solid fa-check"></i> Available' : '<i class="fa-solid fa-lock"></i> Login to View';
+        return `<a href="${link}" class="category-card">
+                <img src="${cat.image}" alt="${cat.name}" class="cat-img">
+                <div class="cat-overlay">
+                    <div class="cat-name">${cat.name}</div>
+                    <div class="cat-hint">${hint}</div>
+                </div>
+            </a>`;
+    }
+
+    const t1 = document.getElementById('track1');
+    const t2 = document.getElementById('track2');
+    let h1 = '', h2 = '';
+
+    // Loop a few times for marquee effect
+    for (let i = 0; i < 4; i++) {
+        categories.forEach((c, idx) => {
+            if (idx % 2 === 0) h1 += createCatCard(c);
+            else h2 += createCatCard(c);
+        });
+        // Also add the others to fill tracks
+        categories.forEach((c, idx) => {
+            if (idx % 2 !== 0) h1 += createCatCard(c);
+            else h2 += createCatCard(c);
+        });
+    }
+    t1.innerHTML = h1;
+    t2.innerHTML = h2;
+    });
+</script>
+
+<!-- =========================================
+     4. BESTSELLERS (TRENDING)
+========================================= -->
+<style>
+    .trending {
+        padding: 6rem 0;
+        background-color: var(--bg-offwhite);
+    }
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2.5rem;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+    }
+
+    .product-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-5px);
+    }
+
+    .p-img-box {
+        position: relative;
+        padding-top: 100%;
+        overflow: hidden;
+    }
+
+    .p-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+
+    .product-card:hover .p-img {
+        transform: scale(1.05);
+    }
+
+    .p-info {
+        padding: 1.5rem;
+    }
+
+    .p-rating {
+        color: #fca311;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .p-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        font-family: var(--font-headings);
+        font-weight: 500;
+    }
+
+    .p-shop {
+        font-size: 0.85rem;
+        color: #888;
+        margin-bottom: 1rem;
+    }
+
+    .p-price {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 1.2rem;
+    }
+
+    .p-btn {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid var(--primary);
+        border-radius: 8px;
+        text-align: center;
+        color: var(--primary);
+        font-weight: 500;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .product-card:hover .p-btn {
+        background: var(--primary);
+        color: white;
+    }
+</style>
+
+<section class="trending">
+    <div class="container-wide">
+        <div class="section-header">
+            <h2 class="section-title">Customer Favorites</h2>
+            <p class="section-subtitle">Discover the most loved handcrafted pieces from our artisan community.</p>
+        </div>
+        <div class="product-grid">
+            {% for product in trending %}
+            <a href="{{ url_for('product.product_detail', product_id=product.p_id) if current_user.is_authenticated else url_for('auth.login') }}"
+                class="product-card">
+                <div class="p-img-box">
+                    {% if product.image_url %}
+                    <img src="{{ url_for('static', filename='uploads/products/' + product.image_url.split('/')[-1]) if not product.image_url.startswith('http') else product.image_url }}"
+                        alt="{{ product.product_name }}" class="p-img">
+                    {% else %}
+                    <div
+                        style="background: #f0f0f0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-image fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="p-info">
+                    <div class="p-rating">
+                        {% for i in range(5) %}<i
+                            class="fa{% if i < (product.avg_rating|default(0)|int) %}-solid{% else %}-regular{% endif %} fa-star"></i>{%
+                        endfor %}
+                        ({{ product.review_count|default(0) }})
+                    </div>
+                    <h3 class="p-title">{{ product.product_name }}</h3>
+                    <p class="p-shop"><i class="fas fa-store"></i> {{ product.shop_name }}</p>
+                    <div class="p-price">₹{{ "%.0f"|format(product.price) }}</div>
+                    <div class="p-btn">
+                        {% if current_user.is_authenticated %}
+                        <i class="fa-solid fa-eye"></i> View Details
+                        {% else %}
+                        <i class="fa-solid fa-lock"></i> Login to View
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        <div style="text-align: center; margin-top: 4rem;">
+            <a href="{{ url_for('product.gallery') }}" class="btn-plattera btn-plattera-secondary">Browse All Products
+                <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================
+     5. FEATURED ARTISANS
+========================================= -->
+<style>
+    .artisans {
+        padding: 8rem 0;
+        background-color: white;
+    }
+
+    .artisan-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 3rem;
+    }
+
+    .artisan-card {
+        background: var(--bg-offwhite);
+        border-radius: 24px;
+        padding: 3rem 2rem;
+        text-align: center;
+        transition: var(--transition);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .artisan-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .art-img-box {
+        width: 130px;
+        height: 130px;
+        margin: 0 auto 1.5rem;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid white;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .art-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .art-name {
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+        font-family: var(--font-headings);
+    }
+
+    .art-shop {
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .art-desc {
+        color: var(--text-light);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        height: 3.2em;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .art-link {
+        font-weight: 600;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .art-link:hover {
+        color: var(--primary);
+    }
+</style>
+
+<section class="artisans">
+    <div class="container-wide">
+        <div class="section-header">
+            <h2 class="section-title">Meet the Makers</h2>
+            <p class="section-subtitle">The talented souls breathing life into every stitch.</p>
+        </div>
+        <div class="artisan-grid">
+            {% for artisan in artisans[:3] %}
+            <div class="artisan-card">
+                <div class="art-img-box">
+                    <img src="https://ui-avatars.com/api/?name={{ artisan.u_name }}&background=FDE8D4&color=BF4646&size=128"
+                        alt="{{ artisan.u_name }}" class="art-img">
+                </div>
+                <h3 class="art-name">{{ artisan.u_name }}</h3>
+                <div class="art-shop"><i class="fa-solid fa-store"></i> {{ artisan.shop_name }}</div>
+                <p class="art-desc">{{ artisan.shop_description|default('Crafting beautiful handmade crochet stories one
+                    stitch at a time.') }}</p>
+                <a href="{{ url_for('product.gallery', seller=artisan.seller_id) if current_user.is_authenticated else url_for('auth.login') }}"
+                    class="art-link">
+                    {% if current_user.is_authenticated %}
+                    View Artisan Profile <i class="fa-solid fa-arrow-right"></i>
+                    {% else %}
+                    Login to View <i class="fa-solid fa-lock"></i>
+                    {% endif %}
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- =========================================
+     6. HOW IT WORKS
+========================================= -->
+<style>
+    .how-it-works {
+        padding: 8rem 0;
+        background-color: var(--bg-offwhite);
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .steps-flex {
+        display: flex;
+        justify-content: space-between;
+        gap: 3rem;
+        margin-top: 4rem;
+        text-align: center;
+    }
+
+    .step-box {
+        flex: 1;
+    }
+
+    .step-num {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        border: 3px solid var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        font-size: 2.5rem;
+        font-family: var(--font-headings);
+        color: var(--primary);
+        background: white;
+    }
+
+    @media (max-width: 768px) {
+        .steps-flex {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<section class="how-it-works">
+    <div class="container-wide">
+        <div class="section-header">
+            <h2 class="section-title">How Plattera Works</h2>
+        </div>
+        <div class="steps-flex">
+            <div class="step-box">
+                <div class="step-num">1</div>
+                <h3 class="p-title">Browse Collections</h3>
+                <p class="p-shop">Explore unique designs from skilled independent artisans across India.</p>
+            </div>
+            <div class="step-item step-box">
+                <div class="step-num">2</div>
+                <h3 class="p-title">Order or Customize</h3>
+                <p class="p-shop">Find ready-made wonders or request a unique custom-made crochet piece.</p>
+            </div>
+            <div class="step-item step-box">
+                <div class="step-num">3</div>
+                <h3 class="p-title">Receive & Relish</h3>
+                <p class="p-shop">Track your item from the artisan's hands to your doorstep.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================
+     7. CUSTOM ORDER CTA (PARALLAX)
+========================================= -->
+<style>
+    .custom-parallax {
+        padding: 10rem 0;
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1544645362-e6e22baabda0?auto=format&fit=crop&q=80&w=1920');
+        background-size: cover;
+        background-attachment: fixed;
+        text-align: center;
+        color: white;
+    }
+
+    .custom-inner {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+</style>
+
+<section class="custom-parallax">
+    <div class="container-wide">
+        <div class="custom-inner">
+            <h2 style="font-size: 3.5rem; color: white; margin-bottom: 2rem; font-family: var(--font-headings);">Have a
+                Unique Design in Mind?</h2>
+            <p style="font-size: 1.3rem; margin-bottom: 3rem; color: rgba(255,255,255,0.9); font-weight: 300;">Upload
+                your ideas and let our artisans craft something uniquely yours. Your vision, expertly stitched.</p>
+            <a href="{{ url_for('custom_order.new_request') if current_user.is_authenticated else url_for('auth.login') }}"
+                class="btn-plattera btn-plattera-primary">
+                {% if current_user.is_authenticated %}
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Start Custom Request
+                {% else %}
+                <i class="fa-solid fa-lock"></i> Login to Request
+                {% endif %}
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================
+     8. TRUST & TRANSPARENCY
+========================================= -->
+<style>
+    .trust {
+        padding: 8rem 0;
+        background: white;
+    }
+
+    .trust-flex {
+        display: flex;
+        align-items: center;
+        gap: 5rem;
+    }
+
+    .trust-col {
+        flex: 1;
+    }
+
+    .trust-check {
+        list-style: none;
+        margin-top: 2rem;
+    }
+
+    .trust-check li {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.2rem;
+        font-size: 1.1rem;
+    }
+
+    .trust-check i {
+        color: var(--primary);
+        background: var(--accent);
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media (max-width: 900px) {
+        .trust-flex {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<section class="trust">
+    <div class="container-wide">
+        <div class="trust-flex">
+            <div class="trust-col">
+                <div class="section-header" style="text-align: left; margin-bottom: 2rem;">
+                    <h2 class="section-title">Crafted With Care.<br>Delivered With Trust.</h2>
+                </div>
+                <p style="color: #666; font-size: 1.1rem; line-height: 1.7;">Plattera bridges the gap between artisan
+                    craftsmanship and structured retail, ensuring a safe, joyful experience for everyone.</p>
+                <ul class="trust-check">
+                    <li><i><i class="fa-solid fa-check"></i></i> Verified Artisan Shop Profiles</li>
+                    <li><i><i class="fa-solid fa-check"></i></i> Authentic Community Reviews</li>
+                    <li><i><i class="fa-solid fa-check"></i></i> End-to-End Order Tracking</li>
+                    <li><i><i class="fa-solid fa-check"></i></i> Dedicated Customer Support</li>
+                </ul>
+            </div>
+            <div class="trust-col" style="border-radius: 30px; overflow: hidden; box-shadow: var(--shadow-lg);">
+                <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&q=80&w=1000"
+                    alt="Process" style="width: 100%; display: block;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================
+     9. TESTIMONIALS
+========================================= -->
+<style>
+    .reviews {
+        padding: 6rem 0;
+        background: var(--bg-offwhite);
+    }
+
+    .review-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2.5rem;
+    }
+
+    .review-card {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+
+    .review-user-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+        border: 2px solid var(--accent);
+    }
+
+    .review-body {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #444;
+        font-style: italic;
+        margin-bottom: 1rem;
+    }
+
+    .review-info {
+        font-weight: 600;
+        font-family: var(--font-headings);
+    }
+</style>
+
+<section class="reviews">
+    <div class="container-wide">
+        <div class="section-header">
+            <h2 class="section-title">Community Love</h2>
+        </div>
+        <div class="review-grid">
+            <div class="review-card">
+                <img src="https://ui-avatars.com/api/?name=Priya&background=random" class="review-user-img" alt="User">
+                <div>
+                    <div style="color: #fca311; margin-bottom: 0.5rem;"><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i></div>
+                    <p class="review-body">"The attention to detail in the amigurumi doll I ordered was breathtaking.
+                        It's clearly a labor of love."</p>
+                    <div class="review-info">Priya S. — <span
+                            style="font-weight: 400; font-size: 0.85rem; color: #888;">Verified Buyer</span></div>
+                </div>
+            </div>
+            <div class="review-card">
+                <img src="https://ui-avatars.com/api/?name=Arjun&background=random" class="review-user-img" alt="User">
+                <div>
+                    <div style="color: #fca311; margin-bottom: 0.5rem;"><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i></div>
+                    <p class="review-body">"I requested a custom cardigan and the artisan kept me updated at every
+                        stage. Absolutely worth it!"</p>
+                    <div class="review-info">Arjun M. — <span
+                            style="font-weight: 400; font-size: 0.85rem; color: #888;">Verified Buyer</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================
+     10. JOIN CIRCLE (FINAL CTA)
+========================================= -->
+<style>
+    .circle {
+        padding: 8rem 0;
+        text-align: center;
+        background: white;
+    }
+
+    .circle-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        margin-top: 3rem;
+    }
+
+    .circle-card {
+        padding: 4rem 2rem;
+        border-radius: 30px;
+        background: #fafafa;
+        border: 1px solid #eee;
+        transition: 0.3s;
+    }
+
+    .circle-card:hover {
+        background: #fff;
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+        .circle-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<section class="circle">
+    <div class="container-wide">
+        <h2 class="section-title">Join the Crochet Circle</h2>
+        <div class="circle-grid">
+            <div class="circle-card">
+                <i class="fa-solid fa-heart fa-3x" style="color: #BF4646; margin-bottom: 1.5rem;"></i>
+                <h3 class="p-title">Bringing Art into Your Life</h3>
+                <p class="p-shop" style="margin-bottom: 2rem;">Discover curated collections of timeless handmade
+                    treasures.</p>
+                <a href="{{ url_for('product.gallery') }}" class="btn-plattera btn-plattera-primary">Explore
+                    Products</a>
+            </div>
+            <div class="circle-card">
+                <i class="fa-solid fa-store fa-3x" style="color: #5c6c3a; margin-bottom: 1.5rem;"></i>
+                <h3 class="p-title">Empowering Your Craft</h3>
+                <p class="p-shop" style="margin-bottom: 2rem;">Turn your crochet passion into a thriving digital
+                    business.</p>
+                {% if current_user.role == 'artisan' %}
+                <a href="{{ url_for('auth.seller_dashboard') }}" class="btn-plattera btn-plattera-secondary">Go to
+                    Dashboard</a>
+                {% else %}
+                <a href="{{ url_for('auth.register') }}" class="btn-plattera btn-plattera-secondary">Start Selling</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

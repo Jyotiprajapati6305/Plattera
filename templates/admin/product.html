@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management | Plattera Admin</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Tenor+Sans&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Admin Pure Black Theme */
+            --primary: #ffffff;
+            --primary-light: rgba(255, 255, 255, 0.1);
+            --primary-dark: #e0e0e0;
+            --secondary: #111111;
+
+            --bg-body: #000000;
+            --bg-card: #0a0a0a;
+            --bg-hover: #151515;
+
+            --text-dark: #ffffff;
+            --text-muted: #888888;
+
+            --border-color: rgba(255, 255, 255, 0.1);
+
+            /* Status Colors */
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.15);
+            --danger: #fb4848;
+            --danger-light: rgba(251, 72, 72, 0.15);
+            --info: #3ba2b8;
+            --info-light: rgba(59, 162, 184, 0.15);
+
+            --font-head: 'Crimson Pro', serif;
+            --font-body: 'Tenor Sans', sans-serif;
+
+            --shadow-sm: none;
+            --shadow-hover: 0 4px 15px rgba(255, 255, 255, 0.05);
+
+            --radius-md: 12px;
+            --radius-sm: 6px;
+            --transition: all 0.3s ease;
+
+            --sidebar-width: 300px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-dark);
+            background-color: var(--bg-body);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-head);
+            font-weight: 600;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem 3rem;
+            width: calc(100% - var(--sidebar-width));
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title h1 {
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            max-width: 600px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-bar input {
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            font-family: inherit;
+            width: 250px;
+            font-size: 0.9rem;
+            background: var(--bg-hover);
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .btn {
+            padding: 0.7rem 1.2rem;
+            border-radius: 50px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid transparent;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-color);
+            color: var(--text-dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-hover);
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--bg-hover);
+        }
+
+        .btn-danger {
+            background: white;
+            border-color: var(--danger);
+            color: var(--danger);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* --- TABS SYSTEM --- */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- CARDS & GRIDS --- */
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-2-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-family: var(--font-head);
+            font-weight: bold;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        /* --- TABLES --- */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            background: #fafafa;
+            white-space: nowrap;
+        }
+
+        tr.hoverable:hover {
+            background: var(--bg-hover);
+        }
+
+        .p-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .flex-cell {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .badge-active {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge-pending {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .badge-rejected {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .badge-deactivated {
+            background: var(--deactivated-light);
+            color: var(--deactivated);
+        }
+
+        /* --- FORMS --- */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.95rem;
+            background: #fff;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: #fafafa;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Expanded Row Detail Panel */
+        .detail-row {
+            display: none;
+            background: #fafafa;
+        }
+
+        .detail-row.open {
+            display: table-row;
+        }
+
+        .detail-content {
+            padding: 2rem !important;
+            border-bottom: 2px solid var(--primary) !important;
+        }
+
+        .detail-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include 'admin/sidebar.html' %}
+
+    <!-- RIGHT MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- PAGE HEADER -->
+        <header class="top-header">
+            <div class="page-title">
+                <h1>Product Management</h1>
+                <p>Manage all crochet products, approve seller listings, control categories, and publish platform
+                    collections.</p>
+            </div>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Search (Name / SKU / Seller)">
+                </div>
+                <button class="btn btn-outline"><i class="fa-solid fa-filter"></i> Filter</button>
+                <button class="btn btn-outline"><i class="fa-solid fa-download"></i> Export</button>
+            </div>
+        </header>
+
+        <!-- ==============================================
+             1. ALL PRODUCTS
+        =============================================== -->
+        <div class="grid-4">
+            <div class="card stat-card" style="margin-bottom:0;">
+                <div class="stat-icon" style="background:var(--primary-light); color:var(--primary);"><i
+                        class="fa-solid fa-box-open"></i></div>
+                <div class="stat-info">
+                    <span class="stat-title">Total Products</span>
+                    <span class="stat-value">{{ stats.total }}</span>
+                </div>
+            </div>
+            <div class="card stat-card" style="margin-bottom:0;">
+                <div class="stat-icon" style="background:var(--success-light); color:var(--success);"><i
+                        class="fa-solid fa-circle-check"></i></div>
+                <div class="stat-info">
+                    <span class="stat-title">Active Products</span>
+                    <span class="stat-value">{{ stats.active }}</span>
+                </div>
+            </div>
+            <div class="card stat-card" style="margin-bottom:0;">
+                <div class="stat-icon" style="background:var(--warning-light); color:var(--warning);"><i
+                        class="fa-solid fa-hourglass-half"></i></div>
+                <div class="stat-info">
+                    <span class="stat-title">Pending</span>
+                    <span class="stat-value">{{ stats.pending }}</span>
+                </div>
+            </div>
+            <div class="card stat-card" style="margin-bottom:0;">
+                <div class="stat-icon" style="background:var(--danger-light); color:var(--danger);"><i
+                        class="fa-solid fa-flag"></i></div>
+                <div class="stat-info">
+                    <span class="stat-title">Reported</span>
+                    <span class="stat-value">{{ stats.reported }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Seller</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in all_products %}
+                        <tr class="hoverable">
+                            <td>
+                                <div class="flex-cell">
+                                    <img src="{{ url_for('static', filename='uploads/' + p.p_image) if p.p_image else 'https://via.placeholder.com/100' }}"
+                                        class="p-image">
+                                    <strong>{{ p.p_name }}</strong>
+                                </div>
+                            </td>
+                            <td><a href="#" style="color:var(--primary); font-weight:bold;">{{ p.shop_name or 'Admin'
+                                    }}</a></td>
+                            <td>{{ p.p_category }}</td>
+                            <td>₹{{ p.p_price }}</td>
+                            <td>{{ p.p_stock }}</td>
+                            <td>
+                                {% if p.p_status == 'Active' %}
+                                <span class="badge badge-active">Active</span>
+                                {% elif p.p_status == 'Pending' %}
+                                <span class="badge badge-pending">Pending</span>
+                                {% else %}
+                                <span class="badge badge-deactivated">{{ p.p_status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn-outline"
+                                    style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:4px;"
+                                    onclick="toggleDetail('row-{{ p.p_id }}')">Manage <i
+                                        class="fa-solid fa-chevron-down"></i></button>
+                            </td>
+                        </tr>
+                        <tr id="row-{{ p.p_id }}" class="detail-row">
+                            <td colspan="7" class="detail-content">
+                                <div style="display:grid; grid-template-columns: 1fr 1.5fr 1fr; gap:1.5rem;">
+                                    <div class="detail-card">
+                                        <img src="{{ url_for('static', filename='uploads/' + p.p_image) if p.p_image else 'https://via.placeholder.com/300' }}"
+                                            style="width:100%; border-radius:8px; margin-bottom:1rem;">
+                                        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                                            <span>Rating: <strong style="color:var(--warning);">4.8 ⭐</strong></span>
+                                            <span>Sales: <strong>0</strong></span>
+                                        </div>
+                                    </div>
+                                    <div class="detail-card">
+                                        <h3 style="color:var(--primary-dark); margin-bottom:1rem;">{{ p.p_name }}</h3>
+                                        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;">{{
+                                            p.p_description }}</p>
+                                        <ul style="font-size:0.9rem; margin-bottom:1.5rem;">
+                                            <li style="margin-bottom:0.3rem;"><strong>ID:</strong> #{{ p.p_id }}</li>
+                                            <li style="margin-bottom:0.3rem;"><strong>Category:</strong> {{ p.p_category
+                                                }}</li>
+                                            <li style="margin-bottom:0.3rem;"><strong>Added On:</strong> {{ p.created_at
+                                                }}</li>
+                                        </ul>
+                                        <div style="display:flex; gap:0.5rem;">
+                                            <button class="btn btn-outline" style="padding:0.5rem 1rem;"><i
+                                                    class="fa-solid fa-pen"></i> Edit</button>
+                                            <button class="btn btn-outline" style="padding:0.5rem 1rem;"><i
+                                                    class="fa-solid fa-eye-slash"></i> Deactivate</button>
+                                        </div>
+                                    </div>
+                                    <div class="detail-card"
+                                        style="background:var(--danger-light); border-color:rgba(217, 76, 76, 0.3);">
+                                        <h4 style="color:var(--danger); margin-bottom:1rem;"><i
+                                                class="fa-solid fa-shield-halved"></i> Admin Moderation</h4>
+                                        <p style="font-size:0.85rem; margin-bottom:1rem;">Moderation tools for this
+                                            product.</p>
+                                        <form action="{{ url_for('admin.delete_product', product_id=p.p_id) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Are you sure you want to permanently delete this product?');">
+                                            <button type="submit" class="btn btn-primary"
+                                                style="background:var(--danger); color:var(--text-dark); width:100%; justify-content:center; cursor:pointer;"><i
+                                                    class="fa-solid fa-trash"></i> Delete Product</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+
+        <!-- ==============================================
+             2. PENDING APPROVALS
+        =============================================== -->
+        <div id="tab-pending" class="tab-content">
+            <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i class="fa-solid fa-clock-rotate-left"
+                    style="color:var(--warning);"></i> Pending Seller Listings</h2>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product Preview</th>
+                                <th>Seller</th>
+                                <th>Category</th>
+                                <th>Submitted Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in pending_products %}
+                            <tr class="hoverable">
+                                <td>
+                                    <div class="flex-cell">
+                                        <img src="{{ url_for('static', filename='uploads/' + p.p_image) if p.p_image else 'https://via.placeholder.com/100' }}"
+                                            class="p-image">
+                                        <div>
+                                            <strong style="display:block;">{{ p.p_name }}</strong>
+                                            <span style="font-size:0.8rem; color:var(--success); font-weight:bold;">₹{{
+                                                p.p_price }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ p.shop_name or 'N/A' }}</td>
+                                <td>{{ p.p_category }}</td>
+                                <td>{{ p.created_at }}</td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding:0.4rem 1rem; font-size:0.85rem;"
+                                        onclick="toggleDetail('pending-row-{{ p.p_id }}')">Review Item</button>
+                                </td>
+                            </tr>
+                            <tr id="pending-row-{{ p.p_id }}" class="detail-row">
+                                <td colspan="5" class="detail-content">
+                                    <div
+                                        style="background:white; border:2px solid var(--warning); border-radius:8px; padding:2rem;">
+                                        <div style="display:grid; grid-template-columns: 1fr 2fr 1fr; gap:2rem;">
+                                            <div>
+                                                <img src="{{ url_for('static', filename='uploads/' + p.p_image) if p.p_image else 'https://via.placeholder.com/100' }}"
+                                                    style="width:100%; border-radius:8px; margin-bottom:0.5rem;">
+                                            </div>
+                                            <div>
+                                                <h3 style="margin-bottom:0.5rem;">{{ p.p_name }}</h3>
+                                                <p
+                                                    style="font-size:1.1rem; color:var(--success); font-weight:bold; margin-bottom:1rem;">
+                                                    ₹{{ p.p_price }}</p>
+                                                <div
+                                                    style="background:#fafafa; padding:1rem; border-radius:4px; margin-bottom:1rem; font-size:0.9rem;">
+                                                    <strong>Description:</strong><br> {{ p.p_description }}
+                                                </div>
+                                            </div>
+                                            <div style="display:flex; flex-direction:column; gap:1rem;">
+                                                <form action="{{ url_for('admin.approve_product', product_id=p.p_id) }}"
+                                                    method="POST">
+                                                    <button type="submit" class="btn btn-primary"
+                                                        style="background:var(--success); justify-content:center; padding:1rem; width: 100%;"><i
+                                                            class="fa-solid fa-check"></i> Approve Product</button>
+                                                </form>
+                                                <hr style="border-top:1px solid var(--border-color); width:100%;">
+                                                <form action="{{ url_for('admin.reject_product', product_id=p.p_id) }}"
+                                                    method="POST">
+                                                    <button type="submit" class="btn btn-danger"
+                                                        style="justify-content:center; padding:1rem; width: 100%;"><i
+                                                            class="fa-solid fa-xmark"></i> Reject Listing</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not pending_products %}
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding:2rem; color:var(--text-muted);">No
+                                    pending products found.</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             3. REPORTED PRODUCTS
+        =============================================== -->
+        <div id="tab-reported" class="tab-content">
+            <h2 style="color:var(--danger); margin-bottom:1.5rem;"><i class="fa-solid fa-flag"></i> Moderation Required
+            </h2>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Reported Product</th>
+                                <th>Seller Account</th>
+                                <th>Report Reason</th>
+                                <th>Reported By</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in reported_products %}
+                            <tr class="hoverable">
+                                <td>
+                                    <div class="flex-cell">
+                                        <img src="{{ url_for('static', filename='uploads/' + p.p_image) if p.p_image else 'https://via.placeholder.com/100' }}"
+                                            class="p-image">
+                                        <a href="#" style="font-weight:bold;">{{ p.p_name }}</a>
+                                    </div>
+                                </td>
+                                <td>{{ p.shop_name or 'N/A' }}</td>
+                                <td><span class="badge badge-rejected"
+                                        style="background:transparent; border:1px solid var(--danger);">Copyright
+                                        Violation</span></td>
+                                <td>User_88492</td>
+                                <td><button class="btn-outline"
+                                        style="padding:0.4rem 0.8rem; font-size:0.8rem; border-radius:4px;"
+                                        onclick="toggleDetail('report-row-{{ p.p_id }}')">Investigate <i
+                                            class="fa-solid fa-chevron-down"></i></button></td>
+                            </tr>
+                            <tr id="report-row-{{ p.p_id }}" class="detail-row">
+                                <td colspan="5" class="detail-content">
+                                    <div
+                                        style="background:var(--danger-light); padding:1.5rem; border:1px solid rgba(217, 76, 76, 0.3); border-radius:8px;">
+                                        <h4 style="color:var(--danger); margin-bottom:1rem;">Report Details</h4>
+                                        <p
+                                            style="font-size:0.9rem; margin-bottom:1rem; background:white; padding:1rem; border-radius:4px;">
+                                            <strong>Message from Reporter:</strong> "Reported status placeholder"
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not reported_products %}
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding:2rem; color:var(--text-muted);">No
+                                    reported products found.</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             4. ADD PRODUCT (ADMIN)
+        =============================================== -->
+        <div id="tab-add" class="tab-content">
+            <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i class="fa-solid fa-crown"
+                    style="color:var(--primary);"></i> Add Platform Exclusive Product</h2>
+
+            <div class="grid-2-form">
+                <div>
+                    <div class="card">
+                        <h3
+                            style="margin-bottom:1.5rem; font-size:1.1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
+                            Basic Information</h3>
+                        <div class="form-group">
+                            <label class="form-label">Product Title *</label>
+                            <input type="text" class="form-control"
+                                placeholder="e.g., Plattera Official Starter Crochet Kit">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Short Tagline</label>
+                            <input type="text" class="form-control" placeholder="A brief hook line...">
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+                            <div class="form-group">
+                                <label class="form-label">Category *</label>
+                                <select class="form-control">
+                                    <option>Kits & Supplies</option>
+                                    <option>Apparel</option>
+                                    <option>Decor</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Subcategory</label>
+                                <select class="form-control">
+                                    <option>Starter Kits</option>
+                                    <option>Yarn Bundles</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Full Description *</label>
+                            <!-- Fake Rich Text Toolbar -->
+                            <div
+                                style="border:1px solid var(--border-color); border-bottom:none; border-radius: 8px 8px 0 0; background:#fafafa; padding:0.5rem; display:flex; gap:0.5rem;">
+                                <button
+                                    style="background:none; border:none; color:var(--text-muted); padding:0.2rem;"><i
+                                        class="fa-solid fa-bold"></i></button>
+                                <button
+                                    style="background:none; border:none; color:var(--text-muted); padding:0.2rem;"><i
+                                        class="fa-solid fa-italic"></i></button>
+                                <button
+                                    style="background:none; border:none; color:var(--text-muted); padding:0.2rem;"><i
+                                        class="fa-solid fa-list-ul"></i></button>
+                                <button
+                                    style="background:none; border:none; color:var(--text-muted); padding:0.2rem;"><i
+                                        class="fa-solid fa-link"></i></button>
+                            </div>
+                            <textarea class="form-control" style="border-radius:0 0 8px 8px;"
+                                placeholder="Write product story, materials, care instructions..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3
+                            style="margin-bottom:1.5rem; font-size:1.1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
+                            Media & Images</h3>
+                        <div class="upload-area">
+                            <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                            <h4 style="margin-bottom:0.5rem;">Drag & drop images here</h4>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Support JPG, PNG
+                                formatting (Max 5MB)</p>
+                            <button class="btn btn-outline" style="background:white;">Browse Files</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <h3
+                            style="margin-bottom:1.5rem; font-size:1.1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
+                            Pricing & Stock</h3>
+                        <div class="form-group">
+                            <label class="form-label">Selling Price (₹) *</label>
+                            <input type="number" class="form-control" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Discounted Price (₹)</label>
+                            <input type="number" class="form-control" placeholder="Optional">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Stock Quantity *</label>
+                            <input type="number" class="form-control" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Low Stock Alert Threshold</label>
+                            <input type="number" class="form-control" value="5">
+                        </div>
+                    </div>
+
+                    <div class="card" style="background:var(--primary-light); border-color:var(--primary);">
+                        <h3 style="color:var(--primary-dark); margin-bottom:1rem;"><i
+                                class="fa-solid fa-paper-plane"></i> Visibility</h3>
+                        <p style="font-size:0.85rem; margin-bottom:1.5rem;">This product will be tagged as
+                            <strong>"Plattera Exclusive"</strong>.
+                        </p>
+                        <div style="display:flex; flex-direction:column; gap:1rem;">
+                            <button class="btn btn-primary" style="justify-content:center; padding:1rem;"><i
+                                    class="fa-solid fa-globe"></i> Publish Now</button>
+                            <button class="btn btn-outline" style="justify-content:center; background:white;">Save as
+                                Draft</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             5. CATEGORY MANAGEMENT
+        =============================================== -->
+        <div id="tab-category" class="tab-content">
+            <h2 style="color:var(--primary-dark); margin-bottom:1.5rem;"><i class="fa-solid fa-layer-group"></i>
+                Marketplace Taxonomy</h2>
+
+            <div class="grid-2" style="grid-template-columns: 1fr 1fr; border:none; margin-bottom:1.5rem;">
+                <div class="card stat-card"
+                    style="margin-bottom:0; background:linear-gradient(135deg, var(--primary-light), white);">
+                    <div class="stat-icon" style="background:white; color:var(--primary); box-shadow:var(--shadow-sm);">
+                        <i class="fa-solid fa-folder"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-title">Master Categories</span>
+                        <span class="stat-value">18</span>
+                    </div>
+                </div>
+                <div class="card stat-card"
+                    style="margin-bottom:0; background:linear-gradient(135deg, var(--info-light), white);">
+                    <div class="stat-icon" style="background:white; color:var(--info); box-shadow:var(--shadow-sm);"><i
+                            class="fa-solid fa-folder-tree"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-title">Nested Subcategories</span>
+                        <span class="stat-value">46</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2-form" style="grid-template-columns: 2fr 1fr;">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                        <h3 style="font-size:1.1rem;">Category Hierarchy</h3>
+                        <div class="search-bar" style="width:200px;">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" placeholder="Find..." style="width:100%;">
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Category Name</th>
+                                    <th>Sub-Categories</th>
+                                    <th>Products Linked</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hoverable">
+                                    <td><strong><i class="fa-solid fa-bag-shopping"
+                                                style="color:var(--text-muted); margin-right:0.5rem;"></i> Crochet
+                                            Bags</strong></td>
+                                    <td><span class="badge" style="background:#f0f0f0; color:#555;">6 Sub</span></td>
+                                    <td>210 Items</td>
+                                    <td>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-pen"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="hoverable">
+                                    <td><strong><i class="fa-solid fa-mitten"
+                                                style="color:var(--text-muted); margin-right:0.5rem;"></i> Winter
+                                            Wear</strong></td>
+                                    <td><span class="badge" style="background:#f0f0f0; color:#555;">4 Sub</span></td>
+                                    <td>345 Items</td>
+                                    <td>
+                                        <button class="btn-outline"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-pen"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="hoverable" style="background:var(--danger-light);">
+                                    <td><strong><i class="fa-solid fa-tree"
+                                                style="color:var(--danger); margin-right:0.5rem;"></i> Christmas
+                                            Seasonal</strong></td>
+                                    <td><span class="badge" style="background:#f0f0f0; color:#555;">0 Sub</span></td>
+                                    <td>0 Items</td>
+                                    <td>
+                                        <button class="btn-primary"
+                                            style="padding:0.3rem 0.6rem; font-size:0.8rem; border-radius:4px;"><i
+                                                class="fa-solid fa-play"></i> Enable</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3
+                        style="margin-bottom:1.5rem; font-size:1.1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
+                        Create New Category</h3>
+                    <div class="form-group">
+                        <label class="form-label">Category Name</label>
+                        <input type="text" class="form-control" placeholder="e.g. Valentine Collection">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Parent Category</label>
+                        <select class="form-control">
+                            <option>None (Make Master Category)</option>
+                            <option>Crochet Bags</option>
+                            <option>Winter Wear</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Icon Class (FontAwesome)</label>
+                        <input type="text" class="form-control" placeholder="fa-solid fa-star">
+                    </div>
+                    <button class="btn btn-primary" style="width:100%; justify-content:center;"><i
+                            class="fa-solid fa-folder-plus"></i> Add Category</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript for Sidebar Navigation & Expandable Rows -->
+    <script>
+        // Sidebar active tab switching logic
+        function switchTab(tabId, btnElement) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Remove active style from buttons
+            document.querySelectorAll('.sidebar-link').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab and highlight button
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Expandable Detail Row Logic
+        function toggleDetail(rowId) {
+            const row = document.getElementById(rowId);
+            if (row.classList.contains('open')) {
+                row.classList.remove('open');
+            } else {
+                row.classList.add('open');
+            }
+        }
+    </script>
+</body>
+
+</html>
