@@ -1,0 +1,26 @@
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 631-326-424
+127.0.0.1 - - [27/Mar/2026 07:18:30] "GET /auth/register HTTP/1.1" 200 -
+127.0.0.1 - - [27/Mar/2026 07:18:31] "[33mGET /static/uploads/products/img3.jpeg HTTP/1.1[0m" 404 -
+127.0.0.1 - - [27/Mar/2026 07:19:44] "GET /auth/register HTTP/1.1" 200 -
+127.0.0.1 - - [27/Mar/2026 07:19:44] "[33mGET /static/uploads/products/img3.jpeg HTTP/1.1[0m" 404 -
+127.0.0.1 - - [27/Mar/2026 07:19:44] "GET /gallery?q= HTTP/1.1" 200 -
+127.0.0.1 - - [27/Mar/2026 07:19:45] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [27/Mar/2026 07:19:45] "[33mGET /static/uploads/products/img3.jpeg HTTP/1.1[0m" 404 -
+127.0.0.1 - - [27/Mar/2026 07:19:45] "GET /gallery?q= HTTP/1.1" 200 -
+127.0.0.1 - - [27/Mar/2026 07:19:46] "[32mGET /orders/ HTTP/1.1[0m" 302 -
+127.0.0.1 - - [27/Mar/2026 07:19:46] "GET /auth/login?next=/orders/ HTTP/1.1" 200 -
+127.0.0.1 - - [27/Mar/2026 07:19:46] "[33mGET /static/uploads/products/img3.jpeg HTTP/1.1[0m" 404 -
+127.0.0.1 - - [27/Mar/2026 07:19:47] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [27/Mar/2026 07:19:49] "GET /gallery HTTP/1.1" 200 -
+127.0.0.1 - - [27/Mar/2026 07:19:50] "GET /product/40 HTTP/1.1" 200 -
+127.0.0.1 - - [27/Mar/2026 07:19:50] "GET /static/uploads/products/40_butterfly.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [27/Mar/2026 07:19:51] "[32mGET /auth/logout HTTP/1.1[0m" 302 -
+127.0.0.1 - - [27/Mar/2026 07:19:51] "GET /auth/login?next=/auth/logout HTTP/1.1" 200 -
+127.0.0.1 - - [27/Mar/2026 07:19:51] "[33mGET /static/uploads/products/img3.jpeg HTTP/1.1[0m" 404 -

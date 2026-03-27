@@ -25,6 +25,7 @@
                     <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Buyer</th>
                     <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Amount</th>
                     <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Date</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Payment</th>
                     <th style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Status</th>
                 </tr>
             </thead>
@@ -58,6 +59,14 @@
                     <td style="padding: 1rem;">{{ order.buyer_name }}</td>
                     <td style="padding: 1rem; font-weight: bold;">₹ {{ "{:,.2f}".format(order.amount) }}</td>
                     <td style="padding: 1rem; font-size: 0.9rem; color: var(--text-muted);">{{ order.created_at[:10] }}
+                    </td>
+                    <td style="padding: 1rem; font-size: 0.85rem;">
+                        {% if order.payment_method == 'razorpay' and order.razorpay_payment_id %}
+                            <span style="color: #2e7d32; font-weight: bold;">Paid (Razorpay)</span><br>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">{{ order.razorpay_payment_id }}</span>
+                        {% else %}
+                            <span style="color: #f57c00; font-weight: bold;">COD / Pending</span>
+                        {% endif %}
                     </td>
                     <td style="padding: 1rem;">
                         <span
